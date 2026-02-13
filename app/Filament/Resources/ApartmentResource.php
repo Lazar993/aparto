@@ -11,6 +11,7 @@ use Filament\Resources\{Form, Resource, Table};
 use Filament\Tables\Actions\{DeleteBulkAction, EditAction};
 use Filament\Tables\Columns\{IconColumn, ImageColumn, TextColumn};
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
 
 class ApartmentResource extends Resource
 {
@@ -140,6 +141,8 @@ class ApartmentResource extends Resource
                         ->multiple()
                         ->nullable(),
                 ]),
+            Hidden::make('user_id')
+                ->default(fn () => auth()->id()),
         ]);
     }
 
@@ -190,4 +193,16 @@ class ApartmentResource extends Resource
             'edit' => Pages\EditApartment::route('/{record}/edit'),
         ];
     }    
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->hasRole('host')) {
+            $query->where('user_id', auth()->id());
+        }
+
+        return $query;
+    }
+
 }
