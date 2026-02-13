@@ -1,0 +1,942 @@
+@import url('https://fonts.bunny.net/css?family=fraunces:400,600,700&manrope:400,500,600');
+
+:root {
+    --aparto-ink: #1f1a17;
+    --aparto-ink-soft: #3f3430;
+    --aparto-cream: #f7f1ea;
+    --aparto-sand: #efe4d8;
+    --aparto-clay: #cf8f6d;
+    --aparto-ember: #a45b3c;
+    --aparto-forest: #204c45;
+    --aparto-foam: #e6f1ee;
+    --aparto-shadow: 0 20px 60px rgba(34, 24, 18, 0.18);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.aparto-body {
+    margin: 0;
+    color: var(--aparto-ink);
+    background: radial-gradient(1200px 600px at 15% -10%, #fff8ef 0%, transparent 70%),
+        radial-gradient(1000px 700px at 95% 10%, #e9f2ef 0%, transparent 60%),
+        var(--aparto-cream);
+    font-family: 'Manrope', 'Segoe UI', sans-serif;
+}
+
+.aparto-shell {
+    min-height: 100vh;
+    padding: 40px 24px 80px;
+}
+
+.aparto-footer {
+    padding: 32px 24px 48px;
+    background: #f1e7dc;
+    border-top: 1px solid rgba(32, 76, 69, 0.12);
+}
+
+.aparto-footer-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    align-items: start;
+}
+
+.aparto-footer-brand {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--aparto-ink);
+    text-decoration: none;
+}
+
+.aparto-footer-note {
+    margin: 10px 0 0;
+    color: var(--aparto-ink-soft);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.aparto-footer-links {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.aparto-footer-links h4 {
+    margin: 0 0 10px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--aparto-ink-soft);
+}
+
+.aparto-footer-links a {
+    display: block;
+    margin: 6px 0;
+    text-decoration: none;
+    color: var(--aparto-ink);
+    font-weight: 600;
+}
+
+.aparto-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.aparto-lang {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+}
+
+.aparto-lang a {
+    text-decoration: none;
+    color: var(--aparto-ink-soft);
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+.aparto-lang a.is-active {
+    border-color: var(--aparto-forest);
+    color: var(--aparto-forest);
+    background: #fff;
+}
+
+.aparto-brand {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.aparto-nav {
+    display: flex;
+    gap: 18px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.aparto-nav a {
+    color: var(--aparto-ink-soft);
+    text-decoration: none;
+}
+
+.aparto-hero {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: center;
+    margin-bottom: 64px;
+}
+
+.aparto-hero-title {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    line-height: 1.05;
+    margin: 0 0 16px;
+}
+
+.aparto-hero-subtitle {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--aparto-ink-soft);
+    margin: 0 0 28px;
+}
+
+.aparto-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.aparto-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.aparto-button.primary {
+    background: var(--aparto-forest);
+    color: #fff;
+    box-shadow: 0 12px 30px rgba(32, 76, 69, 0.25);
+}
+
+.aparto-button.ghost {
+    border-color: var(--aparto-forest);
+    color: var(--aparto-forest);
+    background: transparent;
+}
+
+.aparto-hero-card {
+    background: linear-gradient(140deg, #fff, #f3e7d8);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: var(--aparto-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.aparto-hero-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(160px 160px at 80% 20%, rgba(207, 143, 109, 0.35), transparent 70%);
+    pointer-events: none;
+}
+
+.aparto-hero-stat {
+    display: grid;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--aparto-ink-soft);
+}
+
+.aparto-hero-stat strong {
+    font-size: 28px;
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    color: var(--aparto-ink);
+}
+
+.aparto-section-title {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: clamp(24px, 3vw, 34px);
+    margin: 0 0 24px;
+}
+
+.aparto-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.aparto-card {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(33, 22, 16, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aparto-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 28px 50px rgba(33, 22, 16, 0.18);
+}
+
+.aparto-card-media {
+    display: block;
+    height: 180px;
+    background: linear-gradient(130deg, #f1ded1, #d6ebe6);
+    position: relative;
+}
+
+.aparto-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.aparto-card-body {
+    padding: 18px 18px 22px;
+    display: grid;
+    gap: 10px;
+}
+
+.aparto-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.aparto-card-title-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.aparto-card-meta {
+    font-size: 14px;
+    color: var(--aparto-ink-soft);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.aparto-card-meta>span:first-child:not(.aparto-meta-pill) {
+    font-weight: 600;
+    color: var(--aparto-ink);
+}
+
+.aparto-tag {
+    padding: 4px 10px;
+    background: var(--aparto-foam);
+    color: var(--aparto-forest);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.aparto-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.aparto-meta-pill {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--aparto-foam);
+    color: var(--aparto-forest);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.aparto-meta-icon {
+    width: 22px;
+    height: 22px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.aparto-price {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--aparto-ember);
+}
+
+.aparto-card-link {
+    text-decoration: none;
+    color: var(--aparto-forest);
+    font-weight: 600;
+}
+
+.aparto-detail {
+    display: grid;
+    gap: 28px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: start;
+}
+
+.aparto-detail-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 26px;
+    box-shadow: var(--aparto-shadow);
+}
+
+.aparto-detail-media {
+    border-radius: 18px;
+    overflow: hidden;
+    height: 320px;
+    background: linear-gradient(130deg, #f1ded1, #d6ebe6);
+}
+
+.aparto-detail-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.aparto-gallery {
+    margin-top: 18px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #f6efe7;
+}
+
+.aparto-gallery.is-hidden {
+    display: none;
+}
+
+.aparto-gallery-toggle {
+    margin-top: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--aparto-forest);
+    background: transparent;
+    color: var(--aparto-forest);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.aparto-gallery-toggle.is-active {
+    background: var(--aparto-forest);
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(32, 76, 69, 0.25);
+}
+
+.aparto-detail-actions .aparto-button.is-active {
+    background: var(--aparto-forest);
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(32, 76, 69, 0.25);
+}
+
+.aparto-gallery {
+    animation: apartoGalleryFade 0.35s ease;
+}
+
+@keyframes apartoGalleryFade {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.aparto-gallery-track {
+    display: flex;
+    transition: transform 0.4s ease;
+    will-change: transform;
+}
+
+.aparto-gallery-slide {
+    min-width: 100%;
+    height: 220px;
+    background: linear-gradient(130deg, #f1ded1, #d6ebe6);
+}
+
+.aparto-gallery-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.aparto-gallery-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--aparto-forest);
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.aparto-gallery-button.prev {
+    left: 10px;
+}
+
+.aparto-gallery-button.next {
+    right: 10px;
+}
+
+.aparto-gallery-dots {
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 6px 10px;
+    border-radius: 999px;
+}
+
+.aparto-gallery-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(32, 76, 69, 0.3);
+}
+
+.aparto-gallery-dot.is-active {
+    background: var(--aparto-forest);
+}
+
+.aparto-detail-title {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: clamp(28px, 4vw, 40px);
+    margin: 0 0 12px;
+}
+
+.aparto-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: var(--aparto-ink-soft);
+    font-size: 15px;
+}
+
+.aparto-detail-meta>span:first-child:not(.aparto-meta-pill) {
+    font-weight: 600;
+    color: var(--aparto-ink);
+}
+
+.aparto-detail-price {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--aparto-ember);
+}
+
+.aparto-detail-actions {
+    margin-top: 22px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.aparto-detail-description {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 16px;
+    background: #f4f0ea;
+    border: 1px solid rgba(32, 76, 69, 0.15);
+    animation: apartoDescHighlight 0.45s ease;
+}
+
+.aparto-detail-description.is-hidden {
+    display: none;
+}
+
+@keyframes apartoDescHighlight {
+    0% {
+        box-shadow: 0 0 0 rgba(32, 76, 69, 0);
+    }
+
+    60% {
+        box-shadow: 0 0 0 6px rgba(32, 76, 69, 0.12);
+    }
+
+    100% {
+        box-shadow: 0 0 0 rgba(32, 76, 69, 0);
+    }
+}
+
+.aparto-detail-map {
+    margin-top: 22px;
+    width: 100%;
+    height: 260px;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.aparto-reservation-title {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: 22px;
+    margin: 0 0 10px;
+}
+
+.aparto-reservation-form {
+    display: grid;
+    gap: 16px;
+}
+
+.aparto-reservation-total {
+    display: grid;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #fffdf9;
+    border: 1px solid #e1d7cc;
+}
+
+.aparto-reservation-total-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--aparto-ink-soft);
+}
+
+.aparto-reservation-total-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--aparto-ember);
+}
+
+.aparto-reservation-total-meta {
+    font-size: 12px;
+    color: var(--aparto-ink-soft);
+}
+
+.aparto-reservation-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--aparto-ink-soft);
+}
+
+.aparto-reservation-total-row.is-strong {
+    font-weight: 600;
+    color: var(--aparto-ink);
+}
+
+.aparto-reservation-total-caption {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 11px;
+}
+
+.aparto-reservation-total-amount {
+    font-size: 14px;
+}
+
+.aparto-reservation-form.is-hidden {
+    display: none;
+}
+
+.aparto-form-message {
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.aparto-form-message ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+}
+
+.aparto-form-message.is-success {
+    background: var(--aparto-foam);
+    color: var(--aparto-forest);
+    border: 1px solid rgba(32, 76, 69, 0.2);
+}
+
+.aparto-form-message.is-error {
+    background: #fff1f1;
+    color: #7c2e2e;
+    border: 1px solid rgba(124, 46, 46, 0.2);
+}
+
+.aparto-reservation-card.is-hidden {
+    display: none;
+}
+
+.aparto-reservation-stash {
+    display: none;
+}
+
+.aparto-reservation-card {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.aparto-reservation-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.aparto-empty {
+    padding: 40px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: var(--aparto-shadow);
+    text-align: center;
+}
+
+.aparto-pagination {
+    margin-top: 28px;
+    display: flex;
+    justify-content: center;
+}
+
+.aparto-pagination nav {
+    background: #fff;
+    padding: 10px 16px;
+    border-radius: 999px;
+    box-shadow: var(--aparto-shadow);
+}
+
+.aparto-results {
+    transition: opacity 0.2s ease;
+}
+
+.aparto-results .aparto-empty {
+    margin-top: 24px;
+}
+
+.aparto-results.is-loading {
+    opacity: 0.6;
+}
+
+.aparto-results.is-highlight .aparto-card {
+    animation: apartoCardGlow 0.45s ease;
+}
+
+@keyframes apartoCardGlow {
+    0% {
+        background: #fff;
+        outline: 0 solid rgba(32, 76, 69, 0.15);
+    }
+
+    50% {
+        background: #f4f0ea;
+        outline: 3px solid rgba(32, 76, 69, 0.18);
+    }
+
+    100% {
+        background: #fff;
+        outline: 0 solid rgba(32, 76, 69, 0);
+    }
+}
+
+.aparto-filter {
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: var(--aparto-shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.aparto-filter:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 28px 60px rgba(34, 24, 18, 0.22);
+    animation: apartoCardGlow 0.6s ease;
+}
+
+.aparto-filter--compact {
+    margin: 0 auto 48px;
+    max-width: 640px;
+    padding: 12px 14px;
+    border-radius: 16px;
+}
+
+.aparto-filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    align-items: end;
+}
+
+.aparto-filter--compact .aparto-filter-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.aparto-filter-field--full {
+    grid-column: 1 / -1;
+}
+
+.aparto-filter-field {
+    display: grid;
+    gap: 6px;
+}
+
+.aparto-filter-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--aparto-ink-soft);
+}
+
+.aparto-filter-input {
+    border-radius: 12px;
+    border: 1px solid #e1d7cc;
+    padding: 10px 12px;
+    font-size: 14px;
+    background: #fffdf9;
+    color: var(--aparto-ink);
+}
+
+.aparto-filter--compact .aparto-filter-input {
+    padding: 10px 12px;
+}
+
+.aparto-filter--compact .aparto-button {
+    padding: 10px 18px;
+}
+
+.aparto-filter-textarea {
+    resize: vertical;
+}
+
+.aparto-filter-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap;
+}
+
+.aparto-filter-actions .aparto-button {
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+.aparto-results--list .aparto-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1024px) {
+    .aparto-results--list .aparto-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .aparto-results--list .aparto-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.aparto-fade-up {
+    animation: apartoFadeUp 0.6s ease both;
+}
+
+.aparto-delay-1 {
+    animation-delay: 0.1s;
+}
+
+.aparto-delay-2 {
+    animation-delay: 0.2s;
+}
+
+@keyframes apartoFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 720px) {
+    .aparto-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .aparto-nav {
+        flex-wrap: wrap;
+    }
+
+    .aparto-lang {
+        justify-content: flex-start;
+    }
+}
+
+/* Floating AI Chat Button */
+#ai-chat-open {
+    position: fixed;
+    right: 1.2rem;
+    bottom: 1.2rem;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1.1rem;
+    min-width: 110px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #60A5FA, #3B82F6);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.15);
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25);
+    transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    cursor: pointer;
+    animation: aiPulse 4s ease-in-out infinite;
+}
+
+#ai-chat-open .ai-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+#ai-chat-open:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 45px rgba(37, 99, 235, 0.35);
+}
+
+#ai-chat-open.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Pulse animation */
+@keyframes aiPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Responsive text */
+@media (max-width: 640px) {
+    #ai-chat-open .ai-text {
+        display: none; /* sakrije tekst na mobilnom, ostaje samo ikona */
+    }
+    #ai-chat-open {
+        padding: 0.5rem 0.8rem;
+        min-width: 50px;
+        font-size: 0.85rem;
+    }
+}
+
+.ai-chat-component {
+    box-shadow: 0 20px 50px rgba(59, 130, 246, 0.25), 0 5px 15px rgba(99, 102, 241, 0.15);
+    border-radius: 1.25rem;
+    border: 1px solid rgba(147, 197, 253, 0.6);
+    background: rgba(255, 255, 255, 0.95);
+    transition: all 0.25s ease, transform 0.3s ease, opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-height: 80vh;
+}
+
+.ai-chat-component:focus-within {
+    box-shadow: 0 30px 70px rgba(59, 130, 246, 0.35), 0 10px 25px rgba(99, 102, 241, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .ai-chat-component {
+        width: 90vw;
+        max-height: 70vh;
+    }
+}
+
+/* Scroll poruka */
+#messages {
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Scrollbar styling (opciono) */
+#messages::-webkit-scrollbar {
+    width: 6px;
+}
+#messages::-webkit-scrollbar-thumb {
+    background-color: rgba(59,130,246,0.5);
+    border-radius: 3px;
+}
+
