@@ -226,7 +226,7 @@
 .aparto-grid {
     display: grid;
     gap: 24px;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .aparto-card {
@@ -791,12 +791,12 @@
 }
 
 .aparto-results--list .aparto-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 @media (max-width: 1024px) {
     .aparto-results--list .aparto-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
 }
 
@@ -859,7 +859,7 @@
     border-radius: 9999px;
     background: linear-gradient(135deg, #60A5FA, #3B82F6);
     color: #ffffff;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     font-weight: 700;
     font-size: 0.95rem;
     box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25);
@@ -885,15 +885,24 @@
 
 /* Pulse animation */
 @keyframes aiPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 /* Responsive text */
 @media (max-width: 640px) {
     #ai-chat-open .ai-text {
-        display: none; /* sakrije tekst na mobilnom, ostaje samo ikona */
+        display: none;
+        /* sakrije tekst na mobilnom, ostaje samo ikona */
     }
+
     #ai-chat-open {
         padding: 0.5rem 0.8rem;
         min-width: 50px;
@@ -935,8 +944,8 @@
 #messages::-webkit-scrollbar {
     width: 6px;
 }
+
 #messages::-webkit-scrollbar-thumb {
-    background-color: rgba(59,130,246,0.5);
+    background-color: rgba(59, 130, 246, 0.5);
     border-radius: 3px;
 }
-

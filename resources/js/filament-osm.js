@@ -91,6 +91,7 @@ var apartoOsm = {
         }
 
         dropdown.style.display = 'grid'
+        apartoOsm.positionDropdown(input, dropdown)
 
         for (var i = 0; i < results.length; i += 1) {
             (function (result) {
@@ -98,6 +99,27 @@ var apartoOsm = {
                 item.type = 'button'
                 item.textContent = result.display_name
                 item.className = 'aparto-osm-item'
+
+                // Item styling
+                item.style.padding = '8px 12px'
+                item.style.textAlign = 'left'
+                item.style.border = 'none'
+                item.style.borderRadius = '6px'
+                item.style.cursor = 'pointer'
+                item.style.fontSize = '14px'
+                item.style.color = '#374151'
+                item.style.backgroundColor = 'transparent'
+                item.style.transition = 'background-color 0.15s'
+                item.style.width = '100%'
+                item.style.display = 'block'
+
+                item.addEventListener('mouseenter', function () {
+                    item.style.backgroundColor = '#f3f4f6'
+                })
+
+                item.addEventListener('mouseleave', function () {
+                    item.style.backgroundColor = 'transparent'
+                })
 
                 item.addEventListener('click', function () {
                     apartoOsm.applyResult(input, result)
@@ -112,9 +134,6 @@ var apartoOsm = {
         input.value = result.display_name || input.value
         input.dispatchEvent(new Event('input', { bubbles: true }))
 
-        var city = apartoOsm.findCity(result.address || {})
-        apartoOsm.setInputValue(input.dataset.cityInput, city)
-
         apartoOsm.setInputValue(input.dataset.latInput, result.lat)
         apartoOsm.setInputValue(input.dataset.lngInput, result.lon)
     },
@@ -126,7 +145,8 @@ var apartoOsm = {
             return
         }
 
-        var target = document.getElementById(inputId)
+        // Handle IDs with dots (e.g., data.latitude)
+        var target = document.querySelector('[id="' + inputId + '"]')
         if (!target) {
             return
         }
@@ -143,16 +163,16 @@ var apartoOsm = {
         var dropdown = document.createElement('div')
         dropdown.className = 'aparto-osm-dropdown'
         dropdown.setAttribute('data-osm-for', input.id)
-        dropdown.style.position = 'absolute'
-        dropdown.style.zIndex = '50'
+        dropdown.style.position = 'fixed'
+        dropdown.style.zIndex = '9999'
         dropdown.style.background = '#ffffff'
-        dropdown.style.border = '1px solid #e5e7eb'
-        dropdown.style.borderRadius = '10px'
-        dropdown.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.08)'
-        dropdown.style.padding = '6px'
+        dropdown.style.border = '1px solid #d1d5db'
+        dropdown.style.borderRadius = '8px'
+        dropdown.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+        dropdown.style.padding = '4px'
         dropdown.style.display = 'none'
-        dropdown.style.gap = '4px'
-        dropdown.style.maxHeight = '220px'
+        dropdown.style.gap = '2px'
+        dropdown.style.maxHeight = '280px'
         dropdown.style.overflow = 'auto'
         dropdown.style.boxSizing = 'border-box'
 
@@ -163,13 +183,19 @@ var apartoOsm = {
             apartoOsm.positionDropdown(input, dropdown)
         })
 
+        window.addEventListener('scroll', function () {
+            if (dropdown.style.display !== 'none') {
+                apartoOsm.positionDropdown(input, dropdown)
+            }
+        }, true)
+
         return dropdown
     },
     positionDropdown: function (input, dropdown) {
         var rect = input.getBoundingClientRect()
         dropdown.style.width = rect.width + 'px'
-        dropdown.style.left = rect.left + window.scrollX + 'px'
-        dropdown.style.top = rect.bottom + window.scrollY + 'px'
+        dropdown.style.left = rect.left + 'px'
+        dropdown.style.top = (rect.bottom + 4) + 'px'
     },
     clearDropdown: function (dropdown) {
         while (dropdown.firstChild) {
@@ -246,13 +272,20 @@ var apartoOsm = {
 function apartoOsmInit() {
     apartoOsm.init()
 
-    if (window.Livewire && typeof window.Livewire.hook === 'function') {
-        window.Livewire.hook('message.processed', function () {
+    // Livewire v3 hooks
+    if (window.Livewire) {
+        Livewire.hook('morph.updated', ({ el, component }) => {
             apartoOsm.init()
         })
     }
 }
 
+// Initialize on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {
     apartoOsmInit()
+})
+
+// Also initialize when Alpine is ready (for Filament v3)
+document.addEventListener('livewire:navigated', function () {
+    apartoOsm.init()
 })

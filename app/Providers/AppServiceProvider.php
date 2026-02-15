@@ -3,7 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Page;
-use Filament\Facades\Filament;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\Js;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -31,11 +32,9 @@ class AppServiceProvider extends ServiceProvider
             $view->with('footerPages', $footerPages);
         });
 
-        Filament::serving(function (): void {
-            Filament::registerScripts([
-                Vite::asset('resources/js/filament-osm.js'),
-            ], true);
-        });
+        FilamentAsset::register([
+            Js::make('filament-osm', Vite::asset('resources/js/filament-osm.js')),
+        ]);
 
         if(config('app.env') === 'production'){
             \Illuminate\Support\Facades\URL::forceScheme('https');

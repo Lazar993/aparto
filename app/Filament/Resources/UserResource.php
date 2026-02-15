@@ -6,11 +6,9 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Resources\Resource;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Support\Facades\Hash;
-use Filament\Forms\Components\{TextInput, Toggle, Section, Grid, Card};
+use Filament\Forms\Components\{TextInput, Toggle, Section, Grid};
 use Filament\Tables\Columns\{IconColumn, TextColumn};
 use Filament\Tables\Actions\{EditAction, DeleteBulkAction};
 
@@ -22,66 +20,63 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = 'Users';
     protected static ?int $navigationSort = 3;
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
-                Card::make()
+                Section::make('User Information')
+                    ->description('Basic information about the user')
                     ->schema([
-                        Section::make('User Information')
-                            ->description('Basic information about the user')
+                        Grid::make(2)
                             ->schema([
-                                Grid::make(2)
-                                    ->schema([
-                                        TextInput::make('name')
-                                            ->label('Full Name')
-                                            ->placeholder('Enter full name')
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->columnSpan(1),
+                                TextInput::make('name')
+                                    ->label('Full Name')
+                                    ->placeholder('Enter full name')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpan(1),
 
-                                        TextInput::make('email')
-                                            ->label('Email Address')
-                                            ->placeholder('user@example.com')
-                                            ->email()
-                                            ->required()
-                                            ->unique(ignoreRecord: true)
-                                            ->columnSpan(1),
-                                    ]),
-                            ])
-                            ->collapsible(),
-
-                        Section::make('Security')
-                            ->description('Password and account security settings')
-                            ->schema([
-                                TextInput::make('password')
-                                    ->label('Password')
-                                    ->placeholder('Enter password')
-                                    ->password()
-                                    ->dehydrateStateUsing(fn ($state) => !empty($state) ? Hash::make($state) : null)
-                                    ->dehydrated(fn ($state) => filled($state))
-                                    ->required(fn (string $context) => $context === 'create')
-                                    ->helperText(fn (string $context) => $context === 'edit' ? 'Leave blank to keep current password' : 'Minimum 8 characters recommended')
-                                    ->minLength(8)
-                                    ->maxLength(255),
-                            ])
-                            ->collapsible(),
-
-                        Section::make('Permissions')
-                            ->description('User role and permissions')
-                            ->schema([
-                                Toggle::make('is_admin')
-                                    ->label('Administrator')
-                                    ->helperText('Grant full administrative access to this user')
-                                    ->default(false)
-                                    ->inline(false),
-                            ])
-                            ->collapsible(),
+                                TextInput::make('email')
+                                    ->label('Email Address')
+                                    ->placeholder('user@example.com')
+                                    ->email()
+                                    ->required()
+                                    ->unique(ignoreRecord: true)
+                                    ->columnSpan(1),
+                            ]),
                     ])
+                    ->collapsible(),
+
+                Section::make('Security')
+                    ->description('Password and account security settings')
+                    ->schema([
+                        TextInput::make('password')
+                            ->label('Password')
+                            ->placeholder('Enter password')
+                            ->password()
+                            ->dehydrateStateUsing(fn ($state) => !empty($state) ? Hash::make($state) : null)
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn (string $context) => $context === 'create')
+                            ->helperText(fn (string $context) => $context === 'edit' ? 'Leave blank to keep current password' : 'Minimum 8 characters recommended')
+                            ->minLength(8)
+                            ->maxLength(255),
+                    ])
+                    ->collapsible(),
+
+                Section::make('Permissions')
+                    ->description('User role and permissions')
+                    ->schema([
+                        Toggle::make('is_admin')
+                            ->label('Administrator')
+                            ->helperText('Grant full administrative access to this user')
+                            ->default(false)
+                            ->inline(false),
+                    ])
+                    ->collapsible(),
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([

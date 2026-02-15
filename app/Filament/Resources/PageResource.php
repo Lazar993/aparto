@@ -4,8 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PageResource\Pages;
 use App\Models\Page;
+use Filament\Forms;
 use Filament\Forms\Components\{RichEditor, TextInput, Toggle};
-use Filament\Resources\{Form, Resource, Table};
+use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\{IconColumn, TextColumn};
 use Illuminate\Support\Str;
@@ -14,17 +15,17 @@ class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?int $navigationSort = 4;
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
         ->schema([
             TextInput::make('title')
                 ->required()
-                ->reactive()
+                ->live(onBlur: true)
                 ->afterStateUpdated(fn ($state, callable $set) =>
                     $set('slug', Str::slug($state))
                 ),
@@ -42,7 +43,7 @@ class PageResource extends Resource
         ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([

@@ -5,9 +5,11 @@ namespace App\Filament\Resources;
 use App\Services\OpenAiService;
 use App\Filament\Resources\ApartmentResource\Pages;
 use App\Models\Apartment;
+use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\{FileUpload, Hidden, Section, TextInput, Textarea, Toggle};
-use Filament\Resources\{Form, Resource, Table};
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Actions\{DeleteBulkAction, EditAction};
 use Filament\Tables\Columns\{IconColumn, ImageColumn, TextColumn};
 use Filament\Notifications\Notification;
@@ -17,11 +19,11 @@ class ApartmentResource extends Resource
 {
     protected static ?string $model = Apartment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
     protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
         ->schema([
@@ -34,7 +36,7 @@ class ApartmentResource extends Resource
                         ->columnSpanFull(),
                     Textarea::make('description')
                         ->columnSpanFull()
-                        ->hint('Generate with AI')
+                        // ->hint('Generate with AI')
                         ->hintColor('primary')
                         ->hintAction(
                             Action::make('generateDescription')
@@ -80,6 +82,7 @@ class ApartmentResource extends Resource
                         ->autocomplete('off')
                         ->extraInputAttributes([
                             'data-osm-autocomplete' => 'true',
+                            'data-city-input' => 'data.city',
                             'data-lat-input' => 'data.latitude',
                             'data-lng-input' => 'data.longitude',
                         ]),
@@ -102,29 +105,21 @@ class ApartmentResource extends Resource
                     Toggle::make('active')
                         ->default(true)
                         ->columnSpan(1)
-                        ->inlineLabel()
-                        ->fieldWrapperView('filament.forms.components.field-wrapper.toggle-inline')
-                        ->dehydrateStateUsing(fn ($state): bool => (bool) $state),
+                        ->inline(false),
                     Toggle::make('parking')
                         ->default(false)
                         ->columnSpan(1)
-                        ->inlineLabel()
-                        ->fieldWrapperView('filament.forms.components.field-wrapper.toggle-inline')
-                        ->dehydrateStateUsing(fn ($state): bool => (bool) $state),
+                        ->inline(false),
                     Toggle::make('wifi')
                         ->label('WiFi')
                         ->default(false)
                         ->columnSpan(1)
-                        ->inlineLabel()
-                        ->fieldWrapperView('filament.forms.components.field-wrapper.toggle-inline')
-                        ->dehydrateStateUsing(fn ($state): bool => (bool) $state),
+                        ->inline(false),
                     Toggle::make('pet_friendly')
                         ->label('Pet Friendly')
                         ->default(false)
                         ->columnSpan(1)
-                        ->inlineLabel()
-                        ->fieldWrapperView('filament.forms.components.field-wrapper.toggle-inline')
-                        ->dehydrateStateUsing(fn ($state): bool => (bool) $state),
+                        ->inline(false),
                 ]),
             Section::make('Images')
                 ->columns(2)
@@ -146,7 +141,7 @@ class ApartmentResource extends Resource
         ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([

@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Models\Reservation;
 use Filament\Forms;
-use Filament\Resources\{Form, Resource, Table};
+use Filament\Resources\Resource;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -13,11 +13,11 @@ class ReservationResource extends Resource
 {
     protected static ?string $model = Reservation::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
@@ -68,7 +68,7 @@ class ReservationResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
@@ -116,12 +116,13 @@ class ReservationResource extends Resource
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'secondary' => 'pending',
-                        'success' => 'confirmed',
-                        'danger' => 'canceled',
-                    ])
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'gray',
+                        'confirmed' => 'success',
+                        'canceled' => 'danger',
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('note')
                     ->limit(40)
