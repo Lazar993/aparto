@@ -37,5 +37,11 @@ class AppServiceProvider extends ServiceProvider
             ], true);
         });
 
+        if(config('app.env') === 'production'){
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        } else {
+            \Illuminate\Support\Facades\URL::forceScheme('http');
+        }
+
     }
 }
