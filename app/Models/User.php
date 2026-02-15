@@ -45,4 +45,12 @@ class User extends Authenticatable
         'password' => 'hashed',
         'is_admin' => 'boolean',
     ];
+
+    /**
+     * Determine if the user can access the Filament admin panel.
+     */
+    public function canAccessFilament(): bool
+    {
+        return $this->is_admin;
+    }
 }
