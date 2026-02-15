@@ -19,26 +19,6 @@ use Illuminate\Support\Facades\App;
 
 Route::get('/', [FrontendController::class, 'index'])->name('home');
 
-// Debug route - remove after fixing admin access
-Route::get('/debug-auth', function () {
-    $user = auth()->user();
-    if (!$user) {
-        return response()->json([
-            'authenticated' => false,
-            'message' => 'Not logged in'
-        ]);
-    }
-    
-    return response()->json([
-        'authenticated' => true,
-        'user_id' => $user->id,
-        'user_name' => $user->name,
-        'user_email' => $user->email,
-        'is_admin' => $user->is_admin,
-        'can_access_filament' => method_exists($user, 'canAccessFilament') ? $user->canAccessFilament() : 'method not found',
-    ]);
-});
-
 Route::get('/apartments', [FrontendController::class, 'list'])->name('apartments.index');
 Route::get('/apartments/{id}', [FrontendController::class, 'show'])->name('apartments.show');
 Route::get('/pages/{slug}', [FrontendController::class, 'page'])
