@@ -4,108 +4,106 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Models\Reservation;
-use Filament\Forms;
+use Filament\Forms\{Form, Components};
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\{Table, Actions, Columns, Filters};
 use Illuminate\Database\Eloquent\Builder;
 
 class ReservationResource extends Resource
 {
     protected static ?string $model = Reservation::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-
     protected static ?int $navigationSort = 2;
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('apartment_id')
+                Components\Select::make('apartment_id')
                     ->relationship('apartment', 'title')
                     ->searchable()
                     ->required(),
-                Forms\Components\TextInput::make('name')
+                Components\TextInput::make('name')
                     ->required()
                     ->maxLength(120),
-                Forms\Components\TextInput::make('email')
+                Components\TextInput::make('email')
                     ->email()
                     ->required()
                     ->maxLength(160),
-                Forms\Components\TextInput::make('phone')
+                Components\TextInput::make('phone')
                     ->required()
                     ->maxLength(40),
-                Forms\Components\DatePicker::make('date_from')
+                Components\DatePicker::make('date_from')
                     ->required(),
-                Forms\Components\DatePicker::make('date_to')
+                Components\DatePicker::make('date_to')
                     ->required(),
-                Forms\Components\TextInput::make('nights')
+                Components\TextInput::make('nights')
                     ->numeric()
                     ->required(),
-                Forms\Components\TextInput::make('price_per_night')
+                Components\TextInput::make('price_per_night')
                     ->numeric()
                     ->required(),
-                Forms\Components\TextInput::make('total_price')
+                Components\TextInput::make('total_price')
                     ->numeric()
                     ->required(),
-                Forms\Components\TextInput::make('deposit_amount')
+                Components\TextInput::make('deposit_amount')
                     ->numeric(),
-                Forms\Components\Select::make('status')
+                Components\Select::make('status')
                     ->options([
                         'pending' => 'Pending',
                         'confirmed' => 'Confirmed',
                         'canceled' => 'Canceled',
                     ])
                     ->required(),
-                Forms\Components\TextInput::make('payment_provider')
+                Components\TextInput::make('payment_provider')
                     ->maxLength(120),
-                Forms\Components\TextInput::make('payment_reference')
+                Components\TextInput::make('payment_reference')
                     ->maxLength(160),
-                Forms\Components\DateTimePicker::make('paid_at'),
-                Forms\Components\Textarea::make('note')
+                Components\DateTimePicker::make('paid_at'),
+                Components\Textarea::make('note')
                     ->rows(3)
                     ->maxLength(1000),
             ]);
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                Columns\TextColumn::make('id')
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('apartment.title')
+                Columns\TextColumn::make('apartment.title')
                     ->label('Apartment')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('name')
+                Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('email')
+                Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('phone')
+                Columns\TextColumn::make('phone')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('date_from')
+                Columns\TextColumn::make('date_from')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('date_to')
+                Columns\TextColumn::make('date_to')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('nights')
+                Columns\TextColumn::make('nights')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total_price')
+                Columns\TextColumn::make('total_price')
                     ->formatStateUsing(function ($state): string {
                         return sprintf('%s %0.2f', config('website.currency'), (float) $state);
                     })
                     ->sortable(),
-                Tables\Columns\TextColumn::make('deposit_amount')
+                Columns\TextColumn::make('deposit_amount')
                     ->formatStateUsing(function ($state): string {
                         return sprintf('%s %0.2f', config('website.currency'), (float) $state);
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('balance_due')
+                Columns\TextColumn::make('balance_due')
                     ->label('Balance Due')
                     ->getStateUsing(function (Reservation $record): float {
                         $deposit = $record->deposit_amount ?? 0;
@@ -116,7 +114,7 @@ class ReservationResource extends Resource
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('status')
+                Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'pending' => 'gray',
@@ -124,16 +122,16 @@ class ReservationResource extends Resource
                         'canceled' => 'danger',
                     })
                     ->sortable(),
-                Tables\Columns\TextColumn::make('note')
+                Columns\TextColumn::make('note')
                     ->limit(40)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
+                Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
+                Filters\SelectFilter::make('status')
                     ->options([
                         'pending' => 'Pending',
                         'confirmed' => 'Confirmed',
@@ -141,10 +139,10 @@ class ReservationResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ]);
     }
     
@@ -167,5 +165,5 @@ class ReservationResource extends Resource
             'create' => Pages\CreateReservation::route('/create'),
             'edit' => Pages\EditReservation::route('/{record}/edit'),
         ];
-    }    
+    }
 }

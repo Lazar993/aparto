@@ -50,6 +50,14 @@ class User extends Authenticatable
      */
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
-        return $this->hasRole('super_admin') || $this->hasRole('admin');
+        return $this->hasRole('super_admin') || $this->hasRole('admin') || $this->hasRole('host');
+    }
+
+    /**
+     * Get all apartments created by the user.
+     */
+    public function apartments()
+    {
+        return $this->hasMany(Apartment::class);
     }
 }

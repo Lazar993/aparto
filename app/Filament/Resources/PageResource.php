@@ -4,11 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PageResource\Pages;
 use App\Models\Page;
-use Filament\Forms;
-use Filament\Forms\Components\{RichEditor, TextInput, Toggle};
+use Filament\Forms\{Form, Components\RichEditor, Components\TextInput, Components\Toggle};
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Columns\{IconColumn, TextColumn};
+use Filament\Tables\{Table, Actions, Columns\IconColumn, Columns\TextColumn};
 use Illuminate\Support\Str;
 
 class PageResource extends Resource
@@ -19,7 +17,7 @@ class PageResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Form $form): Form
     {
         return $form
         ->schema([
@@ -43,7 +41,7 @@ class PageResource extends Resource
         ]);
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -55,10 +53,10 @@ class PageResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ]);
     }
     
@@ -76,5 +74,5 @@ class PageResource extends Resource
             'create' => Pages\CreatePage::route('/create'),
             'edit' => Pages\EditPage::route('/{record}/edit'),
         ];
-    }    
+    }
 }

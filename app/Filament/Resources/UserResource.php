@@ -4,13 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
-use Filament\Forms;
+use Filament\Forms\{Form, Components\Grid, Components\Section, Components\Select, Components\TextInput, Components\Toggle};
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\{Table, Actions, Columns\IconColumn, Columns\TextColumn};
 use Illuminate\Support\Facades\Hash;
-use Filament\Forms\Components\{TextInput, Toggle, Section, Grid};
-use Filament\Tables\Columns\{IconColumn, TextColumn};
-use Filament\Tables\Actions\{EditAction, DeleteBulkAction};
 
 class UserResource extends Resource
 {
@@ -20,7 +17,7 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = 'Users';
     protected static ?int $navigationSort = 3;
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -66,6 +63,14 @@ class UserResource extends Resource
                 Section::make('Permissions')
                     ->description('User role and permissions')
                     ->schema([
+                        Select::make('roles')
+                            ->label('Role')
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->helperText('Select one or more roles for this user'),
+                            
                         Toggle::make('is_admin')
                             ->label('Administrator')
                             ->helperText('Grant full administrative access to this user')
@@ -76,7 +81,7 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -96,12 +101,18 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->copyable()
-                    ->icon('heroicon-o-mail'),
+                    ->icon('heroicon-o-envelope'),
+                    
+                TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->badge()
+                    ->searchable()
+                    ->sortable(),
                     
                 IconColumn::make('is_admin')
                     ->label('Admin')
                     ->boolean()
-                    ->trueIcon('heroicon-o-badge-check')
+                    ->trueIcon('heroicon-o-check-badge')
                     ->falseIcon('heroicon-o-x-circle')
                     ->sortable(),
                     
@@ -118,11 +129,11 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
-                EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
     }
@@ -134,11 +145,6 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
-    }
-
-    public static function canViewAny(): bool
-    {
-        return auth()->user()->hasRole('admin');
     }
 
 }

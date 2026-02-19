@@ -11,6 +11,7 @@ class Apartment extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'user_id',
         'title',
         'description',
         'city',
@@ -39,6 +40,11 @@ class Apartment extends Model
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function isAvailable($from, $to)

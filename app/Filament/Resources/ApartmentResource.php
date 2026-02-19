@@ -5,12 +5,12 @@ namespace App\Filament\Resources;
 use App\Services\OpenAiService;
 use App\Filament\Resources\ApartmentResource\Pages;
 use App\Models\Apartment;
-use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\{FileUpload, Hidden, Section, TextInput, Textarea, Toggle};
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\{DeleteBulkAction, EditAction};
+use Filament\Tables\Table;
+use Filament\Tables\Actions;
 use Filament\Tables\Columns\{IconColumn, ImageColumn, TextColumn};
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,12 +18,10 @@ use Illuminate\Database\Eloquent\Builder;
 class ApartmentResource extends Resource
 {
     protected static ?string $model = Apartment::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
-
     protected static ?int $navigationSort = 1;
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Form $form): Form
     {
         return $form
         ->schema([
@@ -141,7 +139,7 @@ class ApartmentResource extends Resource
         ]);
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -166,10 +164,10 @@ class ApartmentResource extends Resource
                 //
             ])
             ->actions([
-                EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ]);
     }
     
