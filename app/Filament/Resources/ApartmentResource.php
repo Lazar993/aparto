@@ -126,11 +126,17 @@ class ApartmentResource extends Resource
                         ->label('Lead Image')
                         ->image()
                         ->directory('apartments/lead_images')
+                        ->imageResizeMode('contain')
+                        ->imageResizeTargetWidth('600')
+                        ->imageResizeTargetHeight('400')
                         ->nullable(),
                     FileUpload::make('gallery_images')
                         ->label('Gallery Images')
                         ->image()
                         ->directory('apartments/gallery_images')
+                        ->imageResizeMode('contain')
+                        ->imageResizeTargetWidth('600')
+                        ->imageResizeTargetHeight('400')
                         ->multiple()
                         ->nullable(),
                 ]),
