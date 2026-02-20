@@ -477,6 +477,142 @@
     background: var(--aparto-forest);
 }
 
+/* Lightbox Styles */
+.aparto-lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.aparto-lightbox.is-active {
+    display: flex;
+}
+
+.aparto-lightbox-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.aparto-lightbox-content img {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.aparto-lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--aparto-forest);
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.aparto-lightbox-close:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+.aparto-lightbox-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--aparto-forest);
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.aparto-lightbox-button:hover {
+    background: #fff;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.aparto-lightbox-button.prev {
+    left: 30px;
+}
+
+.aparto-lightbox-button.next {
+    right: 30px;
+}
+
+.aparto-lightbox-counter {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--aparto-forest);
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+    z-index: 10000;
+}
+
+@media (max-width: 768px) {
+    .aparto-lightbox-button {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+    }
+
+    .aparto-lightbox-button.prev {
+        left: 15px;
+    }
+
+    .aparto-lightbox-button.next {
+        right: 15px;
+    }
+
+    .aparto-lightbox-close {
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+
+    .aparto-lightbox-counter {
+        bottom: 20px;
+        font-size: 12px;
+        padding: 8px 16px;
+    }
+}
+
 .aparto-detail-title {
     font-family: 'Fraunces', 'Times New Roman', serif;
     font-size: clamp(28px, 4vw, 40px);

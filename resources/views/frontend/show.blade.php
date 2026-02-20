@@ -233,6 +233,102 @@
                 }
 
                 update();
+
+                // Lightbox functionality
+                var lightbox = document.querySelector('[data-lightbox]');
+                var lightboxImage = lightbox ? lightbox.querySelector('[data-lightbox-image]') : null;
+                var lightboxClose = lightbox ? lightbox.querySelector('[data-lightbox-close]') : null;
+                var lightboxPrev = lightbox ? lightbox.querySelector('[data-lightbox-prev]') : null;
+                var lightboxNext = lightbox ? lightbox.querySelector('[data-lightbox-next]') : null;
+                var lightboxCounter = lightbox ? lightbox.querySelector('[data-lightbox-counter]') : null;
+                var lightboxIndex = 0;
+                var images = Array.from(slides).map(function(slide) {
+                    return slide.querySelector('img').src;
+                });
+
+                function openLightbox(imageIndex) {
+                    if (!lightbox || !lightboxImage) {
+                        return;
+                    }
+                    lightboxIndex = imageIndex;
+                    lightboxImage.src = images[lightboxIndex];
+                    updateLightboxCounter();
+                    lightbox.classList.add('is-active');
+                    document.body.style.overflow = 'hidden';
+                }
+
+                function closeLightbox() {
+                    if (!lightbox) {
+                        return;
+                    }
+                    lightbox.classList.remove('is-active');
+                    document.body.style.overflow = '';
+                }
+
+                function updateLightboxCounter() {
+                    if (lightboxCounter) {
+                        lightboxCounter.textContent = (lightboxIndex + 1) + ' / ' + images.length;
+                    }
+                }
+
+                function showPrevLightboxImage() {
+                    lightboxIndex = (lightboxIndex - 1 + images.length) % images.length;
+                    lightboxImage.src = images[lightboxIndex];
+                    updateLightboxCounter();
+                }
+
+                function showNextLightboxImage() {
+                    lightboxIndex = (lightboxIndex + 1) % images.length;
+                    lightboxImage.src = images[lightboxIndex];
+                    updateLightboxCounter();
+                }
+
+                // Add click listeners to gallery images
+                Array.from(slides).forEach(function(slide, idx) {
+                    var img = slide.querySelector('img');
+                    if (img) {
+                        img.addEventListener('click', function() {
+                            openLightbox(idx);
+                        });
+                    }
+                });
+
+                // Lightbox controls
+                if (lightboxClose) {
+                    lightboxClose.addEventListener('click', closeLightbox);
+                }
+
+                if (lightboxPrev) {
+                    lightboxPrev.addEventListener('click', showPrevLightboxImage);
+                }
+
+                if (lightboxNext) {
+                    lightboxNext.addEventListener('click', showNextLightboxImage);
+                }
+
+                // Close lightbox on background click
+                if (lightbox) {
+                    lightbox.addEventListener('click', function(e) {
+                        if (e.target === lightbox) {
+                            closeLightbox();
+                        }
+                    });
+                }
+
+                // Keyboard navigation
+                document.addEventListener('keydown', function(e) {
+                    if (!lightbox.classList.contains('is-active')) {
+                        return;
+                    }
+
+                    if (e.key === 'Escape') {
+                        closeLightbox();
+                    } else if (e.key === 'ArrowLeft') {
+                        showPrevLightboxImage();
+                    } else if (e.key === 'ArrowRight') {
+                        showNextLightboxImage();
+                    }
+                });
             });
         </script>
     @endif

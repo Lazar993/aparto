@@ -56,15 +56,26 @@
         </button>
         <div class="aparto-gallery is-hidden" data-gallery>
             <div class="aparto-gallery-track" data-gallery-track>
-                @foreach($apartment->gallery_images as $image)
+                @foreach($apartment->gallery_images as $index => $image)
                 <div class="aparto-gallery-slide">
-                    <img src="{{ asset('storage/' . $image) }}" alt="{{ $apartment->title }}">
+                    <img src="{{ asset('storage/' . $image) }}" alt="{{ $apartment->title }}" data-lightbox-trigger="{{ $index }}" style="cursor: pointer;">
                 </div>
                 @endforeach
             </div>
             <button class="aparto-gallery-button prev" type="button" data-gallery-prev aria-label="Previous image">&#8249;</button>
             <button class="aparto-gallery-button next" type="button" data-gallery-next aria-label="Next image">&#8250;</button>
             <div class="aparto-gallery-dots" data-gallery-dots></div>
+        </div>
+        
+        <!-- Lightbox Modal -->
+        <div class="aparto-lightbox" data-lightbox>
+            <button class="aparto-lightbox-close" data-lightbox-close aria-label="Close">&#10005;</button>
+            <div class="aparto-lightbox-content">
+                <img src="" alt="{{ $apartment->title }}" data-lightbox-image>
+            </div>
+            <button class="aparto-lightbox-button prev" data-lightbox-prev aria-label="Previous image">&#8249;</button>
+            <button class="aparto-lightbox-button next" data-lightbox-next aria-label="Next image">&#8250;</button>
+            <div class="aparto-lightbox-counter" data-lightbox-counter></div>
         </div>
         @endif
     </div>
