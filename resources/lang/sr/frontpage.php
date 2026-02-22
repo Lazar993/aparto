@@ -12,6 +12,7 @@ return [
         'footer_text' => 'Usputite se u avanturu istraživanja Srbije kroz naše pažljivo odabrane stanove. Bilo da planirate vikend izlet, poslovno putovanje ili duži odmor, naša platforma vam pruža jednostavan način da pronađete savršen smeštaj koji će učiniti vaš boravak nezaboravnim.',
         'cta_primary' => 'Pogledaj stanove',
         'cta_secondary' => 'Kontaktiraj nas',
+        'seo_description' => 'Aparto je platforma za rezervaciju stanova u Srbiji. Pronađite idealan smeštaj brzo i jednostavno, uz plaćanje depozita online i ostatak uživo.',
     ],
     'stats' => [
         'available' => 'aktivnih stanova dostupno danas',

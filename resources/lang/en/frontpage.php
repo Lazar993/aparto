@@ -12,6 +12,7 @@ return [
         'footer_text' => 'Embark on an adventure exploring Serbia through our carefully curated apartments. Whether you are planning a weekend getaway, a business trip, or a longer vacation, our platform provides an easy way to find the perfect accommodation that will make your stay unforgettable.',
         'cta_primary' => 'Browse apartments',
         'cta_secondary' => 'Contact us',
+        'seo_description' => 'Aparto is a platform for booking apartments in Serbia. Find the ideal accommodation quickly and easily, with online deposit payment and the rest in person.',
     ],
     'stats' => [
         'available' => 'active apartments available today',

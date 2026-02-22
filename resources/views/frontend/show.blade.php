@@ -586,6 +586,12 @@
             if (reserveToggle) {
                 reserveToggle.addEventListener('click', function () {
                     showReserveForm();
+                    // Scroll to the reservation card
+                    setTimeout(function() {
+                        if (reserveCard) {
+                            reserveCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 400); // Wait for form to be inserted and animated
                 });
             }
 
