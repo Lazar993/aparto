@@ -8,7 +8,8 @@ return [
     ],
     'hero' => [
         'title' => 'Stanovi za kratki boravak širom Srbije.',
-        'subtitle' => 'Aparto je u razvoju. Rezervacije su u planu, a za sada možete da pregledate stanove i kontaktirate nas.',
+        'subtitle' => 'Aparto je online platforma za pronalaženje i rezervaciju stanova širom Srbije. Na jednom mestu možete pregledati proverene smeštaje, uporediti cene i rezervisati stan koji najbolje odgovara vašim potrebama. Bilo da tražite stan u Beogradu, Novom Sadu, Nišu ili nekom drugom gradu, naša platforma vam omogućava da lako pronađete idealan smeštaj za vaš kratki boravak.',
+        'footer_text' => 'Usputite se u avanturu istraživanja Srbije kroz naše pažljivo odabrane stanove. Bilo da planirate vikend izlet, poslovno putovanje ili duži odmor, naša platforma vam pruža jednostavan način da pronađete savršen smeštaj koji će učiniti vaš boravak nezaboravnim.',
         'cta_primary' => 'Pogledaj stanove',
         'cta_secondary' => 'Kontaktiraj nas',
     ],
@@ -86,6 +87,7 @@ return [
             'email' => 'Unesite ispravnu email adresu.',
             'phone' => 'Broj telefona mora imati najmanje 9 cifara i sadržati samo brojeve.',
             'unavailable' => 'Stan nije slobodan za izabrane datume.',
+            'min_nights' => 'Stan zahteva minimum :min noćenja.',
         ],
         'attributes' => [
             'date_from' => 'datum dolaska',

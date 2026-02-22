@@ -2,7 +2,7 @@
         <div class="aparto-footer-shell">
             <div>
                 <a class="aparto-footer-brand" href="{{ route('home') }}">{{ config('app.name') }}</a>
-                <p class="aparto-footer-note">{{ __('frontpage.hero.subtitle') }}</p>
+                <p class="aparto-footer-note">{{ __('frontpage.hero.footer_text') }}</p>
             </div>
             <div class="aparto-footer-links">
                 <div>

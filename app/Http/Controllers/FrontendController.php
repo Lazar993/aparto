@@ -39,7 +39,30 @@ class FrontendController extends Controller
             })
             ->values();
 
-        return view('frontend.show', compact('apartment', 'reservationRanges'));
+        // Add blocked dates to reservation ranges
+        $blockedDates = collect($apartment->blocked_dates ?? [])->map(function ($blocked) {
+            return [
+                'from' => isset($blocked['from']) ? Carbon::parse($blocked['from'])->toDateString() : null,
+                'to' => isset($blocked['to']) ? Carbon::parse($blocked['to'])->toDateString() : null,
+            ];
+        })->filter(function ($blocked) {
+            return $blocked['from'] && $blocked['to'];
+        })->values();
+
+        $reservationRanges = $reservationRanges->concat($blockedDates)->values();
+
+        // Prepare custom pricing data
+        $customPricing = collect($apartment->custom_pricing ?? [])->map(function ($pricing) {
+            return [
+                'from' => isset($pricing['from']) ? Carbon::parse($pricing['from'])->toDateString() : null,
+                'to' => isset($pricing['to']) ? Carbon::parse($pricing['to'])->toDateString() : null,
+                'price' => $pricing['price'] ?? null,
+            ];
+        })->filter(function ($pricing) {
+            return $pricing['from'] && $pricing['to'] && $pricing['price'];
+        })->values();
+
+        return view('frontend.show', compact('apartment', 'reservationRanges', 'customPricing'));
     }
 
     public function list(\Illuminate\Http\Request $request)

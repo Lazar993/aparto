@@ -8,7 +8,8 @@ return [
     ],
     'hero' => [
         'title' => 'Apartments for short stays across Serbia.',
-        'subtitle' => 'Aparto is under development. Reservations are planned, but for now you can browse listings and contact us.',
+        'subtitle' => 'Aparto is an online platform for finding and booking apartments across Serbia. On one site, you can browse verified accommodations, compare prices, and book the apartment that best suits your needs. Whether you are looking for an apartment in Belgrade, Novi Sad, Niš, or another city, our platform makes it easy to find the ideal accommodation for your short stay.',
+        'footer_text' => 'Embark on an adventure exploring Serbia through our carefully curated apartments. Whether you are planning a weekend getaway, a business trip, or a longer vacation, our platform provides an easy way to find the perfect accommodation that will make your stay unforgettable.',
         'cta_primary' => 'Browse apartments',
         'cta_secondary' => 'Contact us',
     ],
@@ -86,6 +87,7 @@ return [
             'email' => 'Please enter a valid email address.',
             'phone' => 'Phone number must be at least 9 digits and contain only numbers.',
             'unavailable' => 'This apartment is not available for the selected dates.',
+            'min_nights' => 'This apartment requires a minimum of :min nights.',
         ],
         'attributes' => [
             'date_from' => 'check-in date',

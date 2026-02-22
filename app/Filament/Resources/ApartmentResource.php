@@ -7,7 +7,7 @@ use App\Filament\Resources\ApartmentResource\Pages;
 use App\Models\Apartment;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\{FileUpload, Hidden, Section, TextInput, Textarea, Toggle};
+use Filament\Forms\Components\{DatePicker, FileUpload, Hidden, Repeater, Section, TextInput, Textarea, Toggle};
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Actions;
@@ -100,6 +100,13 @@ class ApartmentResource extends Resource
                         ->numeric()
                         ->prefix(config('website.currency'))
                         ->columnSpan(1),
+                    TextInput::make('min_nights')
+                        ->label('Minimum Nights')
+                        ->required()
+                        ->numeric()
+                        ->default(1)
+                        ->minValue(1)
+                        ->columnSpan(1),
                     Toggle::make('active')
                         ->default(true)
                         ->columnSpan(1)
@@ -118,6 +125,71 @@ class ApartmentResource extends Resource
                         ->default(false)
                         ->columnSpan(1)
                         ->inline(false),
+                ]),
+            Section::make('Discounts')
+                ->columns(2)
+                ->schema([
+                    TextInput::make('discount_nights')
+                        ->label('Number of Nights for Discount')
+                        ->numeric()
+                        ->minValue(1)
+                        ->helperText('Minimum number of nights to qualify for a discount')
+                        ->columnSpan(1),
+                    TextInput::make('discount_percentage')
+                        ->label('Discount Percentage')
+                        ->numeric()
+                        ->suffix('%')
+                        ->minValue(0)
+                        ->maxValue(100)
+                        ->helperText('Discount percentage for bookings meeting the minimum nights')
+                        ->columnSpan(1),
+                ]),
+            Section::make('Availability & Custom Pricing')
+                ->columns(1)
+                ->schema([
+                    Repeater::make('blocked_dates')
+                        ->label('Blocked Date Periods')
+                        ->schema([
+                            DatePicker::make('from')
+                                ->label('From')
+                                ->required()
+                                ->native(false)
+                                ->displayFormat('d/m/Y'),
+                            DatePicker::make('to')
+                                ->label('To')
+                                ->required()
+                                ->native(false)
+                                ->displayFormat('d/m/Y')
+                                ->afterOrEqual('from'),
+                        ])
+                        ->columns(2)
+                        ->collapsible()
+                        ->helperText('Select date ranges when the apartment is not available for booking')
+                        ->defaultItems(0),
+                    Repeater::make('custom_pricing')
+                        ->label('Custom Pricing Periods')
+                        ->schema([
+                            DatePicker::make('from')
+                                ->label('From')
+                                ->required()
+                                ->native(false)
+                                ->displayFormat('d/m/Y'),
+                            DatePicker::make('to')
+                                ->label('To')
+                                ->required()
+                                ->native(false)
+                                ->displayFormat('d/m/Y')
+                                ->afterOrEqual('from'),
+                            TextInput::make('price')
+                                ->label('Price per Night')
+                                ->required()
+                                ->numeric()
+                                ->prefix(config('website.currency')),
+                        ])
+                        ->columns(3)
+                        ->collapsible()
+                        ->helperText('Set custom prices for date ranges')
+                        ->defaultItems(0),
                 ]),
             Section::make('Images')
                 ->columns(2)

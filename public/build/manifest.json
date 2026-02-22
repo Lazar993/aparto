@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-BvgivPGa.css",
+    "file": "assets/app-Ds5VKDIu.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -11,7 +11,7 @@
     "isEntry": true
   },
   "resources/js/filament-osm.js": {
-    "file": "assets/filament-osm-C94xLJxA.js",
+    "file": "assets/filament-osm-BjAOXEbv.js",
     "name": "filament-osm",
     "src": "resources/js/filament-osm.js",
     "isEntry": true

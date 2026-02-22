@@ -41,7 +41,16 @@ class ReservationController extends Controller
         $days = Carbon::parse($data['date_from'])
             ->diffInDays(Carbon::parse($data['date_to']));
 
-        $total = $days * $apartment->price_per_night;
+        // Check minimum nights requirement
+        if ($apartment->min_nights && $days < $apartment->min_nights) {
+            return back()->withErrors([
+                'date_to' => __('frontpage.reservation.validation.min_nights', ['min' => $apartment->min_nights]),
+            ])->withInput();
+        }
+
+        // Calculate price using the new method that considers custom pricing and discounts
+        $priceDetails = $apartment->calculatePrice($data['date_from'], $data['date_to']);
+        $total = $priceDetails['total'];
         $depositRate = (float) config('website.deposit_rate', 0.3);
         $deposit = round($total * $depositRate, 2);
 
@@ -53,7 +62,7 @@ class ReservationController extends Controller
             'date_from' => $data['date_from'],
             'date_to' => $data['date_to'],
             'nights' => $days,
-            'price_per_night' => $apartment->price_per_night,
+            'price_per_night' => $priceDetails['price_per_night'],
             'total_price' => $total,
             'deposit_amount' => $deposit,
             'note' => $data['note'] ?? null,

@@ -25,7 +25,11 @@ $reservationShouldOpen = session('success') || $errors->any();
 
         <form class="aparto-reservation-form"
             data-reservation-ranges='@json($reservationRanges)'
+            data-custom-pricing='@json($customPricing ?? [])'
             data-price-per-night="{{ $apartment->price_per_night }}"
+            data-min-nights="{{ $apartment->min_nights ?? 1 }}"
+            data-discount-nights="{{ $apartment->discount_nights ?? 0 }}"
+            data-discount-percentage="{{ $apartment->discount_percentage ?? 0 }}"
             data-deposit-rate="{{ config('website.deposit_rate', 0.3) }}"
             data-currency="{{ config('website.currency') }}"
             data-nights-label="{{ __('frontpage.reservation.nights') }}"

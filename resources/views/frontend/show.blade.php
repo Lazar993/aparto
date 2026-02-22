@@ -38,6 +38,90 @@
         </script>
     @endif
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        /* Flatpickr price display styles */
+        .flatpickr-day {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 4px;
+            height: auto !important;
+            min-height: 48px;
+            border-radius: 4px !important; /* Square shape with slight rounding */
+        }
+        
+        .flatpickr-day:hover,
+        .flatpickr-day.prevMonthDay:hover,
+        .flatpickr-day.nextMonthDay:hover {
+            border-radius: 4px !important;
+        }
+        
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange,
+        .flatpickr-day.selected.inRange,
+        .flatpickr-day.startRange.inRange,
+        .flatpickr-day.endRange.inRange,
+        .flatpickr-day.selected:focus,
+        .flatpickr-day.startRange:focus,
+        .flatpickr-day.endRange:focus,
+        .flatpickr-day.selected:hover,
+        .flatpickr-day.startRange:hover,
+        .flatpickr-day.endRange:hover,
+        .flatpickr-day.selected.prevMonthDay,
+        .flatpickr-day.startRange.prevMonthDay,
+        .flatpickr-day.endRange.prevMonthDay,
+        .flatpickr-day.selected.nextMonthDay,
+        .flatpickr-day.startRange.nextMonthDay,
+        .flatpickr-day.endRange.nextMonthDay {
+            border-radius: 4px !important;
+        }
+        
+        .flatpickr-day.inRange {
+            border-radius: 0 !important;
+            box-shadow: -5px 0 0 #e6e6e6, 5px 0 0 #e6e6e6;
+        }
+        
+        .flatpickr-day-price {
+            font-size: 9px;
+            font-weight: 600;
+            color: #666;
+            margin-top: 2px;
+            line-height: 1;
+        }
+        
+        .flatpickr-day.has-custom-price .flatpickr-day-price {
+            color: #ff6b35;
+            font-weight: 700;
+        }
+        
+        .flatpickr-day.selected .flatpickr-day-price,
+        .flatpickr-day.startRange .flatpickr-day-price,
+        .flatpickr-day.endRange .flatpickr-day-price,
+        .flatpickr-day.today.selected .flatpickr-day-price {
+            color: white;
+        }
+        
+        .flatpickr-day.disabled .flatpickr-day-price {
+            display: none;
+        }
+        
+        .flatpickr-day:hover .flatpickr-day-price {
+            color: #333;
+        }
+        
+        .flatpickr-day.has-custom-price:hover .flatpickr-day-price {
+            color: #ff4500;
+        }
+        
+        .flatpickr-day.selected:hover .flatpickr-day-price,
+        .flatpickr-day.startRange:hover .flatpickr-day-price,
+        .flatpickr-day.endRange:hover .flatpickr-day-price {
+            color: white;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -75,17 +159,43 @@
             var payLabel = form.querySelector('[data-reservation-pay-label]');
             var payValue = form.querySelector('[data-reservation-pay-value]');
             var pricePerNight = parseFloat(form.dataset.pricePerNight || '0');
+            var minNights = parseInt(form.dataset.minNights || '1');
+            var discountNights = parseInt(form.dataset.discountNights || '0');
+            var discountPercentage = parseFloat(form.dataset.discountPercentage || '0');
             var currency = form.dataset.currency || 'EUR';
             var nightsLabel = form.dataset.nightsLabel || '';
             var depositRate = parseFloat(form.dataset.depositRate || '0.3');
             var depositText = form.dataset.depositLabel || '';
             var payText = form.dataset.payLabel || '';
+            var customPricing = [];
+            
+            try {
+                customPricing = JSON.parse(form.dataset.customPricing || '[]');
+            } catch (error) {
+                customPricing = [];
+            }
 
             if (depositLabel) {
                 depositLabel.textContent = depositText;
             }
             if (payLabel) {
                 payLabel.textContent = payText;
+            }
+
+            function getPriceForDate(dateStr) {
+                // Check if date falls within any custom pricing period
+                for (var i = 0; i < customPricing.length; i++) {
+                    var pricing = customPricing[i];
+                    if (!pricing.from || !pricing.to || !pricing.price) {
+                        continue;
+                    }
+                    
+                    if (dateStr >= pricing.from && dateStr <= pricing.to) {
+                        return parseFloat(pricing.price);
+                    }
+                }
+                
+                return pricePerNight;
             }
 
             function updateTotal() {
@@ -128,13 +238,38 @@
                     return;
                 }
 
-                var total = nights * pricePerNight;
+                // Calculate total considering custom pricing
+                var total = 0;
+                var currentDate = new Date(fromDate);
+                
+                while (currentDate < toDate) {
+                    var dateStr = currentDate.toISOString().split('T')[0];
+                    total += getPriceForDate(dateStr);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                var avgPricePerNight = total / nights;
+                var discountAmount = 0;
+                var discountApplied = false;
+
+                // Apply discount if applicable
+                if (discountNights > 0 && discountPercentage > 0 && nights >= discountNights) {
+                    discountAmount = (total * discountPercentage) / 100;
+                    total -= discountAmount;
+                    discountApplied = true;
+                }
+
                 var deposit = Math.round(total * depositRate * 100) / 100;
+                
                 if (totalValue) {
                     totalValue.textContent = currency + ' ' + total.toFixed(2);
                 }
                 if (totalMeta) {
-                    totalMeta.textContent = nights + ' ' + nightsLabel + ' x ' + currency + ' ' + pricePerNight;
+                    var metaText = nights + ' ' + nightsLabel;
+                    if (discountApplied) {
+                        metaText += ' (' + discountPercentage + '% discount applied)';
+                    }
+                    totalMeta.textContent = metaText;
                 }
                 if (depositValue) {
                     depositValue.textContent = currency + ' ' + deposit.toFixed(2);
@@ -155,6 +290,23 @@
                     }
 
                     updateTotal();
+                },
+                onDayCreate: function(dObj, dStr, fp, dayElem) {
+                    var dateStr = dayElem.dateObj.toISOString().split('T')[0];
+                    var price = getPriceForDate(dateStr);
+                    var isUnavailable = isDisabled(dayElem.dateObj);
+                    
+                    if (!isUnavailable) {
+                        var priceSpan = document.createElement('span');
+                        priceSpan.className = 'flatpickr-day-price';
+                        priceSpan.textContent = currency + ' ' + price.toFixed(0);
+                        dayElem.appendChild(priceSpan);
+                        
+                        // Highlight if different from base price
+                        if (price !== pricePerNight) {
+                            dayElem.classList.add('has-custom-price');
+                        }
+                    }
                 }
             });
 
@@ -164,6 +316,23 @@
                 disable: [isDisabled],
                 onChange: function () {
                     updateTotal();
+                },
+                onDayCreate: function(dObj, dStr, fp, dayElem) {
+                    var dateStr = dayElem.dateObj.toISOString().split('T')[0];
+                    var price = getPriceForDate(dateStr);
+                    var isUnavailable = isDisabled(dayElem.dateObj);
+                    
+                    if (!isUnavailable) {
+                        var priceSpan = document.createElement('span');
+                        priceSpan.className = 'flatpickr-day-price';
+                        priceSpan.textContent = currency + ' ' + price.toFixed(0);
+                        dayElem.appendChild(priceSpan);
+                        
+                        // Highlight if different from base price
+                        if (price !== pricePerNight) {
+                            dayElem.classList.add('has-custom-price');
+                        }
+                    }
                 }
             });
 
