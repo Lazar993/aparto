@@ -24,14 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('layouts.partials.footer', function ($view): void {
-            $footerPages = Page::where('is_active', true)
-                ->orderBy('title')
-                ->get(['title', 'slug']);
-
-            $view->with('footerPages', $footerPages);
-        });
-
         FilamentAsset::register([
             Js::make('filament-osm', Vite::asset('resources/js/filament-osm.js')),
         ]);
@@ -41,6 +33,5 @@ class AppServiceProvider extends ServiceProvider
         } else {
             \Illuminate\Support\Facades\URL::forceScheme('http');
         }
-
     }
 }

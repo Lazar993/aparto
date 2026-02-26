@@ -1,3 +1,6 @@
+@php
+    $pages = \App\Http\Repository\PagesRepository::pages();
+@endphp
 <footer class="aparto-footer">
         <div class="aparto-footer-shell">
             <div>
@@ -11,10 +14,10 @@
                     <a href="{{ route('apartments.index') }}">{{ __('frontpage.nav.apartments') }}</a>
                     <a href="{{ route('home') }}#contact">{{ __('frontpage.nav.contact') }}</a>
                 </div>
-                @if(!empty($footerPages) && $footerPages->isNotEmpty())
+                @if(!empty($pages) && $pages->isNotEmpty())
                     <div>
                         <h4>Pages</h4>
-                        @foreach($footerPages as $page)
+                        @foreach($pages as $page)
                             <a href="{{ route('pages.show', $page->slug) }}">{{ $page->title }}</a>
                         @endforeach
                     </div>
