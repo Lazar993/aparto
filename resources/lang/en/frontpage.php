@@ -102,4 +102,8 @@ return [
         'show' => 'Show gallery',
         'hide' => 'Hide gallery',
     ],
+    'footer' => [
+        'explore' => 'Explore',
+        'pages' => 'Pages',
+    ]
 ];

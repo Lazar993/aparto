@@ -102,4 +102,8 @@ return [
         'show' => 'Prikaži galeriju',
         'hide' => 'Sakrij galeriju',
     ],
+    'footer' => [
+        'explore' => 'Istražite',
+        'pages' => 'Stranice',
+    ]
 ];
