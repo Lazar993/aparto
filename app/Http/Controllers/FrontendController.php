@@ -121,6 +121,7 @@ class FrontendController extends Controller
     {
         $page = Page::where('is_active', true)
             ->where('slug', $slug)
+            ->orderBy('priority', 'asc')
             ->firstOrFail();
 
         return view('frontend.page', compact('page'));

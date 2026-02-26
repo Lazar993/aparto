@@ -15,5 +15,6 @@ class Page extends Model
         'slug',
         'content',
         'is_active',
+        'priority',
     ];
 }

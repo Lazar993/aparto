@@ -36,6 +36,11 @@ class PageResource extends Resource
                 ->required()
                 ->columnSpanFull(),
 
+            TextInput::make('priority')
+                ->required()
+                ->numeric()
+                ->default(0),
+
             Toggle::make('is_active')
                 ->default(true),
         ]);
@@ -47,6 +52,7 @@ class PageResource extends Resource
             ->columns([
                 TextColumn::make('title')->searchable(),
                 TextColumn::make('slug'),
+                TextColumn::make('priority')->sortable(),
                 IconColumn::make('is_active')->boolean(),
             ])
             ->filters([

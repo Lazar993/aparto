@@ -53,7 +53,7 @@ return [
     ],
     'contact' => [
         'title' => 'Plan your stay',
-        'subtitle' => 'Send us a request to aparto@gmail.com with all the key details that would be useful to us (part of the city, number of people, time of arrival/departure, up to what price...) and we will do our best to find you suitable accommodation as soon as possible (maximum 1 hour in the GMT+1 time zone, during working hours). Working hours are from 9 am to 9 pm every working day and on Saturdays, and on Sundays from 10 am to 6 pm.',
+        'subtitle' => 'Send us a message at ' . config('website.contact_email') . '  with basic information about your needs (desired location, number of people, check-in and check-out dates, budget, etc.), and our team will strive to suggest suitable accommodation for you as soon as possible. We respond to messages during business hours - Monday to Saturday from 9 AM to 9 PM, and Sunday from 10 AM to 6 PM. The usual response time is up to one hour within business hours (GMT+1).',
         'cta' => 'Email Aparto',
     ],
     'detail' => [

@@ -53,7 +53,7 @@ return [
     ],
     'contact' => [
         'title' => 'Isplanirajte boravak',
-        'subtitle' => 'Pošaljite nam zahtev na aparto@gmail.com sa svim bitnim detaljima (deo grada, broj osoba, vreme dolaska/odlaska, do koje cene...) i potrudićemo se da vam što pre pronađemo odgovarajući smeštaj (najviše 1 sat u GMT+1 vremenskoj zoni, tokom radnog vremena). Radno vreme je od 9 do 21h svakog radnog dana i subotom, a nedeljom od 10 do 18h.',
+        'subtitle' => 'Pošaljite nam poruku na ' . config('website.contact_email') . ' sa osnovnim informacijama o vašim potrebama (željena lokacija, broj osoba, datum dolaska i odlaska, budžet i slično), a naš tim će se potruditi da vam u najkraćem roku predloži odgovarajući smeštaj. Na poruke odgovaramo tokom radnog vremena - radnim danima i subotom od 9 do 21 čas, a nedeljom od 10 do 18 časova. Uobičajeno vreme odgovora je do jednog sata u okviru radnog vremena (GMT+1).',
         'cta' => 'Pošalji email',
     ],
     'detail' => [

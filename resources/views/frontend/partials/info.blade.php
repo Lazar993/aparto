@@ -3,5 +3,5 @@
     <p class="aparto-hero-subtitle" style="margin-bottom: 20px;">
         {{ __('frontpage.contact.subtitle') }}
     </p>
-    <a class="aparto-button primary" href="mailto:hello@aparto.local">{{ __('frontpage.contact.cta') }}</a>
+    <a class="aparto-button primary" href="mailto:{{ config('website.contact_email') }}">{{ __('frontpage.contact.cta') }}</a>
 </section>
