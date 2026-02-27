@@ -4,10 +4,10 @@
         <p class="aparto-hero-subtitle">
             {{ __('frontpage.hero.subtitle') }}
         </p>
-        <div class="aparto-hero-actions">
+        {{-- <div class="aparto-hero-actions">
             <a href="{{ route('apartments.index') }}" class="aparto-button primary">{{ __('frontpage.hero.cta_primary') }}</a>
             <a href="#contact" class="aparto-button ghost">{{ __('frontpage.hero.cta_secondary') }}</a>
-        </div>
+        </div> --}}
     </div>
     <div class="aparto-hero-card aparto-fade-up aparto-delay-2">
         <div class="aparto-hero-stat">
