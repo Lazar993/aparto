@@ -59,48 +59,17 @@ class Apartment extends Model
     {
         // Check if dates are blocked
         if ($this->isBlocked($from, $to)) {
-            \Log::info('Apartment blocked', [
-                'apartment_id' => $this->id,
-                'from' => $from,
-                'to' => $to,
-            ]);
             return false;
         }
 
         // Optimized query with proper date overlap check
         // For hotel bookings: check-out date is exclusive, check-in is inclusive
         // So if existing reservation ends on 2026-03-05, new can start on 2026-03-05
-        $overlappingReservations = $this->reservations()
+        return !$this->reservations()
             ->where('status', '!=', 'canceled')
             ->where('date_from', '<', $to)
             ->where('date_to', '>', $from)
-            ->get();
-
-        if ($overlappingReservations->isNotEmpty()) {
-            \Log::warning('Overlapping reservations found', [
-                'apartment_id' => $this->id,
-                'requested_from' => $from,
-                'requested_to' => $to,
-                'overlapping_count' => $overlappingReservations->count(),
-                'overlapping_reservations' => $overlappingReservations->map(function($r) {
-                    return [
-                        'id' => $r->id,
-                        'date_from' => $r->date_from,
-                        'date_to' => $r->date_to,
-                        'status' => $r->status,
-                    ];
-                })->toArray(),
-            ]);
-            return false;
-        }
-
-        \Log::info('Apartment is available', [
-            'apartment_id' => $this->id,
-            'from' => $from,
-            'to' => $to,
-        ]);
-
-        return true;
+            ->exists();
     }
 
     public function isBlocked($from, $to)

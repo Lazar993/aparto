@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Notification;
 use App\Models\Apartment;
 use App\Models\Reservation;
@@ -126,28 +125,29 @@ class ReservationController extends Controller
 
                     $isNewUser = true;
 
-                    // Fire the Registered event to send verification email
-                    event(new Registered($user));
+                    // Note: Verification email removed to avoid timeout
+                    // User will get password reset email to set their password instead
                 }
 
                 $userId = $user->id;
 
-                // Send password reset link for new users
+                // Queue password reset link for new users (async to avoid timeout)
                 if ($isNewUser) {
-                    try {
-                        $token = app('auth.password.broker')->createToken($user);
-                        $user->sendPasswordResetNotification($token);
-                        Log::info('Password reset email sent successfully', [
-                            'user_email' => $user->email,
-                            'user_id' => $user->id,
-                        ]);
-                    } catch (\Exception $e) {
-                        Log::error('Failed to send password reset email', [
-                            'error' => $e->getMessage(),
-                            'user_email' => $user->email,
-                        ]);
-                        // Don't fail reservation if email fails
-                    }
+                    \Illuminate\Support\Facades\Queue::later(now()->addSeconds(5), function() use ($user) {
+                        try {
+                            $token = app('auth.password.broker')->createToken($user);
+                            $user->sendPasswordResetNotification($token);
+                            Log::info('Password reset email sent successfully', [
+                                'user_email' => $user->email,
+                                'user_id' => $user->id,
+                            ]);
+                        } catch (\Exception $e) {
+                            Log::error('Failed to send password reset email', [
+                                'error' => $e->getMessage(),
+                                'user_email' => $user->email,
+                            ]);
+                        }
+                    });
                 }
             }
         } catch (\Exception $e) {
