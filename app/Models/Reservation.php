@@ -29,6 +29,15 @@ class Reservation extends Model
         'note',
     ];
 
+    protected $casts = [
+        'date_from' => 'date',
+        'date_to' => 'date',
+        'paid_at' => 'datetime',
+        'price_per_night' => 'decimal:2',
+        'total_price' => 'decimal:2',
+        'deposit_amount' => 'decimal:2',
+    ];
+
     public function apartment()
     {
         return $this->belongsTo(Apartment::class);

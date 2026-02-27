@@ -39,9 +39,22 @@ class ReservationController extends Controller
 
         $data = $request->validate($rules, $messages, $attributes);
 
-        // Parse dates and calculate nights
-        $dateFrom = Carbon::parse($data['date_from'])->startOfDay();
-        $dateTo = Carbon::parse($data['date_to'])->startOfDay();
+        // Parse dates explicitly in UTC to avoid timezone issues
+        // Dates from frontend are already in Y-m-d format (e.g., '2026-03-15')
+        try {
+            $dateFrom = Carbon::createFromFormat('Y-m-d', $data['date_from'], 'UTC')->startOfDay();
+            $dateTo = Carbon::createFromFormat('Y-m-d', $data['date_to'], 'UTC')->startOfDay();
+        } catch (\Exception $e) {
+            Log::error('Date parsing error', [
+                'date_from' => $data['date_from'],
+                'date_to' => $data['date_to'],
+                'error' => $e->getMessage(),
+            ]);
+            return back()->withErrors([
+                'date_from' => __('frontpage.reservation.validation.date'),
+            ])->withInput();
+        }
+
         $days = $dateFrom->diffInDays($dateTo);
 
         // Log for debugging
@@ -50,10 +63,19 @@ class ReservationController extends Controller
             'date_to' => $dateTo->toDateString(),
             'calculated_days' => $days,
             'min_nights' => $apartment->min_nights,
+            'raw_input' => [
+                'date_from' => $data['date_from'],
+                'date_to' => $data['date_to'],
+            ],
         ]);
 
         // Check if dates are valid
         if ($days <= 0) {
+            Log::warning('Invalid date range', [
+                'date_from' => $dateFrom->toDateString(),
+                'date_to' => $dateTo->toDateString(),
+                'calculated_days' => $days,
+            ]);
             return back()->withErrors([
                 'date_to' => __('frontpage.reservation.validation.after'),
             ])->withInput();
@@ -124,6 +146,7 @@ class ReservationController extends Controller
                             'error' => $e->getMessage(),
                             'user_email' => $user->email,
                         ]);
+                        // Don't fail reservation if email fails
                     }
                 }
             }
@@ -177,6 +200,7 @@ class ReservationController extends Controller
                 'error' => $e->getMessage(),
                 'reservation_id' => $reservation->id,
             ]);
+            // Don't fail the reservation if email fails
         }
 
         return back()->with('success', __('frontpage.reservation.success'));

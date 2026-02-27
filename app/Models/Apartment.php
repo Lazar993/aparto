@@ -59,20 +59,48 @@ class Apartment extends Model
     {
         // Check if dates are blocked
         if ($this->isBlocked($from, $to)) {
+            \Log::info('Apartment blocked', [
+                'apartment_id' => $this->id,
+                'from' => $from,
+                'to' => $to,
+            ]);
             return false;
         }
 
-        return !$this->reservations()
+        // Optimized query with proper date overlap check
+        // For hotel bookings: check-out date is exclusive, check-in is inclusive
+        // So if existing reservation ends on 2026-03-05, new can start on 2026-03-05
+        $overlappingReservations = $this->reservations()
             ->where('status', '!=', 'canceled')
-            ->where(function ($q) use ($from, $to) {
-                $q->whereBetween('date_from', [$from, $to])
-                    ->orWhereBetween('date_to', [$from, $to])
-                    ->orWhere(function ($q) use ($from, $to) {
-                        $q->where('date_from', '<=', $from)
-                        ->where('date_to', '>=', $to);
-                    });
-            })
-            ->exists();
+            ->where('date_from', '<', $to)
+            ->where('date_to', '>', $from)
+            ->get();
+
+        if ($overlappingReservations->isNotEmpty()) {
+            \Log::warning('Overlapping reservations found', [
+                'apartment_id' => $this->id,
+                'requested_from' => $from,
+                'requested_to' => $to,
+                'overlapping_count' => $overlappingReservations->count(),
+                'overlapping_reservations' => $overlappingReservations->map(function($r) {
+                    return [
+                        'id' => $r->id,
+                        'date_from' => $r->date_from,
+                        'date_to' => $r->date_to,
+                        'status' => $r->status,
+                    ];
+                })->toArray(),
+            ]);
+            return false;
+        }
+
+        \Log::info('Apartment is available', [
+            'apartment_id' => $this->id,
+            'from' => $from,
+            'to' => $to,
+        ]);
+
+        return true;
     }
 
     public function isBlocked($from, $to)
@@ -117,15 +145,27 @@ class Apartment extends Model
             ];
         }
 
-        $total = 0;
-        $currentDate = $fromDate->copy();
+        // Prevent performance issues with extremely long reservations
+        if ($nights > 365) {
+            \Log::warning('Very long reservation requested', [
+                'apartment_id' => $this->id,
+                'nights' => $nights,
+                'date_from' => $fromDate->toDateString(),
+                'date_to' => $toDate->toDateString(),
+            ]);
+            // For very long stays, use simplified calculation
+            $total = $this->price_per_night * $nights;
+        } else {
+            $total = 0;
+            $currentDate = $fromDate->copy();
 
-        // Calculate total considering custom pricing
-        while ($currentDate->lt($toDate)) {
-            $dateStr = $currentDate->toDateString();
-            $priceForDate = $this->getPriceForDate($dateStr);
-            $total += $priceForDate;
-            $currentDate->addDay();
+            // Calculate total considering custom pricing
+            while ($currentDate->lt($toDate)) {
+                $dateStr = $currentDate->toDateString();
+                $priceForDate = $this->getPriceForDate($dateStr);
+                $total += $priceForDate;
+                $currentDate->addDay();
+            }
         }
 
         // Apply discount if applicable

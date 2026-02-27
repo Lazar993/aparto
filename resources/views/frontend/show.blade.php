@@ -218,8 +218,9 @@
                     return;
                 }
 
-                var fromDate = new Date(fromValue + 'T00:00:00');
-                var toDate = new Date(toValue + 'T00:00:00');
+                // Use UTC dates to avoid timezone issues
+                var fromDate = new Date(fromValue + 'T00:00:00Z');
+                var toDate = new Date(toValue + 'T00:00:00Z');
                 var nights = Math.round((toDate - fromDate) / 86400000);
 
                 if (!Number.isFinite(nights) || nights <= 0) {
@@ -359,8 +360,9 @@
                     return false;
                 }
                 
-                var fromDate = new Date(fromValue + 'T00:00:00');
-                var toDate = new Date(toValue + 'T00:00:00');
+                // Use UTC dates to avoid timezone issues (DST, timezone offsets)
+                var fromDate = new Date(fromValue + 'T00:00:00Z');
+                var toDate = new Date(toValue + 'T00:00:00Z');
                 var nights = Math.round((toDate - fromDate) / 86400000);
                 
                 if (nights < minNights) {
