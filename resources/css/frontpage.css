@@ -642,21 +642,19 @@
     margin-top: 22px;
     display: flex;
     gap: 12px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 }
 
 @media (max-width: 640px) {
     .aparto-detail-actions {
         gap: 8px;
-        flex-wrap: nowrap !important;
     }
 
     .aparto-detail-actions .aparto-button {
-        flex: 1 1 0;
-        min-width: 0;
-        font-size: 14px;
+        flex: 1 1 auto;
+        min-width: 120px;
+        font-size: 13px;
         padding: 10px 12px;
-        white-space: nowrap;
     }
 }
 
@@ -1118,4 +1116,436 @@
 #messages::-webkit-scrollbar-thumb {
     background-color: rgba(59, 130, 246, 0.5);
     border-radius: 3px;
+}
+
+/* Reviews Section */
+.aparto-detail-reviews {
+    margin-top: 24px;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    border: 1px solid var(--aparto-sand);
+    animation: slideDown 0.3s ease forwards;
+}
+
+.aparto-detail-reviews.is-hidden {
+    display: none;
+}
+
+.aparto-reviews-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--aparto-sand);
+}
+
+.aparto-reviews-title {
+    margin: 0;
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--aparto-ink);
+}
+
+.aparto-reviews-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.aparto-rating-text {
+    font-size: 14px;
+    color: var(--aparto-ink-soft);
+    font-weight: 500;
+}
+
+/* Star Rating Display (non-interactive) */
+.aparto-rating-display {
+    display: flex;
+    gap: 2px;
+}
+
+.aparto-rating-display .aparto-star {
+    font-size: 20px;
+    color: #ddd;
+}
+
+.aparto-rating-display .aparto-star.filled {
+    color: #f59e0b;
+}
+
+/* Reviews List */
+.aparto-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.aparto-review-item {
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--aparto-sand);
+}
+
+.aparto-review-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.aparto-review-author strong {
+    display: block;
+    font-weight: 600;
+    color: var(--aparto-ink);
+    margin-bottom: 4px;
+}
+
+.aparto-review-date {
+    font-size: 13px;
+    color: var(--aparto-ink-soft);
+}
+
+.aparto-review-comment {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--aparto-ink-soft);
+}
+
+/* Empty Reviews State */
+.aparto-reviews-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--aparto-ink-soft);
+}
+
+.aparto-reviews-empty p {
+    margin: 0 0 8px;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--aparto-ink);
+}
+
+.aparto-reviews-empty small {
+    font-size: 14px;
+}
+
+/* Review Form */
+.aparto-review-form {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid var(--aparto-sand);
+}
+
+.aparto-review-form h4 {
+    margin: 0 0 20px;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--aparto-ink);
+}
+
+.aparto-form-group {
+    margin-bottom: 20px;
+}
+
+.aparto-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--aparto-ink);
+}
+
+.aparto-form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--aparto-sand);
+    border-radius: 8px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+}
+
+.aparto-form-group textarea:focus {
+    outline: none;
+    border-color: var(--aparto-clay);
+}
+
+/* Star Rating Input (interactive) */
+.aparto-rating-input {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.aparto-star-input {
+    font-size: 32px;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.15s ease, transform 0.15s ease;
+    user-select: none;
+}
+
+.aparto-star-input:hover {
+    transform: scale(1.1);
+}
+
+.aparto-star-input.hovered {
+    color: #f59e0b;
+}
+
+/* Review Notice */
+.aparto-review-notice {
+    margin-top: 32px;
+    padding: 16px 20px;
+    background: var(--aparto-foam);
+    border-radius: 8px;
+    border: 1px solid var(--aparto-forest);
+    color: var(--aparto-forest);
+    font-size: 14px;
+    text-align: center;
+}
+
+.aparto-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .aparto-reviews-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .aparto-review-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .aparto-detail-actions {
+        flex-wrap: wrap;
+    }
+
+    .aparto-detail-actions .aparto-button {
+        flex: 1 1 auto;
+        min-width: 120px;
+    }
+}
+
+/* Authentication Styles */
+.aparto-auth-section {
+    max-width: 480px;
+    margin: 60px auto;
+    padding: 0 24px;
+}
+
+.aparto-auth-container {
+    background: white;
+    border-radius: 12px;
+    padding: 40px 32px;
+    box-shadow: 0 10px 40px rgba(31, 26, 23, 0.08);
+}
+
+.aparto-auth-title {
+    margin: 0 0 8px;
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--aparto-ink);
+}
+
+.aparto-auth-description {
+    margin: 0 0 24px;
+    color: var(--aparto-ink-soft);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.aparto-auth-errors,
+.aparto-auth-success {
+    margin-bottom: 24px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.aparto-auth-errors {
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #c33;
+}
+
+.aparto-auth-errors p {
+    margin: 0;
+}
+
+.aparto-auth-success {
+    background: var(--aparto-foam);
+    border: 1px solid var(--aparto-forest);
+    color: var(--aparto-forest);
+}
+
+.aparto-auth-form {
+    margin-top: 24px;
+}
+
+.aparto-form-group {
+    margin-bottom: 20px;
+}
+
+.aparto-form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--aparto-ink);
+}
+
+.aparto-form-group input[type="text"],
+.aparto-form-group input[type="email"],
+.aparto-form-group input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--aparto-sand);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--aparto-ink);
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.aparto-form-group input:focus {
+    outline: none;
+    border-color: var(--aparto-clay);
+    box-shadow: 0 0 0 3px rgba(207, 143, 109, 0.1);
+}
+
+.aparto-form-group input.aparto-input-disabled {
+    background: var(--aparto-sand);
+    color: var(--aparto-ink-soft);
+    cursor: not-allowed;
+}
+
+.aparto-form-group small {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--aparto-ink-soft);
+}
+
+.aparto-form-checkbox {
+    margin-top: 16px;
+}
+
+.aparto-form-checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.aparto-form-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.aparto-form-actions {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.aparto-btn-primary {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    color: white;
+    background: var(--aparto-forest);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.aparto-btn-primary:hover {
+    background: var(--aparto-ember);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(164, 91, 60, 0.3);
+}
+
+.aparto-btn-primary:active {
+    transform: translateY(0);
+}
+
+.aparto-link {
+    text-align: center;
+    font-size: 14px;
+    color: var(--aparto-forest);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.aparto-link:hover {
+    color: var(--aparto-ember);
+    text-decoration: underline;
+}
+
+.aparto-user-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+}
+
+.aparto-user-email {
+    color: var(--aparto-ink);
+    font-weight: 500;
+}
+
+.aparto-logout-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--aparto-forest);
+    background: transparent;
+    border: 1.5px solid var(--aparto-forest);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.aparto-logout-btn:hover {
+    background: var(--aparto-forest);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .aparto-auth-container {
+        padding: 32px 24px;
+    }
+
+    .aparto-user-menu {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
 }

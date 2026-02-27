@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
-use App\Http\Controllers\{FrontendController, ReservationController, TestPaymentController, AiSearchController};
+use App\Http\Controllers\{FrontendController, ReservationController, TestPaymentController, AiSearchController, ReviewController};
 use Illuminate\Support\Facades\App;
 
 /*
@@ -155,3 +155,84 @@ Route::post('/test-payments/{reservation}/confirm', [TestPaymentController::clas
 # AI Search endpoint
 Route::post('/ai-search', [AiSearchController::class, 'search'])
     ->name('ai.search');
+
+# Review submission endpoint
+Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+# Authentication routes
+Route::get('/login', function () {
+    if (auth()->check()) {
+        return redirect()->route('home');
+    }
+    return view('auth.login');
+})->name('login');
+
+Route::post('/login', function (Request $request) {
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (auth()->attempt($credentials, $request->boolean('remember'))) {
+        $request->session()->regenerate();
+        return redirect()->intended('/');
+    }
+
+    return back()->withErrors([
+        'email' => __('The provided credentials do not match our records.'),
+    ])->onlyInput('email');
+})->name('login.post');
+
+Route::post('/logout', function (Request $request) {
+    auth()->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('home');
+})->name('logout');
+
+# Password Reset routes
+Route::get('/forgot-password', function () {
+    if (auth()->check()) {
+        return redirect()->route('home');
+    }
+    return view('auth.forgot-password');
+})->name('password.request');
+
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    $status = \Illuminate\Support\Facades\Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT
+        ? back()->with(['status' => __($status)])
+        : back()->withErrors(['email' => __($status)]);
+})->name('password.email');
+
+Route::get('/reset-password/{token}', function (string $token) {
+    return view('auth.reset-password', ['token' => $token, 'email' => request('email')]);
+})->name('password.reset');
+
+Route::post('/reset-password', function (Request $request) {
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
+
+    $status = \Illuminate\Support\Facades\Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->forceFill([
+                'password' => \Illuminate\Support\Facades\Hash::make($password)
+            ])->save();
+
+            auth()->login($user);
+        }
+    );
+
+    return $status === \Illuminate\Support\Facades\Password::PASSWORD_RESET
+        ? redirect()->route('home')->with('status', __($status))
+        : back()->withErrors(['email' => [__($status)]]);
+})->name('password.update');

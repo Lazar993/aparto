@@ -286,7 +286,16 @@
                 disable: [isDisabled],
                 onChange: function (selectedDates) {
                     if (selectedDates[0] && dateTo) {
-                        dateTo.set('minDate', selectedDates[0]);
+                        // Set minimum check-out date to be check-in date + minimum nights
+                        var minCheckout = new Date(selectedDates[0]);
+                        minCheckout.setDate(minCheckout.getDate() + minNights);
+                        dateTo.set('minDate', minCheckout);
+                        
+                        // Clear check-out if it's now before the new minimum
+                        var currentCheckout = dateTo.selectedDates[0];
+                        if (currentCheckout && currentCheckout < minCheckout) {
+                            dateTo.clear();
+                        }
                     }
 
                     updateTotal();
@@ -338,6 +347,28 @@
 
             form._updateTotal = updateTotal;
             updateTotal();
+            
+            // Add form validation on submit
+            form.addEventListener('submit', function(e) {
+                var fromValue = form.querySelector('#date_from').value;
+                var toValue = form.querySelector('#date_to').value;
+                
+                if (!fromValue || !toValue) {
+                    e.preventDefault();
+                    alert('Please select both check-in and check-out dates.');
+                    return false;
+                }
+                
+                var fromDate = new Date(fromValue + 'T00:00:00');
+                var toDate = new Date(toValue + 'T00:00:00');
+                var nights = Math.round((toDate - fromDate) / 86400000);
+                
+                if (nights < minNights) {
+                    e.preventDefault();
+                    alert('This apartment requires a minimum of ' + minNights + ' night(s). You have selected ' + nights + ' night(s). Please select a longer stay.');
+                    return false;
+                }
+            });
         });
     </script>
     @if(!empty($apartment->gallery_images))
@@ -524,6 +555,71 @@
                     description.style.animation = '';
                 }
             });
+        });
+    </script>
+    <script>
+        // Reviews toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            var toggle = document.querySelector('[data-reviews-toggle]');
+            var reviews = document.querySelector('[data-reviews]');
+
+            if (!toggle || !reviews) {
+                return;
+            }
+
+            toggle.dataset.showText = '{{ __('frontpage.reviews.show') }}';
+            toggle.dataset.hideText = '{{ __('frontpage.reviews.hide') }}';
+
+            toggle.addEventListener('click', function () {
+                var isHidden = reviews.classList.contains('is-hidden');
+                reviews.classList.toggle('is-hidden');
+                toggle.classList.toggle('is-active', isHidden);
+                toggle.textContent = isHidden ? toggle.dataset.hideText : toggle.dataset.showText;
+                if (isHidden) {
+                    reviews.style.animation = 'none';
+                    reviews.offsetHeight;
+                    reviews.style.animation = '';
+                }
+            });
+        });
+
+        // Star rating selector
+        document.addEventListener('DOMContentLoaded', function () {
+            var ratingInput = document.querySelector('[data-rating-input]');
+            if (!ratingInput) {
+                return;
+            }
+
+            var stars = ratingInput.querySelectorAll('.aparto-star-input');
+            var hiddenInput = document.getElementById('rating-value');
+            var selectedRating = 0;
+
+            stars.forEach(function(star, index) {
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(star.dataset.rating);
+                    hiddenInput.value = selectedRating;
+                    updateStars(selectedRating);
+                });
+
+                star.addEventListener('mouseenter', function() {
+                    var hoverRating = parseInt(star.dataset.rating);
+                    updateStars(hoverRating);
+                });
+            });
+
+            ratingInput.addEventListener('mouseleave', function() {
+                updateStars(selectedRating);
+            });
+
+            function updateStars(rating) {
+                stars.forEach(function(star, index) {
+                    if (index < rating) {
+                        star.classList.add('hovered');
+                    } else {
+                        star.classList.remove('hovered');
+                    }
+                });
+            }
         });
     </script>
     <script>

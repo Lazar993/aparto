@@ -36,9 +36,96 @@
             <button class="aparto-button ghost" type="button" data-description-toggle>
                 {{ __('frontpage.detail.show_description') }}
             </button>
+            <button class="aparto-button ghost" type="button" data-reviews-toggle>
+                {{ __('frontpage.reviews.show') }}
+            </button>
         </div>
         <div class="aparto-detail-description is-hidden" data-description>
             {{ $apartment->description }}
+        </div>
+        <div class="aparto-detail-reviews is-hidden" data-reviews>
+            <div class="aparto-reviews-header">
+                <h3 class="aparto-reviews-title">{{ __('frontpage.reviews.title') }}</h3>
+                @if($apartment->reviews_count > 0)
+                    <div class="aparto-reviews-summary">
+                        <div class="aparto-rating-display">
+                            @for($i = 1; $i <= 5; $i++)
+                                <span class="aparto-star {{ $i <= round($apartment->average_rating) ? 'filled' : '' }}">★</span>
+                            @endfor
+                        </div>
+                        <span class="aparto-rating-text">{{ number_format($apartment->average_rating, 1) }} ({{ $apartment->reviews_count }} {{ $apartment->reviews_count == 1 ? 'review' : 'reviews' }})</span>
+                    </div>
+                @endif
+            </div>
+
+            @if($reviews->count() > 0)
+                <div class="aparto-reviews-list">
+                    @foreach($reviews as $review)
+                        <div class="aparto-review-item">
+                            <div class="aparto-review-header">
+                                <div class="aparto-review-author">
+                                    <strong>{{ $review->user->name }}</strong>
+                                    <span class="aparto-review-date">{{ $review->created_at->format('M d, Y') }}</span>
+                                </div>
+                                <div class="aparto-rating-display">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <span class="aparto-star {{ $i <= $review->rating ? 'filled' : '' }}">★</span>
+                                    @endfor
+                                </div>
+                            </div>
+                            @if($review->comment)
+                                <p class="aparto-review-comment">{{ $review->comment }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="aparto-reviews-empty">
+                    <p>{{ __('frontpage.reviews.no_reviews') }}</p>
+                    <small>{{ __('frontpage.reviews.no_reviews_desc') }}</small>
+                </div>
+            @endif
+
+            @auth
+                @if($userCanReview)
+                    <div class="aparto-review-form">
+                        <h4>{{ __('frontpage.reviews.write_review') }}</h4>
+                        <form action="{{ route('reviews.store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="apartment_id" value="{{ $apartment->id }}">
+                            
+                            <div class="aparto-form-group">
+                                <label>{{ __('frontpage.reviews.your_rating') }}</label>
+                                <div class="aparto-rating-input" data-rating-input>
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <span class="aparto-star-input" data-rating="{{ $i }}">★</span>
+                                    @endfor
+                                    <input type="hidden" name="rating" id="rating-value" required>
+                                </div>
+                                @error('rating')
+                                    <span class="aparto-error">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="aparto-form-group">
+                                <label for="comment">{{ __('frontpage.reviews.your_comment') }}</label>
+                                <textarea name="comment" id="comment" rows="4" placeholder="{{ __('frontpage.reviews.comment_placeholder') }}">{{ old('comment') }}</textarea>
+                                @error('comment')
+                                    <span class="aparto-error">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <button type="submit" class="aparto-button primary">{{ __('frontpage.reviews.submit') }}</button>
+                        </form>
+                    </div>
+                @elseif($userHasReviewed)
+                    <p class="aparto-review-notice">{{ __('frontpage.reviews.already_reviewed') }}</p>
+                @else
+                    <p class="aparto-review-notice">{{ __('frontpage.reviews.reservation_required') }}</p>
+                @endif
+            @else
+                <p class="aparto-review-notice">{{ __('frontpage.reviews.login_required') }}</p>
+            @endauth
         </div>
         @if($apartment->latitude && $apartment->longitude)
         <div id="aparto-detail-map" class="aparto-detail-map" data-lat="{{ $apartment->latitude }}" data-lng="{{ $apartment->longitude }}"></div>

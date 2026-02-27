@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Apartment;
-use App\Models\Page;
+use App\Models\{Apartment, Reservation, Review, Page};
+
 use Carbon\Carbon;
 
 class FrontendController extends Controller
 {
     public function index()
     {
-        // Dohvati sve aktivne stanove
+        // Fetch only active apartments for the homepage
         $apartments = Apartment::where('active', true)->get();
 
         $cities = Apartment::where('active', true)
@@ -62,7 +62,38 @@ class FrontendController extends Controller
             return $pricing['from'] && $pricing['to'] && $pricing['price'];
         })->values();
 
-        return view('frontend.show', compact('apartment', 'reservationRanges', 'customPricing'));
+        // Fetch approved reviews with user data
+        $reviews = $apartment->approvedReviews()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Check if authenticated user can review
+        $userCanReview = false;
+        $userHasReviewed = false;
+
+        if (auth()->check()) {
+            // Check if user has a past reservation for this apartment
+            // Support both new (with user_id) and old (without user_id) reservations
+            // For development/testing: Accept 'pending' or 'confirmed' status
+            $hasPastReservation = $apartment->reservations()
+                ->where(function($query) {
+                    $query->where('user_id', auth()->id())
+                          ->orWhere('email', auth()->user()->email);
+                })
+                ->where('date_to', '<', now())
+                ->whereIn('status', ['confirmed', 'pending']) // Allow pending for testing
+                ->exists();
+
+            // Check if user already reviewed this apartment
+            $userHasReviewed = $apartment->reviews()
+                ->where('user_id', auth()->id())
+                ->exists();
+
+            $userCanReview = $hasPastReservation && !$userHasReviewed;
+        }
+
+        return view('frontend.show', compact('apartment', 'reservationRanges', 'customPricing', 'reviews', 'userCanReview', 'userHasReviewed'));
     }
 
     public function list(\Illuminate\Http\Request $request)

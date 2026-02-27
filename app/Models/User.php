@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Models\Contracts\FilamentUser;
+use App\Models\Review;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -51,6 +52,11 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
+        // Check if user has admin flag OR has admin roles
+        if ($this->is_admin) {
+            return true;
+        }
+        
         return $this->hasRole('super_admin') || $this->hasRole('admin') || $this->hasRole('host');
     }
 
@@ -60,5 +66,21 @@ class User extends Authenticatable implements FilamentUser
     public function apartments()
     {
         return $this->hasMany(Apartment::class);
+    }
+
+    /**
+     * Get all reservations made by the user.
+     */
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    /**
+     * Get all reviews made by the user.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }

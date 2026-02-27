@@ -4,29 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Reservation extends Model
+class Review extends Model
 {
-    use HasFactory, SoftDeletes;
-    
+    use HasFactory;
+
     protected $fillable = [
         'apartment_id',
         'user_id',
-        'name',
-        'email',
-        'phone',
-        'date_from',
-        'date_to',
-        'nights',
-        'price_per_night',
-        'total_price',
-        'deposit_amount',
+        'rating',
+        'comment',
         'status',
-        'payment_provider',
-        'payment_reference',
-        'paid_at',
-        'note',
     ];
 
     public function apartment()
@@ -39,4 +27,3 @@ class Reservation extends Model
         return $this->belongsTo(User::class);
     }
 }
-

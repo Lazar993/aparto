@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Review;
 
 class Apartment extends Model
 {
@@ -167,6 +168,26 @@ class Apartment extends Model
         }
 
         return $this->price_per_night;
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->reviews()->where('status', 'approved');
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return round($this->approvedReviews()->avg('rating'), 1);
+    }
+
+    public function getReviewsCountAttribute()
+    {
+        return $this->approvedReviews()->count();
     }
 
 
