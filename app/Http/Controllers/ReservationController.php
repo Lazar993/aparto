@@ -124,30 +124,18 @@ class ReservationController extends Controller
                     ]);
 
                     $isNewUser = true;
-
-                    // Note: Verification email removed to avoid timeout
-                    // User will get password reset email to set their password instead
                 }
 
                 $userId = $user->id;
-
-                // Queue password reset link for new users (async to avoid timeout)
+                
+                // Generate password reset token for new users
+                $passwordResetToken = null;
                 if ($isNewUser) {
-                    \Illuminate\Support\Facades\Queue::later(now()->addSeconds(5), function() use ($user) {
-                        try {
-                            $token = app('auth.password.broker')->createToken($user);
-                            $user->sendPasswordResetNotification($token);
-                            Log::info('Password reset email sent successfully', [
-                                'user_email' => $user->email,
-                                'user_id' => $user->id,
-                            ]);
-                        } catch (\Exception $e) {
-                            Log::error('Failed to send password reset email', [
-                                'error' => $e->getMessage(),
-                                'user_email' => $user->email,
-                            ]);
-                        }
-                    });
+                    $passwordResetToken = app('auth.password.broker')->createToken($user);
+                    Log::info('Password reset token generated for new user', [
+                        'user_email' => $user->email,
+                        'user_id' => $user->id,
+                    ]);
                 }
             }
         } catch (\Exception $e) {
@@ -181,7 +169,11 @@ class ReservationController extends Controller
             if ($userId) {
                 // Send to registered user
                 $user = User::find($userId);
-                $user->notify(new ReservationCreated($reservation, $isNewUser ?? false));
+                $user->notify(new ReservationCreated(
+                    $reservation, 
+                    $isNewUser ?? false, 
+                    $passwordResetToken ?? null
+                ));
                 Log::info('Reservation confirmation email sent', [
                     'reservation_id' => $reservation->id,
                     'user_email' => $user->email,
@@ -189,7 +181,7 @@ class ReservationController extends Controller
             } else {
                 // Send to guest email (no user account)
                 Notification::route('mail', $reservationData['email'])
-                    ->notify(new ReservationCreated($reservation, false));
+                    ->notify(new ReservationCreated($reservation, false, null));
                 Log::info('Reservation confirmation email sent to guest', [
                     'reservation_id' => $reservation->id,
                     'email' => $reservationData['email'],
