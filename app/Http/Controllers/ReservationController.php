@@ -108,35 +108,36 @@ class ReservationController extends Controller
 
         // Find or create user (only if user_id column exists in reservations table)
         $userId = null;
+        $isNewUser = false;
+        $passwordResetToken = null;
         
         try {
             // Check if user_id column exists by checking the fillable array includes it
             if (in_array('user_id', (new Reservation)->getFillable())) {
                 $user = User::where('email', $data['email'])->first();
-                $isNewUser = false;
 
                 if (!$user) {
-                    // Create new user with random password
-                    $user = User::create([
-                        'name' => $data['name'],
-                        'email' => $data['email'],
-                        'password' => Hash::make(Str::random(32)), // Random password
-                    ]);
+                    // Create new user with random password (without firing events to prevent duplicate emails)
+                    $user = User::withoutEvents(function () use ($data) {
+                        return User::create([
+                            'name' => $data['name'],
+                            'email' => $data['email'],
+                            'password' => Hash::make(Str::random(32)), // Random password
+                        ]);
+                    });
 
                     $isNewUser = true;
-                }
-
-                $userId = $user->id;
-                
-                // Generate password reset token for new users
-                $passwordResetToken = null;
-                if ($isNewUser) {
+                    
+                    // Generate password reset token for new users
                     $passwordResetToken = app('auth.password.broker')->createToken($user);
                     Log::info('Password reset token generated for new user', [
                         'user_email' => $user->email,
                         'user_id' => $user->id,
+                        'token_generated' => !empty($passwordResetToken),
                     ]);
                 }
+
+                $userId = $user->id;
             }
         } catch (\Exception $e) {
             // If user creation fails, continue without user_id
@@ -171,12 +172,14 @@ class ReservationController extends Controller
                 $user = User::find($userId);
                 $user->notify(new ReservationCreated(
                     $reservation, 
-                    $isNewUser ?? false, 
-                    $passwordResetToken ?? null
+                    $isNewUser, 
+                    $passwordResetToken
                 ));
                 Log::info('Reservation confirmation email sent', [
                     'reservation_id' => $reservation->id,
                     'user_email' => $user->email,
+                    'is_new_user' => $isNewUser,
+                    'has_token' => !empty($passwordResetToken),
                 ]);
             } else {
                 // Send to guest email (no user account)
