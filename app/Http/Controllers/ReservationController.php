@@ -6,11 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Notification;
 use App\Models\Apartment;
 use App\Models\Reservation;
 use App\Models\User;
-use App\Notifications\ReservationCreated;
 use Carbon\Carbon;
 
 class ReservationController extends Controller
@@ -163,40 +161,14 @@ class ReservationController extends Controller
             $reservationData['user_id'] = $userId;
         }
 
+        // Create reservation - observer will handle email notifications
         $reservation = Reservation::create($reservationData);
 
-        // Send reservation confirmation email
-        try {
-            if ($userId) {
-                // Send to registered user
-                $user = User::find($userId);
-                $user->notify(new ReservationCreated(
-                    $reservation, 
-                    $isNewUser, 
-                    $passwordResetToken
-                ));
-                Log::info('Reservation confirmation email sent', [
-                    'reservation_id' => $reservation->id,
-                    'user_email' => $user->email,
-                    'is_new_user' => $isNewUser,
-                    'has_token' => !empty($passwordResetToken),
-                ]);
-            } else {
-                // Send to guest email (no user account)
-                Notification::route('mail', $reservationData['email'])
-                    ->notify(new ReservationCreated($reservation, false, null));
-                Log::info('Reservation confirmation email sent to guest', [
-                    'reservation_id' => $reservation->id,
-                    'email' => $reservationData['email'],
-                ]);
-            }
-        } catch (\Exception $e) {
-            Log::error('Failed to send reservation confirmation email', [
-                'error' => $e->getMessage(),
-                'reservation_id' => $reservation->id,
-            ]);
-            // Don't fail the reservation if email fails
-        }
+        Log::info('Reservation created successfully', [
+            'reservation_id' => $reservation->id,
+            'user_id' => $userId,
+            'email' => $reservationData['email'],
+        ]);
 
         return back()->with('success', __('frontpage.reservation.success'));
     }

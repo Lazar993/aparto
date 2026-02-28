@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Page;
+use App\Models\Reservation;
+use App\Observers\ReservationObserver;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\Js;
 use Illuminate\Support\Facades\Vite;
@@ -24,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register model observers
+        Reservation::observe(ReservationObserver::class);
+        
         FilamentAsset::register([
             Js::make('filament-osm', Vite::asset('resources/js/filament-osm.js')),
         ]);
