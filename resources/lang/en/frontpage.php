@@ -22,7 +22,7 @@ return [
     'featured' => 'Featured stays',
     'apartments' => [
         'title' => 'Apartments in Serbia',
-        'subtitle' => 'Browse the latest listings. Reservations are planned and coming soon.',
+        'subtitle' => 'Browse the latest listings and send your reservation request online in minutes.',
     ],
     'filters' => [
         'search' => 'Search',
@@ -79,6 +79,10 @@ return [
         'nights' => 'nights',
         'submit' => 'Send reservation',
         'cancel' => 'Cancel',
+        'confirm_title' => 'Confirm reservation',
+        'confirm_message' => 'Are you sure you want to reserve this apartment?',
+        'confirm_submit' => 'Yes, send reservation',
+        'confirm_cancel' => 'Go back',
         'success' => 'Reservation request sent! We will email you with confirmation.',
         'error_title' => 'Please fix the highlighted issues:',
         'validation' => [
@@ -118,6 +122,9 @@ return [
         'reservation_required' => 'You must have a completed stay to leave a review',
         'already_reviewed' => 'You have already reviewed this apartment',
         'by' => 'by',
+        'one' => 'review',
+        'less_than_five' => 'reviews',
+        'five_or_more' => 'reviews',
     ],
     'footer' => [
         'explore' => 'Explore',

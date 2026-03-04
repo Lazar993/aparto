@@ -11,7 +11,10 @@ class FrontendController extends Controller
     public function index()
     {
         // Fetch only active apartments for the homepage
-        $apartments = Apartment::where('active', true)->get();
+        $apartments = Apartment::where('active', true)
+            ->withCount(['approvedReviews as reviews_count'])
+            ->withAvg('approvedReviews as average_rating', 'rating')
+            ->get();
 
         $cities = Apartment::where('active', true)
             ->whereNotNull('city')
@@ -25,7 +28,9 @@ class FrontendController extends Controller
 
     public function show($id)
     {
-        $apartment = Apartment::findOrFail($id);
+        $apartment = Apartment::withCount(['approvedReviews as reviews_count'])
+            ->withAvg('approvedReviews as average_rating', 'rating')
+            ->findOrFail($id);
 
         $reservationRanges = $apartment->reservations()
             ->where('status', 'confirmed')
@@ -98,7 +103,9 @@ class FrontendController extends Controller
 
     public function list(\Illuminate\Http\Request $request)
     {
-        $query = Apartment::where('active', true);
+        $query = Apartment::where('active', true)
+            ->withCount(['approvedReviews as reviews_count'])
+            ->withAvg('approvedReviews as average_rating', 'rating');
 
         $search = trim((string) $request->query('q', ''));
         if ($search !== '') {

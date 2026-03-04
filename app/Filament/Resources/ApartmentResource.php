@@ -152,12 +152,10 @@ class ApartmentResource extends Resource
                         ->schema([
                             DatePicker::make('from')
                                 ->label('From')
-                                ->required()
                                 ->native(false)
                                 ->displayFormat('d/m/Y'),
                             DatePicker::make('to')
                                 ->label('To')
-                                ->required()
                                 ->native(false)
                                 ->displayFormat('d/m/Y')
                                 ->afterOrEqual('from'),
@@ -171,18 +169,17 @@ class ApartmentResource extends Resource
                         ->schema([
                             DatePicker::make('from')
                                 ->label('From')
-                                ->required()
                                 ->native(false)
                                 ->displayFormat('d/m/Y'),
                             DatePicker::make('to')
                                 ->label('To')
-                                ->required()
+                                ->native(false)
+                                ->displayFormat('d/m/Y')
                                 ->native(false)
                                 ->displayFormat('d/m/Y')
                                 ->afterOrEqual('from'),
                             TextInput::make('price')
                                 ->label('Price per Night')
-                                ->required()
                                 ->numeric()
                                 ->prefix(config('website.currency')),
                         ])

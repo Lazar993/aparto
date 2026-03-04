@@ -700,6 +700,90 @@
                     hideReserveForm();
                 });
             }
+
+            var reserveForm = reserveCard.querySelector('.aparto-reservation-form');
+            var confirmModal = reserveCard.querySelector('[data-reserve-confirm-modal]');
+            var confirmSubmit = reserveCard.querySelector('[data-reserve-confirm-submit]');
+            var confirmCancel = reserveCard.querySelector('[data-reserve-confirm-cancel]');
+            var confirmClose = reserveCard.querySelector('[data-reserve-confirm-close]');
+            var confirmHideTimer = null;
+
+            function openConfirmModal() {
+                if (!confirmModal) {
+                    return;
+                }
+
+                if (confirmHideTimer) {
+                    clearTimeout(confirmHideTimer);
+                    confirmHideTimer = null;
+                }
+
+                confirmModal.classList.remove('is-hidden');
+                confirmModal.classList.remove('is-visible');
+                confirmModal.offsetHeight;
+                requestAnimationFrame(function () {
+                    confirmModal.classList.add('is-visible');
+                });
+                confirmModal.setAttribute('aria-hidden', 'false');
+            }
+
+            function closeConfirmModal() {
+                if (!confirmModal) {
+                    return;
+                }
+
+                confirmModal.classList.remove('is-visible');
+                confirmModal.setAttribute('aria-hidden', 'true');
+
+                confirmHideTimer = setTimeout(function () {
+                    confirmModal.classList.add('is-hidden');
+                }, 240);
+            }
+
+            if (reserveForm && confirmModal) {
+                reserveForm.addEventListener('submit', function (event) {
+                    if (reserveForm.dataset.confirmed === 'true') {
+                        reserveForm.dataset.confirmed = 'false';
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    if (typeof reserveForm.reportValidity === 'function' && !reserveForm.reportValidity()) {
+                        return;
+                    }
+
+                    openConfirmModal();
+                });
+            }
+
+            if (confirmSubmit && reserveForm) {
+                confirmSubmit.addEventListener('click', function () {
+                    reserveForm.dataset.confirmed = 'true';
+                    closeConfirmModal();
+
+                    if (typeof reserveForm.requestSubmit === 'function') {
+                        reserveForm.requestSubmit();
+                        return;
+                    }
+
+                    reserveForm.submit();
+                });
+            }
+
+            if (confirmCancel) {
+                confirmCancel.addEventListener('click', closeConfirmModal);
+            }
+
+            if (confirmClose) {
+                confirmClose.addEventListener('click', closeConfirmModal);
+            }
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && confirmModal && !confirmModal.classList.contains('is-hidden')) {
+                    closeConfirmModal();
+                }
+            });
         });
     </script>
 @endsection

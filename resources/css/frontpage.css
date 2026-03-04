@@ -330,6 +330,45 @@
     font-weight: 600;
 }
 
+.aparto-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.aparto-card-rating-summary {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--aparto-foam);
+    color: var(--aparto-forest);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.aparto-card-rating-star {
+    color: var(--aparto-ember);
+    font-size: 13px;
+    line-height: 1;
+}
+
+.aparto-card-rating-separator {
+    color: var(--aparto-ink-soft);
+    font-weight: 500;
+}
+
+.aparto-card-rating-empty {
+    color: var(--aparto-ink-soft);
+    font-weight: 600;
+}
+
 .aparto-detail {
     display: grid;
     gap: 28px;
@@ -813,11 +852,88 @@
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.35s ease, transform 0.35s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .aparto-reservation-card.is-visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+.aparto-confirm-modal {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border-radius: inherit;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.24s ease;
+}
+
+.aparto-confirm-modal.is-hidden {
+    display: none;
+}
+
+.aparto-confirm-modal.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.aparto-confirm-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: var(--aparto-ink);
+    opacity: 0;
+    border-radius: inherit;
+    transition: opacity 0.24s ease;
+}
+
+.aparto-confirm-modal-dialog {
+    position: relative;
+    width: min(480px, 100%);
+    background: #fff;
+    border-radius: 22px;
+    border: 1px solid var(--aparto-sand);
+    box-shadow: var(--aparto-shadow);
+    overflow: hidden;
+    padding: 22px;
+    display: grid;
+    gap: 12px;
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+    transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.aparto-confirm-modal.is-visible .aparto-confirm-modal-backdrop {
+    opacity: 0.45;
+}
+
+.aparto-confirm-modal.is-visible .aparto-confirm-modal-dialog {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.aparto-confirm-modal-title {
+    margin: 0;
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: 24px;
+    color: var(--aparto-ink);
+}
+
+.aparto-confirm-modal-text {
+    margin: 0;
+    color: var(--aparto-ink-soft);
+    line-height: 1.6;
+}
+
+.aparto-confirm-modal-actions {
+    margin-top: 4px;
 }
 
 
@@ -1425,6 +1541,49 @@
     color: var(--aparto-ink);
     background: white;
     transition: all 0.2s ease;
+}
+
+.aparto-password-wrap {
+    position: relative;
+}
+
+.aparto-password-wrap input[type="password"],
+.aparto-password-wrap input[type="text"] {
+    padding-right: 48px;
+}
+
+.aparto-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--aparto-ink-soft);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.aparto-password-toggle:hover {
+    background: var(--aparto-foam);
+    color: var(--aparto-forest);
+}
+
+.aparto-password-toggle:focus-visible {
+    outline: 2px solid var(--aparto-clay);
+    outline-offset: 1px;
+}
+
+.aparto-password-toggle .is-hidden {
+    display: none;
 }
 
 .aparto-form-group input:focus {

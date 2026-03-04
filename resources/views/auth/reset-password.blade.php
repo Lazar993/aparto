@@ -34,27 +34,53 @@
 
                 <div class="aparto-form-group">
                     <label for="password">{{ __('New Password') }}</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        required
-                        autocomplete="new-password"
-                        minlength="8"
-                    >
+                    <div class="aparto-password-wrap">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required
+                            autocomplete="new-password"
+                            minlength="8"
+                        >
+                        <button
+                            type="button"
+                            class="aparto-password-toggle"
+                            data-password-toggle
+                            data-target="password"
+                            aria-label="Show password"
+                            title="Show password"
+                        >
+                            <span class="aparto-eye-open" aria-hidden="true">👁</span>
+                            <span class="aparto-eye-closed is-hidden" aria-hidden="true">🙈</span>
+                        </button>
+                    </div>
                     <small>{{ __('Minimum 8 characters') }}</small>
                 </div>
 
                 <div class="aparto-form-group">
                     <label for="password_confirmation">{{ __('Confirm Password') }}</label>
-                    <input 
-                        type="password" 
-                        id="password_confirmation" 
-                        name="password_confirmation" 
-                        required
-                        autocomplete="new-password"
-                        minlength="8"
-                    >
+                    <div class="aparto-password-wrap">
+                        <input 
+                            type="password" 
+                            id="password_confirmation" 
+                            name="password_confirmation" 
+                            required
+                            autocomplete="new-password"
+                            minlength="8"
+                        >
+                        <button
+                            type="button"
+                            class="aparto-password-toggle"
+                            data-password-toggle
+                            data-target="password_confirmation"
+                            aria-label="Show password"
+                            title="Show password"
+                        >
+                            <span class="aparto-eye-open" aria-hidden="true">👁</span>
+                            <span class="aparto-eye-closed is-hidden" aria-hidden="true">🙈</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="aparto-form-actions">
@@ -65,4 +91,36 @@
             </form>
         </div>
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toggles = document.querySelectorAll('[data-password-toggle]');
+
+            toggles.forEach(function (toggle) {
+                toggle.addEventListener('click', function () {
+                    var targetId = toggle.getAttribute('data-target');
+                    var input = targetId ? document.getElementById(targetId) : null;
+
+                    if (!input) {
+                        return;
+                    }
+
+                    var isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
+
+                    var openIcon = toggle.querySelector('.aparto-eye-open');
+                    var closedIcon = toggle.querySelector('.aparto-eye-closed');
+
+                    if (openIcon && closedIcon) {
+                        openIcon.classList.toggle('is-hidden', isPassword);
+                        closedIcon.classList.toggle('is-hidden', !isPassword);
+                    }
+
+                    var nextLabel = isPassword ? 'Hide password' : 'Show password';
+                    toggle.setAttribute('aria-label', nextLabel);
+                    toggle.setAttribute('title', nextLabel);
+                });
+            });
+        });
+    </script>
 @endsection

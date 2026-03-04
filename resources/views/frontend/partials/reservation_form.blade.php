@@ -82,5 +82,17 @@ $reservationShouldOpen = session('success') || $errors->any();
                 <button class="aparto-button ghost" type="button" data-reserve-cancel>{{ __('frontpage.reservation.cancel') }}</button>
             </div>
         </form>
+
+        <div class="aparto-confirm-modal is-hidden" data-reserve-confirm-modal aria-hidden="true">
+            <div class="aparto-confirm-modal-backdrop" data-reserve-confirm-close></div>
+            <div class="aparto-confirm-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="aparto-reserve-confirm-title">
+                <h3 id="aparto-reserve-confirm-title" class="aparto-confirm-modal-title">{{ __('frontpage.reservation.confirm_title') }}</h3>
+                <p class="aparto-confirm-modal-text">{{ __('frontpage.reservation.confirm_message') }}</p>
+                <div class="aparto-filter-actions aparto-confirm-modal-actions">
+                    <button class="aparto-button ghost" type="button" data-reserve-confirm-cancel>{{ __('frontpage.reservation.confirm_cancel') }}</button>
+                    <button class="aparto-button primary" type="button" data-reserve-confirm-submit>{{ __('frontpage.reservation.confirm_submit') }}</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

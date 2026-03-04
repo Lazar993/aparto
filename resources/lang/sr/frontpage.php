@@ -22,7 +22,7 @@ return [
     'featured' => 'Izdvojeni stanovi',
     'apartments' => [
         'title' => 'Stanovi u Srbiji',
-        'subtitle' => 'Pregledajte najnovije oglase. Rezervacije su u planu i stižu uskoro.',
+        'subtitle' => 'Pregledajte najnovije oglase i pošaljite zahtev za rezervaciju online za par minuta.',
     ],
     'filters' => [
         'search' => 'Pretraga',
@@ -79,7 +79,11 @@ return [
         'nights' => 'noći',
         'submit' => 'Pošalji rezervaciju',
         'cancel' => 'Otkaži',
-        'success' => 'Zahtev za rezervaciju je poslat! Potvrdu saljemo na vas email.',
+        'confirm_title' => 'Potvrda rezervacije',
+        'confirm_message' => 'Da li ste sigurni da želite da rezervišete ovaj stan?',
+        'confirm_submit' => 'Da, pošalji rezervaciju',
+        'confirm_cancel' => 'Nazad',
+        'success' => 'Zahtev za rezervaciju je poslat! Potvrdu saljemo na vaš email.',
         'error_title' => 'Molimo ispravite označene greške:',
         'validation' => [
             'required' => 'Polje :attribute je obavezno.',
@@ -118,6 +122,9 @@ return [
         'reservation_required' => 'Morate imati završen boravak da biste ostavili recenziju',
         'already_reviewed' => 'Već ste recenzirali ovaj stan',
         'by' => 'od',
+        'one' => 'recenzija',
+        'less_than_five' => 'recenzije',
+        'five_or_more' => 'recenzija',
     ],
     'footer' => [
         'explore' => 'Istražite',

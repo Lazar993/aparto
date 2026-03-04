@@ -41,7 +41,7 @@
                 </div>
                 <div class="aparto-filter-actions">
                     <button class="aparto-button primary" type="submit">{{ __('frontpage.filters.apply') }}</button>
-                    <a class="aparto-button ghost" href="{{ route('apartments.index') }}">{{ __('frontpage.filters.reset') }}</a>
+                    <a class="aparto-button ghost" href="{{ route('apartments.index') }}" data-filter-reset>{{ __('frontpage.filters.reset') }}</a>
                 </div>
             </div>
         </form>
@@ -81,6 +81,23 @@
 
             $form.on('submit', function (event) {
                 event.preventDefault();
+                loadResults($form.attr('action'));
+            });
+
+            $form.find('[data-filter-reset]').on('click', function (event) {
+                event.preventDefault();
+
+                $form.find('input[type="text"], input[type="number"]').val('');
+
+                $form.find('select').each(function () {
+                    var $select = $(this);
+                    if ($select.find('option[value=""]').length) {
+                        $select.val('');
+                    } else {
+                        $select.prop('selectedIndex', 0);
+                    }
+                });
+
                 loadResults($form.attr('action'));
             });
 

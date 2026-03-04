@@ -1,5 +1,5 @@
 <section class="aparto-fade-up aparto-delay-1" style="margin-bottom: 24px;">
-        <form class="aparto-filter" method="GET" action="{{ route('apartments.index') }}">
+    <form id="home-aparto-filter" class="aparto-filter" method="GET" action="{{ route('apartments.index') }}">
             <div class="aparto-filter-row">
                 <div class="aparto-filter-field">
                     <label class="aparto-filter-label" for="home-filter-q">{{ __('frontpage.filters.search') }}</label>
@@ -32,7 +32,7 @@
                 </div>
                 <div class="aparto-filter-actions">
                     <button class="aparto-button primary" type="submit">{{ __('frontpage.filters.apply') }}</button>
-                    <a class="aparto-button ghost" href="{{ route('apartments.index') }}">{{ __('frontpage.filters.reset') }}</a>
+                    <a class="aparto-button ghost" href="{{ route('home') }}" data-filter-reset>{{ __('frontpage.filters.reset') }}</a>
                 </div>
             </div>
         </form>

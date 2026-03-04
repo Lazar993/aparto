@@ -189,13 +189,23 @@ class Apartment extends Model
         return $this->reviews()->where('status', 'approved');
     }
 
-    public function getAverageRatingAttribute()
+    public function getAverageRatingAttribute($value)
     {
-        return round($this->approvedReviews()->avg('rating'), 1);
+        if ($value !== null) {
+            return round((float) $value, 1);
+        }
+
+        $average = $this->approvedReviews()->avg('rating');
+
+        return $average !== null ? round((float) $average, 1) : 0.0;
     }
 
-    public function getReviewsCountAttribute()
+    public function getReviewsCountAttribute($value)
     {
+        if ($value !== null) {
+            return (int) $value;
+        }
+
         return $this->approvedReviews()->count();
     }
 

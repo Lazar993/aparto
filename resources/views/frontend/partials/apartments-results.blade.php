@@ -47,7 +47,28 @@
                         @endif
                     </div>
                     <div class="aparto-price">{{ config('website.currency') }} {{ number_format($apartment->price_per_night, 0) }} {{ __('frontpage.card.price_suffix') }}</div>
-                    <a class="aparto-card-link" href="{{ route('apartments.show', $apartment->id) }}">{{ __('frontpage.card.details') }}</a>
+                    <div class="aparto-card-footer">
+                        {{-- <a class="aparto-card-link" href="{{ route('apartments.show', $apartment->id) }}">{{ __('frontpage.card.details') }}</a> --}}
+                        @if((int) $apartment->reviews_count > 0)
+                            <span class="aparto-card-rating-summary" title="{{ __('frontpage.reviews.average_rating') }}">
+                                <span class="aparto-card-rating-star">★</span>
+                                <span>{{ number_format((float) $apartment->average_rating, 1) }}</span>
+                                <span class="aparto-card-rating-separator">·</span>
+                                <span>
+                                    {{ (int) $apartment->reviews_count }}
+                                    @if($apartment->reviews_count == 1)
+                                        {{ __('frontpage.reviews.one') }}
+                                    @elseif($apartment->reviews_count < 5)
+                                        {{ __('frontpage.reviews.less_than_five') }}
+                                    @else
+                                        {{ __('frontpage.reviews.five_or_more') }}
+                                    @endif
+                                </span>
+                            </span>
+                        @else
+                            <span class="aparto-card-rating-summary aparto-card-rating-empty">{{ __('frontpage.reviews.no_reviews') }}</span>
+                        @endif
+                    </div>
                 </div>
             </article>
         @endforeach

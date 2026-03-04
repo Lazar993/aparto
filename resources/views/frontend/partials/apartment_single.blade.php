@@ -53,7 +53,15 @@
                                 <span class="aparto-star {{ $i <= round($apartment->average_rating) ? 'filled' : '' }}">★</span>
                             @endfor
                         </div>
-                        <span class="aparto-rating-text">{{ number_format($apartment->average_rating, 1) }} ({{ $apartment->reviews_count }} {{ $apartment->reviews_count == 1 ? 'review' : 'reviews' }})</span>
+                        <span class="aparto-rating-text">{{ number_format($apartment->average_rating, 1) }}
+                            @if($apartment->reviews_count == 1)   
+                            ({{ $apartment->reviews_count }} {{ __('frontpage.reviews.one') }})
+                            @elseif($apartment->reviews_count < 5)  
+                            ({{ $apartment->reviews_count }} {{ __('frontpage.reviews.less_than_five') }})
+                            @else  
+                            ({{ $apartment->reviews_count }} {{ __('frontpage.reviews.five_or_more') }})
+                            @endif
+                        </span>
                     </div>
                 @endif
             </div>
