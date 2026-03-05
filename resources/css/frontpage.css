@@ -1213,28 +1213,28 @@
 }
 
 .aparto-filter-field--search .aparto-filter-label::before {
-    background-image: url('/images/icons/search.svg');
+    background-image: var(--aparto-icon-search, url('/images/icons/search.svg'));
 }
 
 .aparto-filter-field--city .aparto-filter-label::before {
-    background-image: url('/images/icons/city.svg');
+    background-image: var(--aparto-icon-city, url('/images/icons/city.svg'));
 }
 
 .aparto-filter-field--guests .aparto-filter-label::before {
-    background-image: url('/images/icons/guests.svg');
+    background-image: var(--aparto-icon-guests, url('/images/icons/guests.svg'));
 }
 
 .aparto-filter-field--checkin .aparto-filter-label::before,
 .aparto-filter-field--checkout .aparto-filter-label::before {
-    background-image: url('/images/icons/calendar.svg');
+    background-image: var(--aparto-icon-calendar, url('/images/icons/calendar.svg'));
 }
 
 .aparto-filter-field--price .aparto-filter-label::before {
-    background-image: url('/images/icons/rooms.svg');
+    background-image: var(--aparto-icon-price, url('/images/icons/euro.svg'));
 }
 
 .aparto-filter-field--parking .aparto-filter-label::before {
-    background-image: url('/images/icons/parking.svg');
+    background-image: var(--aparto-icon-parking, url('/images/icons/parking.svg'));
 }
 
 .aparto-filter-input:focus {

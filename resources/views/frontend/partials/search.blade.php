@@ -4,9 +4,15 @@
             || request()->filled('min_price')
             || request()->filled('max_price')
             || request()->filled('parking');
+        $filterIconVars = "--aparto-icon-search: url('" . asset('images/icons/search.svg') . "');"
+            . " --aparto-icon-city: url('" . asset('images/icons/city.svg') . "');"
+            . " --aparto-icon-guests: url('" . asset('images/icons/guests.svg') . "');"
+            . " --aparto-icon-calendar: url('" . asset('images/icons/calendar.svg') . "');"
+            . " --aparto-icon-price: url('" . asset('images/icons/euro.svg') . "');"
+            . " --aparto-icon-parking: url('" . asset('images/icons/parking.svg') . "');";
     @endphp
 
-    <form id="home-aparto-filter" class="aparto-filter aparto-filter--dense aparto-filter--premium" method="GET" action="{{ route('apartments.index') }}">
+    <form id="home-aparto-filter" class="aparto-filter aparto-filter--dense aparto-filter--premium" method="GET" action="{{ route('apartments.index') }}" style="{{ $filterIconVars }}">
             <div class="aparto-filter-primary">
                 <div class="aparto-filter-field aparto-filter-field--city">
                     <label class="aparto-filter-label" for="home-filter-city">{{ __('frontpage.filters.city') }}</label>
