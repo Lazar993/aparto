@@ -62,6 +62,7 @@ class ApartmentResource extends Resource
                                         'parking' => $data['parking'] ?? null,
                                         'wifi' => $data['wifi'] ?? null,
                                         'pet_friendly' => $data['pet_friendly'] ?? null,
+                                        'guest_number' => $data['guest_number'] ?? null,
                                     ]);
 
                                     if ($description) {
@@ -102,6 +103,13 @@ class ApartmentResource extends Resource
                         ->columnSpan(1),
                     TextInput::make('min_nights')
                         ->label('Minimum Nights')
+                        ->required()
+                        ->numeric()
+                        ->default(1)
+                        ->minValue(1)
+                        ->columnSpan(1),
+                    TextInput::make('guest_number')
+                        ->label('Number of Guests')
                         ->required()
                         ->numeric()
                         ->default(1)

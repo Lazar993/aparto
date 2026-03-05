@@ -1074,6 +1074,267 @@
     flex-shrink: 1;
 }
 
+.aparto-filter--dense {
+    padding: 14px 16px;
+    border-radius: 16px;
+}
+
+.aparto-filter--dense .aparto-filter-row {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 10px 12px;
+}
+
+.aparto-filter--dense .aparto-filter-field {
+    grid-column: span 2;
+}
+
+.aparto-filter--dense .aparto-filter-actions {
+    grid-column: span 2;
+    justify-content: flex-end;
+    align-self: end;
+}
+
+.aparto-filter--dense .aparto-filter-label {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+}
+
+.aparto-filter--dense .aparto-filter-input {
+    padding: 8px 10px;
+}
+
+.aparto-filter--dense .aparto-button {
+    padding: 9px 14px;
+}
+
+.aparto-filter--premium {
+    padding: 12px 14px;
+    border-radius: 18px;
+}
+
+.aparto-filter--sticky {
+    position: sticky;
+    top: 84px;
+    z-index: 30;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+}
+
+.aparto-filter-primary {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 10px 12px;
+    align-items: end;
+}
+
+.aparto-filter-primary .aparto-filter-field--checkin,
+.aparto-filter-primary .aparto-filter-field--checkout {
+    grid-column: span 2;
+}
+
+.aparto-filter-primary .aparto-filter-field--guests {
+    grid-column: span 2;
+}
+
+.aparto-filter-primary .aparto-filter-field--city {
+    grid-column: span 3;
+}
+
+.aparto-filter-primary .aparto-filter-actions {
+    grid-column: span 3;
+    justify-content: flex-end;
+}
+
+.aparto-filter-advanced {
+    margin-top: 10px;
+    border-top: 1px solid #efe5d8;
+    padding-top: 8px;
+}
+
+.aparto-filter-advanced-toggle {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--aparto-ink-soft);
+    font-weight: 700;
+}
+
+.aparto-filter-advanced-toggle::-webkit-details-marker {
+    display: none;
+}
+
+.aparto-filter-advanced-toggle::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid #89664f;
+    border-bottom: 2px solid #89664f;
+    transform: rotate(45deg) translateY(-1px);
+    transition: transform 0.2s ease;
+}
+
+.aparto-filter-advanced[open] .aparto-filter-advanced-toggle::before {
+    transform: rotate(-135deg) translateY(-1px);
+}
+
+.aparto-filter-advanced-body {
+    margin-top: 10px;
+}
+
+.aparto-filter-row--advanced {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 10px 12px;
+}
+
+.aparto-filter-row--advanced .aparto-filter-field {
+    grid-column: span 2;
+}
+
+.aparto-filter-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.aparto-filter-label::before {
+    content: "";
+    width: 13px;
+    height: 13px;
+    opacity: 0.75;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 13px 13px;
+}
+
+.aparto-filter-field--search .aparto-filter-label::before {
+    background-image: url('/images/icons/search.svg');
+}
+
+.aparto-filter-field--city .aparto-filter-label::before {
+    background-image: url('/images/icons/city.svg');
+}
+
+.aparto-filter-field--guests .aparto-filter-label::before {
+    background-image: url('/images/icons/guests.svg');
+}
+
+.aparto-filter-field--checkin .aparto-filter-label::before,
+.aparto-filter-field--checkout .aparto-filter-label::before {
+    background-image: url('/images/icons/calendar.svg');
+}
+
+.aparto-filter-field--price .aparto-filter-label::before {
+    background-image: url('/images/icons/rooms.svg');
+}
+
+.aparto-filter-field--parking .aparto-filter-label::before {
+    background-image: url('/images/icons/parking.svg');
+}
+
+.aparto-filter-input:focus {
+    outline: 0;
+    border-color: #89664f;
+    box-shadow: 0 0 0 3px rgba(137, 102, 79, 0.15);
+}
+
+@media (max-width: 1200px) {
+
+    .aparto-filter--dense .aparto-filter-field,
+    .aparto-filter--dense .aparto-filter-actions {
+        grid-column: span 3;
+    }
+
+    .aparto-filter-primary .aparto-filter-field--checkin,
+    .aparto-filter-primary .aparto-filter-field--checkout,
+    .aparto-filter-primary .aparto-filter-field--guests,
+    .aparto-filter-primary .aparto-filter-field--city {
+        grid-column: span 4;
+    }
+
+    .aparto-filter-primary .aparto-filter-actions {
+        grid-column: span 12;
+        justify-content: flex-start;
+    }
+
+    .aparto-filter-row--advanced .aparto-filter-field {
+        grid-column: span 5;
+    }
+}
+
+@media (max-width: 900px) {
+
+    .aparto-filter--sticky {
+        position: static;
+        top: auto;
+        backdrop-filter: none;
+        background: #fff;
+    }
+
+    .aparto-filter--dense .aparto-filter-field,
+    .aparto-filter--dense .aparto-filter-actions {
+        grid-column: span 4;
+    }
+
+    .aparto-filter-primary .aparto-filter-field--checkin,
+    .aparto-filter-primary .aparto-filter-field--checkout,
+    .aparto-filter-primary .aparto-filter-field--guests,
+    .aparto-filter-primary .aparto-filter-field--city {
+        grid-column: span 6;
+    }
+
+    .aparto-filter-row--advanced .aparto-filter-field {
+        grid-column: span 10;
+    }
+}
+
+@media (max-width: 720px) {
+    .aparto-filter--dense {
+        padding: 12px;
+    }
+
+    .aparto-filter--dense .aparto-filter-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .aparto-filter--dense .aparto-filter-field,
+    .aparto-filter--dense .aparto-filter-actions {
+        grid-column: span 1;
+    }
+
+    .aparto-filter--dense .aparto-filter-actions {
+        justify-content: stretch;
+    }
+
+    .aparto-filter--dense .aparto-filter-actions .aparto-button {
+        flex: 1;
+    }
+
+    .aparto-filter-primary {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .aparto-filter-primary .aparto-filter-field--checkin,
+    .aparto-filter-primary .aparto-filter-field--checkout,
+    .aparto-filter-primary .aparto-filter-field--guests,
+    .aparto-filter-primary .aparto-filter-field--city,
+    .aparto-filter-primary .aparto-filter-actions,
+    .aparto-filter-row--advanced .aparto-filter-field {
+        grid-column: span 1;
+    }
+
+    .aparto-filter-primary .aparto-filter-actions {
+        justify-content: stretch;
+    }
+}
+
 .aparto-results--list .aparto-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }

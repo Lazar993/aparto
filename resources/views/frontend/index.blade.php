@@ -41,6 +41,25 @@
                 });
             }
 
+            function syncDateBounds() {
+                var $checkIn = $form.find('input[name="date_from"]');
+                var $checkOut = $form.find('input[name="date_to"]');
+                var checkInValue = $checkIn.val();
+
+                if (!checkInValue) {
+                    $checkOut.attr('min', '{{ now()->toDateString() }}');
+                    return;
+                }
+
+                $checkOut.attr('min', checkInValue);
+
+                if ($checkOut.val() && $checkOut.val() <= checkInValue) {
+                    $checkOut.val('');
+                }
+            }
+
+            syncDateBounds();
+
             $form.on('submit', function (event) {
                 event.preventDefault();
                 loadResults();
@@ -49,7 +68,7 @@
             $form.find('[data-filter-reset]').on('click', function (event) {
                 event.preventDefault();
 
-                $form.find('input[type="text"], input[type="number"]').val('');
+                $form.find('input[type="text"], input[type="number"], input[type="date"]').val('');
 
                 $form.find('select').each(function () {
                     var $select = $(this);
@@ -60,10 +79,13 @@
                     }
                 });
 
+                $form.find('.aparto-filter-advanced').prop('open', false);
+
                 loadResults();
             });
 
-            $form.find('select, input[type="number"]').on('change', function () {
+            $form.find('select, input[type="number"], input[type="date"]').on('change', function () {
+                syncDateBounds();
                 loadResults();
             });
 

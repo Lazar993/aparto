@@ -5,11 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use App\Models\Review;
 
 class Apartment extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::saved(function (self $apartment): void {
+            if (!$apartment->wasChanged('blocked_dates') && !$apartment->wasRecentlyCreated) {
+                return;
+            }
+
+            $apartment->syncBlockedPeriodsFromJson();
+        });
+    }
 
     protected $fillable = [
         'user_id',
@@ -26,6 +38,7 @@ class Apartment extends Model
         'blocked_dates',
         'custom_pricing',
         'rooms',
+        'guest_number',
         'active',
         'parking',
         'wifi',
@@ -43,11 +56,17 @@ class Apartment extends Model
         'custom_pricing' => 'array',
         'latitude' => 'float',
         'longitude' => 'float',
+        'guest_number' => 'integer',
     ];
 
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
+    }
+
+    public function blockedPeriods()
+    {
+        return $this->hasMany(ApartmentBlockedPeriod::class);
     }
 
     public function user()
@@ -74,28 +93,89 @@ class Apartment extends Model
 
     public function isBlocked($from, $to)
     {
+        $fromDate = \Carbon\Carbon::parse($from)->startOfDay();
+        $toDate = \Carbon\Carbon::parse($to)->startOfDay();
+
+        // Treat invalid/zero-length ranges as a 1-night request.
+        if ($toDate->lte($fromDate)) {
+            $toDate = $fromDate->copy()->addDay();
+        }
+
+        // Blocked ranges are inclusive in admin UI, while check-out is exclusive.
+        // Overlap formula: blocked_from < requested_to AND blocked_to >= requested_from.
+        $hasBlockedPeriod = $this->blockedPeriods()
+            ->where('date_from', '<', $toDate->toDateString())
+            ->where('date_to', '>=', $fromDate->toDateString())
+            ->exists();
+
+        if ($hasBlockedPeriod) {
+            return true;
+        }
+
+        // Legacy fallback while old JSON column is still present.
         if (empty($this->blocked_dates)) {
             return false;
         }
 
-        $fromDate = \Carbon\Carbon::parse($from);
-        $toDate = \Carbon\Carbon::parse($to);
-
         foreach ($this->blocked_dates as $blocked) {
-            if (!isset($blocked['from']) || !isset($blocked['to'])) {
+            $blockedFromRaw = $blocked['from'] ?? $blocked['date_from'] ?? null;
+            $blockedToRaw = $blocked['to'] ?? $blocked['date_to'] ?? null;
+
+            if (!$blockedFromRaw || !$blockedToRaw) {
                 continue;
             }
 
-            $blockedFrom = \Carbon\Carbon::parse($blocked['from']);
-            $blockedTo = \Carbon\Carbon::parse($blocked['to']);
+            $blockedFrom = \Carbon\Carbon::parse($blockedFromRaw)->startOfDay();
+            // Admin blocked ranges are calendar-date inclusive.
+            $blockedToExclusive = \Carbon\Carbon::parse($blockedToRaw)->startOfDay()->addDay();
 
-            // Check if booking period overlaps with blocked period
-            if ($fromDate->lt($blockedTo) && $toDate->gt($blockedFrom)) {
+            if ($fromDate->lt($blockedToExclusive) && $toDate->gt($blockedFrom)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public function syncBlockedPeriodsFromJson(): void
+    {
+        $periods = collect($this->blocked_dates ?? [])
+            ->map(function ($blocked) {
+                if (!is_array($blocked)) {
+                    return null;
+                }
+
+                $from = $blocked['from'] ?? $blocked['date_from'] ?? null;
+                $to = $blocked['to'] ?? $blocked['date_to'] ?? null;
+
+                if (!$from || !$to) {
+                    return null;
+                }
+
+                try {
+                    $fromDate = \Carbon\Carbon::parse($from)->toDateString();
+                    $toDate = \Carbon\Carbon::parse($to)->toDateString();
+                } catch (\Throwable $e) {
+                    return null;
+                }
+
+                if ($toDate < $fromDate) {
+                    return null;
+                }
+
+                return [
+                    'date_from' => $fromDate,
+                    'date_to' => $toDate,
+                ];
+            })
+            ->filter()
+            ->values();
+
+        $this->blockedPeriods()->delete();
+
+        if ($periods->isNotEmpty()) {
+            $this->blockedPeriods()->createMany($periods->all());
+        }
     }
 
     public function calculatePrice($from, $to)
@@ -116,7 +196,7 @@ class Apartment extends Model
 
         // Prevent performance issues with extremely long reservations
         if ($nights > 365) {
-            \Log::warning('Very long reservation requested', [
+            Log::warning('Very long reservation requested', [
                 'apartment_id' => $this->id,
                 'nights' => $nights,
                 'date_from' => $fromDate->toDateString(),

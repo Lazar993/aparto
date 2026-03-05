@@ -8,42 +8,71 @@
         <h1 class="aparto-section-title">{{ __('frontpage.apartments.title') }}</h1>
         <p class="aparto-hero-subtitle">{{ __('frontpage.apartments.subtitle') }}</p>
 
-        <form class="aparto-filter" method="GET" action="{{ route('apartments.index') }}">
-            <div class="aparto-filter-row">
-                <div class="aparto-filter-field">
-                    <label class="aparto-filter-label" for="filter-q">{{ __('frontpage.filters.search') }}</label>
-                    <input id="filter-q" name="q" type="text" value="{{ request('q') }}" placeholder="{{ __('frontpage.filters.search_placeholder') }}" class="aparto-filter-input">
-                </div>
-                <div class="aparto-filter-field">
+        @php
+            $hasAdvancedFilters = request()->filled('q')
+                || request()->filled('min_price')
+                || request()->filled('max_price')
+                || request()->filled('parking');
+        @endphp
+
+        <form class="aparto-filter aparto-filter--dense aparto-filter--premium aparto-filter--sticky" method="GET" action="{{ route('apartments.index') }}">
+            <div class="aparto-filter-primary">
+                <div class="aparto-filter-field aparto-filter-field--city">
                     <label class="aparto-filter-label" for="filter-city">{{ __('frontpage.filters.city') }}</label>
-                    <select id="filter-city" name="city" class="aparto-filter-input">
-                        <option value="">{{ __('frontpage.filters.all_cities') }}</option>
+                    <input id="filter-city" name="city" type="text" list="filter-city-options" value="{{ request('city') }}" placeholder="{{ __('frontpage.filters.all_cities') }}" class="aparto-filter-input" autocomplete="off">
+                    <datalist id="filter-city-options">
                         @foreach($cities as $city)
-                            <option value="{{ $city }}" {{ request('city') === $city ? 'selected' : '' }}>{{ $city }}</option>
+                            <option value="{{ $city }}"></option>
                         @endforeach
-                    </select>
+                    </datalist>
                 </div>
-                <div class="aparto-filter-field">
-                    <label class="aparto-filter-label" for="filter-min">{{ __('frontpage.filters.min_price') }}</label>
-                    <input id="filter-min" name="min_price" type="number" step="1" min="0" value="{{ request('min_price') }}" class="aparto-filter-input">
+                <div class="aparto-filter-field aparto-filter-field--guests">
+                    <label class="aparto-filter-label" for="filter-guests">{{ __('frontpage.filters.guests') }}</label>
+                    <input id="filter-guests" name="guests" type="number" step="1" min="1" value="{{ request('guests') }}" class="aparto-filter-input">
                 </div>
-                <div class="aparto-filter-field">
-                    <label class="aparto-filter-label" for="filter-max">{{ __('frontpage.filters.max_price') }}</label>
-                    <input id="filter-max" name="max_price" type="number" step="1" min="0" value="{{ request('max_price') }}" class="aparto-filter-input">
+                <div class="aparto-filter-field aparto-filter-field--checkin">
+                    <label class="aparto-filter-label" for="filter-date-from">{{ __('frontpage.filters.check_in') }}</label>
+                    <input id="filter-date-from" name="date_from" type="date" value="{{ request('date_from') }}" min="{{ now()->toDateString() }}" class="aparto-filter-input">
                 </div>
-                <div class="aparto-filter-field">
-                    <label class="aparto-filter-label" for="filter-parking">{{ __('frontpage.filters.parking') }}</label>
-                    <select id="filter-parking" name="parking" class="aparto-filter-input">
-                        <option value="">{{ __('frontpage.filters.parking_any') }}</option>
-                        <option value="1" {{ request('parking') === '1' ? 'selected' : '' }}>{{ __('frontpage.filters.parking_yes') }}</option>
-                        <option value="0" {{ request('parking') === '0' ? 'selected' : '' }}>{{ __('frontpage.filters.parking_no') }}</option>
-                    </select>
+                <div class="aparto-filter-field aparto-filter-field--checkout">
+                    <label class="aparto-filter-label" for="filter-date-to">{{ __('frontpage.filters.check_out') }}</label>
+                    <input id="filter-date-to" name="date_to" type="date" value="{{ request('date_to') }}" min="{{ request('date_from') ?: now()->toDateString() }}" class="aparto-filter-input">
                 </div>
                 <div class="aparto-filter-actions">
                     <button class="aparto-button primary" type="submit">{{ __('frontpage.filters.apply') }}</button>
                     <a class="aparto-button ghost" href="{{ route('apartments.index') }}" data-filter-reset>{{ __('frontpage.filters.reset') }}</a>
                 </div>
             </div>
+
+            <details class="aparto-filter-advanced" {{ $hasAdvancedFilters ? 'open' : '' }}>
+                <summary class="aparto-filter-advanced-toggle">
+                    <span>{{ __('frontpage.filters.more_filters') }}</span>
+                </summary>
+                <div class="aparto-filter-advanced-body">
+                    <div class="aparto-filter-row aparto-filter-row--advanced">
+                        <div class="aparto-filter-field aparto-filter-field--search">
+                            <label class="aparto-filter-label" for="filter-q">{{ __('frontpage.filters.search') }}</label>
+                            <input id="filter-q" name="q" type="text" value="{{ request('q') }}" placeholder="{{ __('frontpage.filters.search_placeholder') }}" class="aparto-filter-input">
+                        </div>
+                        <div class="aparto-filter-field aparto-filter-field--price">
+                            <label class="aparto-filter-label" for="filter-min">{{ __('frontpage.filters.min_price') }}</label>
+                            <input id="filter-min" name="min_price" type="number" step="1" min="0" value="{{ request('min_price') }}" class="aparto-filter-input">
+                        </div>
+                        <div class="aparto-filter-field aparto-filter-field--price">
+                            <label class="aparto-filter-label" for="filter-max">{{ __('frontpage.filters.max_price') }}</label>
+                            <input id="filter-max" name="max_price" type="number" step="1" min="0" value="{{ request('max_price') }}" class="aparto-filter-input">
+                        </div>
+                        <div class="aparto-filter-field aparto-filter-field--parking">
+                            <label class="aparto-filter-label" for="filter-parking">{{ __('frontpage.filters.parking') }}</label>
+                            <select id="filter-parking" name="parking" class="aparto-filter-input">
+                                <option value="">{{ __('frontpage.filters.parking_any') }}</option>
+                                <option value="1" {{ request('parking') === '1' ? 'selected' : '' }}>{{ __('frontpage.filters.parking_yes') }}</option>
+                                <option value="0" {{ request('parking') === '0' ? 'selected' : '' }}>{{ __('frontpage.filters.parking_no') }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </details>
         </form>
 
         <div id="aparto-results" class="aparto-results aparto-results--list">
@@ -79,6 +108,25 @@
                 });
             }
 
+            function syncDateBounds() {
+                var $checkIn = $form.find('input[name="date_from"]');
+                var $checkOut = $form.find('input[name="date_to"]');
+                var checkInValue = $checkIn.val();
+
+                if (!checkInValue) {
+                    $checkOut.attr('min', '{{ now()->toDateString() }}');
+                    return;
+                }
+
+                $checkOut.attr('min', checkInValue);
+
+                if ($checkOut.val() && $checkOut.val() <= checkInValue) {
+                    $checkOut.val('');
+                }
+            }
+
+            syncDateBounds();
+
             $form.on('submit', function (event) {
                 event.preventDefault();
                 loadResults($form.attr('action'));
@@ -87,7 +135,7 @@
             $form.find('[data-filter-reset]').on('click', function (event) {
                 event.preventDefault();
 
-                $form.find('input[type="text"], input[type="number"]').val('');
+                $form.find('input[type="text"], input[type="number"], input[type="date"]').val('');
 
                 $form.find('select').each(function () {
                     var $select = $(this);
@@ -98,10 +146,13 @@
                     }
                 });
 
+                $form.find('.aparto-filter-advanced').prop('open', false);
+
                 loadResults($form.attr('action'));
             });
 
-            $form.find('select, input[type="number"]').on('change', function () {
+            $form.find('select, input[type="number"], input[type="date"]').on('change', function () {
+                syncDateBounds();
                 loadResults($form.attr('action'));
             });
 

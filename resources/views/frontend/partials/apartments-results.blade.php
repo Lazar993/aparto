@@ -27,6 +27,12 @@
                             <img src="{{ asset('images/icons/rooms.svg') }}" alt="Rooms" class="aparto-meta-icon">
                             <span>{{ __('frontpage.card.rooms_label') }}: {{ $apartment->rooms }}</span>
                         </span>
+                        @if((int) $apartment->guest_number > 0)
+                            <span class="aparto-meta-item aparto-meta-pill">
+                                <img src="{{ asset('images/icons/guests.svg') }}" alt="Guests" class="aparto-meta-icon">
+                                <span>{{ __('frontpage.card.guests_label') }}: {{ $apartment->guest_number }}</span>
+                            </span>
+                        @endif
                         @if($apartment->parking)
                             <span class="aparto-meta-item aparto-meta-pill">
                                 <img src="{{ asset('images/icons/parking.svg') }}" alt="Parking" class="aparto-meta-icon">
@@ -46,7 +52,7 @@
                             </span>
                         @endif
                     </div>
-                    <div class="aparto-price">{{ config('website.currency') }} {{ number_format($apartment->price_per_night, 0) }} {{ __('frontpage.card.price_suffix') }}</div>
+                    <div class="aparto-price"> {{ __('frontpage.card.price_prefix') }} {{ number_format($apartment->price_per_night, 0) }} {{ config('website.currency') }} {{ __('frontpage.card.price_suffix') }} </div>
                     <div class="aparto-card-footer">
                         {{-- <a class="aparto-card-link" href="{{ route('apartments.show', $apartment->id) }}">{{ __('frontpage.card.details') }}</a> --}}
                         @if((int) $apartment->reviews_count > 0)
