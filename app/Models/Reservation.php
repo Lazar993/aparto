@@ -33,6 +33,7 @@ class Reservation extends Model
         'date_from' => 'date',
         'date_to' => 'date',
         'paid_at' => 'datetime',
+        'review_reminder_sent_at' => 'datetime',
         'price_per_night' => 'decimal:2',
         'total_price' => 'decimal:2',
         'deposit_amount' => 'decimal:2',

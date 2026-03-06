@@ -3,13 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReviewResource\Pages;
-use App\Filament\Resources\ReviewResource\RelationManagers;
 use App\Models\Review;
 use Filament\Forms\{Form, Components};
 use Filament\Resources\Resource;
 use Filament\Tables\{Table, Actions, Columns, Filters};
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ReviewResource extends Resource
 {
@@ -27,7 +25,13 @@ class ReviewResource extends Resource
             ->schema([
                 Components\Select::make('apartment_id')
                     ->label('Apartment')
-                    ->relationship('apartment', 'title')
+                    ->relationship('apartment', 'title', function (Builder $query): void {
+                        $user = auth()->user();
+
+                        if ($user && $user->hasRole('host')) {
+                            $query->where('user_id', $user->id);
+                        }
+                    })
                     ->searchable()
                     ->preload()
                     ->required(),
@@ -149,5 +153,19 @@ class ReviewResource extends Resource
             'create' => Pages\CreateReview::route('/create'),
             'edit' => Pages\EditReview::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        if ($user && $user->hasRole('host')) {
+            $query->whereHas('apartment', function (Builder $apartmentQuery) use ($user): void {
+                $apartmentQuery->where('user_id', $user->id);
+            });
+        }
+
+        return $query;
     }
 }

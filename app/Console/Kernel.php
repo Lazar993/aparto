@@ -14,6 +14,9 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('app:check-payment-status')
             ->everyFifteenMinutes();
+
+        $schedule->command('app:send-review-reminders')
+            ->dailyAt('10:00');
     }
 
     /**

@@ -21,7 +21,7 @@
                 . " --aparto-icon-parking: url('" . asset('images/icons/parking.svg') . "');";
         @endphp
 
-        <form class="aparto-filter aparto-filter--dense aparto-filter--premium aparto-filter--sticky" method="GET" action="{{ route('apartments.index') }}" style="{{ $filterIconVars }}">
+        <form class="aparto-filter aparto-filter--dense aparto-filter--premium" method="GET" action="{{ route('apartments.index') }}" style="{{ $filterIconVars }}">
             <div class="aparto-filter-primary">
                 <div class="aparto-filter-field aparto-filter-field--city">
                     <label class="aparto-filter-label" for="filter-city">{{ __('frontpage.filters.city') }}</label>

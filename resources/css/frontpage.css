@@ -951,11 +951,102 @@
     justify-content: center;
 }
 
-.aparto-pagination nav {
+.aparto-pagination-nav {
+    width: min(100%, 780px);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f3ec 100%);
+    border: 1px solid #e8ddcf;
+    border-radius: 18px;
+    box-shadow: 0 14px 34px rgba(49, 35, 25, 0.14);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.aparto-pagination-summary {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: var(--aparto-ink-soft);
+    white-space: nowrap;
+}
+
+.aparto-pagination-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.aparto-pagination-item {
+    min-width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid #ddcdbb;
     background: #fff;
-    padding: 10px 16px;
-    border-radius: 999px;
-    box-shadow: var(--aparto-shadow);
+    overflow: hidden;
+}
+
+.aparto-pagination-item a,
+.aparto-pagination-item span {
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: #6e4f39;
+}
+
+.aparto-pagination-item a {
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.aparto-pagination-item a:hover {
+    background: #f5ece1;
+    color: #4f3625;
+    transform: translateY(-1px);
+}
+
+.aparto-pagination-item.is-active {
+    border-color: #6a4a34;
+    background: #6a4a34;
+}
+
+.aparto-pagination-item.is-active span {
+    color: #fff;
+}
+
+.aparto-pagination-item.is-disabled {
+    opacity: 0.45;
+}
+
+@media (max-width: 720px) {
+    .aparto-pagination-nav {
+        padding: 10px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .aparto-pagination-summary {
+        text-align: center;
+    }
+
+    .aparto-pagination-list {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .aparto-pagination-item {
+        min-width: 34px;
+        height: 34px;
+    }
 }
 
 .aparto-results {

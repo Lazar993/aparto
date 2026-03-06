@@ -81,6 +81,6 @@
     </div>
 
     <div class="aparto-pagination">
-        {{ $apartments->links() }}
+        {{ $apartments->onEachSide(1)->links('vendor.pagination.aparto') }}
     </div>
 @endif

@@ -40,27 +40,27 @@ $reservationShouldOpen = session('success') || $errors->any();
             @csrf
             <div class="aparto-filter-row">
                 <div class="aparto-filter-field">
-                    <label class="aparto-filter-label" for="date_from">{{ __('frontpage.reservation.date_from') }}</label>
+                    <label class="aparto-filter-label" for="date_from" style="display: unset;">{{ __('frontpage.reservation.date_from') }}</label>
                     <input class="aparto-filter-input" type="date" id="date_from" name="date_from" value="{{ old('date_from') }}" required>
                 </div>
                 <div class="aparto-filter-field">
-                    <label class="aparto-filter-label" for="date_to">{{ __('frontpage.reservation.date_to') }}</label>
+                    <label class="aparto-filter-label" for="date_to" style="display: unset;">{{ __('frontpage.reservation.date_to') }}</label>
                     <input class="aparto-filter-input" type="date" id="date_to" name="date_to" value="{{ old('date_to') }}" required>
                 </div>
                 <div class="aparto-filter-field">
-                    <label class="aparto-filter-label" for="name">{{ __('frontpage.reservation.name') }}</label>
+                    <label class="aparto-filter-label" for="name" style="display: unset;">{{ __('frontpage.reservation.name') }}</label>
                     <input class="aparto-filter-input" type="text" id="name" name="name" value="{{ old('name') }}" required>
                 </div>
                 <div class="aparto-filter-field">
-                    <label class="aparto-filter-label" for="email">{{ __('frontpage.reservation.email') }}</label>
+                    <label class="aparto-filter-label" for="email" style="display: unset;">{{ __('frontpage.reservation.email') }}</label>
                     <input class="aparto-filter-input" type="email" id="email" name="email" value="{{ old('email') }}" required>
                 </div>
                 <div class="aparto-filter-field">
-                    <label class="aparto-filter-label" for="phone">{{ __('frontpage.reservation.phone') }}</label>
+                    <label class="aparto-filter-label" for="phone" style="display: unset;">{{ __('frontpage.reservation.phone') }}</label>
                     <input class="aparto-filter-input" type="text" id="phone" name="phone" value="{{ old('phone') }}" required>
                 </div>
                 <div class="aparto-filter-field aparto-filter-field--full">
-                    <label class="aparto-filter-label" for="note">{{ __('frontpage.reservation.note') }}</label>
+                    <label class="aparto-filter-label" for="note" style="display: unset;">{{ __('frontpage.reservation.note') }}</label>
                     <textarea class="aparto-filter-input aparto-filter-textarea" id="note" name="note" rows="3">{{ old('note') }}</textarea>
                 </div>
             </div>

@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\Reservation;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 class ReservationPolicy
 {
@@ -15,7 +16,8 @@ class ReservationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_reservation');
+        return $this->hasPermission($user, 'view_any_reservation')
+            || $this->hasPermission($user, 'view_reservation');
     }
 
     /**
@@ -23,7 +25,7 @@ class ReservationPolicy
      */
     public function view(User $user, Reservation $reservation): bool
     {
-        return $user->can('view_reservation');
+        return $this->hasPermission($user, 'view_reservation');
     }
 
     /**
@@ -31,7 +33,7 @@ class ReservationPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_reservation');
+        return $this->hasPermission($user, 'create_reservation');
     }
 
     /**
@@ -39,7 +41,7 @@ class ReservationPolicy
      */
     public function update(User $user, Reservation $reservation): bool
     {
-        return $user->can('update_reservation');
+        return $this->hasPermission($user, 'update_reservation');
     }
 
     /**
@@ -47,7 +49,7 @@ class ReservationPolicy
      */
     public function delete(User $user, Reservation $reservation): bool
     {
-        return $user->can('delete_reservation');
+        return $this->hasPermission($user, 'delete_reservation');
     }
 
     /**
@@ -55,7 +57,7 @@ class ReservationPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_reservation');
+        return $this->hasPermission($user, 'delete_any_reservation');
     }
 
     /**
@@ -63,7 +65,7 @@ class ReservationPolicy
      */
     public function forceDelete(User $user, Reservation $reservation): bool
     {
-        return $user->can('force_delete_reservation');
+        return $this->hasPermission($user, 'force_delete_reservation');
     }
 
     /**
@@ -71,7 +73,7 @@ class ReservationPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_reservation');
+        return $this->hasPermission($user, 'force_delete_any_reservation');
     }
 
     /**
@@ -79,7 +81,7 @@ class ReservationPolicy
      */
     public function restore(User $user, Reservation $reservation): bool
     {
-        return $user->can('restore_reservation');
+        return $this->hasPermission($user, 'restore_reservation');
     }
 
     /**
@@ -87,7 +89,7 @@ class ReservationPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_reservation');
+        return $this->hasPermission($user, 'restore_any_reservation');
     }
 
     /**
@@ -95,7 +97,7 @@ class ReservationPolicy
      */
     public function replicate(User $user, Reservation $reservation): bool
     {
-        return $user->can('replicate_reservation');
+        return $this->hasPermission($user, 'replicate_reservation');
     }
 
     /**
@@ -103,6 +105,21 @@ class ReservationPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_reservation');
+        return $this->hasPermission($user, 'reorder_reservation');
+    }
+
+    protected function hasPermission(User $user, string $permission): bool
+    {
+        foreach (['admin', 'web'] as $guard) {
+            try {
+                if ($user->hasPermissionTo($permission, $guard)) {
+                    return true;
+                }
+            } catch (PermissionDoesNotExist) {
+                // Ignore missing permission in one guard and keep checking the other.
+            }
+        }
+
+        return false;
     }
 }

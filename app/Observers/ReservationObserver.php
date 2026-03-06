@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Reservation;
 use App\Models\User;
 use App\Notifications\ReservationCreated;
+use App\Notifications\ReservationCreatedForHost;
 use App\Notifications\ReservationConfirmed;
 use App\Notifications\ReservationCanceled;
 use Illuminate\Support\Facades\Log;
@@ -56,6 +57,16 @@ class ReservationObserver
             }
         } catch (\Exception $e) {
             Log::error('Failed to send ReservationCreated email', [
+                'error' => $e->getMessage(),
+                'reservation_id' => $reservation->id,
+            ]);
+        }
+
+        // Notify apartment host in a separate try/catch to avoid blocking guest notifications.
+        try {
+            $this->notifyHostAboutNewReservation($reservation);
+        } catch (\Exception $e) {
+            Log::error('Failed to send host reservation notification', [
                 'error' => $e->getMessage(),
                 'reservation_id' => $reservation->id,
             ]);
@@ -129,5 +140,30 @@ class ReservationObserver
                 ]);
             }
         }
+    }
+
+    private function notifyHostAboutNewReservation(Reservation $reservation): void
+    {
+        $reservation->loadMissing(['apartment.user']);
+
+        $apartment = $reservation->apartment;
+        $host = $apartment?->user;
+
+        if (! $host) {
+            Log::warning('Host notification skipped: apartment has no assigned user', [
+                'reservation_id' => $reservation->id,
+                'apartment_id' => $reservation->apartment_id,
+            ]);
+
+            return;
+        }
+
+        $host->notify(new ReservationCreatedForHost($reservation));
+
+        Log::info('Host reservation notification sent', [
+            'reservation_id' => $reservation->id,
+            'host_id' => $host->id,
+            'host_email' => $host->email,
+        ]);
     }
 }

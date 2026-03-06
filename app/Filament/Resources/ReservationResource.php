@@ -20,7 +20,13 @@ class ReservationResource extends Resource
         return $form
             ->schema([
                 Components\Select::make('apartment_id')
-                    ->relationship('apartment', 'title')
+                    ->relationship('apartment', 'title', function (Builder $query): void {
+                        $user = auth()->user();
+
+                        if ($user && $user->hasRole('host')) {
+                            $query->where('user_id', $user->id);
+                        }
+                    })
                     ->searchable()
                     ->required(),
                 Components\TextInput::make('name')
@@ -155,7 +161,16 @@ class ReservationResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereNull('deleted_at');
+        $query = parent::getEloquentQuery()->whereNull('deleted_at');
+        $user = auth()->user();
+
+        if ($user && $user->hasRole('host')) {
+            $query->whereHas('apartment', function (Builder $apartmentQuery) use ($user): void {
+                $apartmentQuery->where('user_id', $user->id);
+            });
+        }
+
+        return $query;
     }
     
     public static function getPages(): array

@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\Apartment;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 class ApartmentPolicy
 {
@@ -15,7 +16,8 @@ class ApartmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_apartment');
+        return $this->hasPermission($user, 'view_any_apartment')
+            || $this->hasPermission($user, 'view_apartment');
     }
 
     /**
@@ -23,7 +25,7 @@ class ApartmentPolicy
      */
     public function view(User $user, Apartment $apartment): bool
     {
-        return $user->can('view_apartment');
+        return $this->hasPermission($user, 'view_apartment');
     }
 
     /**
@@ -31,7 +33,7 @@ class ApartmentPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_apartment');
+        return $this->hasPermission($user, 'create_apartment');
     }
 
     /**
@@ -39,7 +41,7 @@ class ApartmentPolicy
      */
     public function update(User $user, Apartment $apartment): bool
     {
-        return $user->can('update_apartment');
+        return $this->hasPermission($user, 'update_apartment');
     }
 
     /**
@@ -47,7 +49,7 @@ class ApartmentPolicy
      */
     public function delete(User $user, Apartment $apartment): bool
     {
-        return $user->can('delete_apartment');
+        return $this->hasPermission($user, 'delete_apartment');
     }
 
     /**
@@ -55,7 +57,7 @@ class ApartmentPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_apartment');
+        return $this->hasPermission($user, 'delete_any_apartment');
     }
 
     /**
@@ -63,7 +65,7 @@ class ApartmentPolicy
      */
     public function forceDelete(User $user, Apartment $apartment): bool
     {
-        return $user->can('force_delete_apartment');
+        return $this->hasPermission($user, 'force_delete_apartment');
     }
 
     /**
@@ -71,7 +73,7 @@ class ApartmentPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_apartment');
+        return $this->hasPermission($user, 'force_delete_any_apartment');
     }
 
     /**
@@ -79,7 +81,7 @@ class ApartmentPolicy
      */
     public function restore(User $user, Apartment $apartment): bool
     {
-        return $user->can('restore_apartment');
+        return $this->hasPermission($user, 'restore_apartment');
     }
 
     /**
@@ -87,7 +89,7 @@ class ApartmentPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_apartment');
+        return $this->hasPermission($user, 'restore_any_apartment');
     }
 
     /**
@@ -95,7 +97,7 @@ class ApartmentPolicy
      */
     public function replicate(User $user, Apartment $apartment): bool
     {
-        return $user->can('replicate_apartment');
+        return $this->hasPermission($user, 'replicate_apartment');
     }
 
     /**
@@ -103,6 +105,21 @@ class ApartmentPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_apartment');
+        return $this->hasPermission($user, 'reorder_apartment');
+    }
+
+    protected function hasPermission(User $user, string $permission): bool
+    {
+        foreach (['admin', 'web'] as $guard) {
+            try {
+                if ($user->hasPermissionTo($permission, $guard)) {
+                    return true;
+                }
+            } catch (PermissionDoesNotExist) {
+                // Permission may only be defined for one guard.
+            }
+        }
+
+        return false;
     }
 }

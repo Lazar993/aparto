@@ -10,10 +10,18 @@ class FrontendController extends Controller
 {
     public function index()
     {
-        // Fetch only active apartments for the homepage
+        $homepageLimit = max(1, (int) config('website.homepage_apartments_limit', 9));
+
+        // Show a curated homepage set: reviewed listings first, then better rated and more recent.
         $apartments = Apartment::where('active', true)
             ->withCount(['approvedReviews as reviews_count'])
             ->withAvg('approvedReviews as average_rating', 'rating')
+            ->orderByRaw('CASE WHEN reviews_count > 0 THEN 0 ELSE 1 END')
+            ->orderByDesc('average_rating')
+            ->orderByDesc('reviews_count')
+            ->orderByRaw("CASE WHEN lead_image IS NULL OR lead_image = '' THEN 1 ELSE 0 END")
+            ->orderByDesc('id')
+            ->limit($homepageLimit)
             ->get();
 
         $cities = Apartment::where('active', true)
@@ -180,7 +188,7 @@ class FrontendController extends Controller
         }
 
         $apartments = $query->orderByDesc('id')
-            ->paginate(9)
+            ->paginate((int) config('website.apartments_per_page', 12))
             ->appends($filters);
 
         $cities = Apartment::where('active', true)
