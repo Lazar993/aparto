@@ -83,6 +83,9 @@ class ReservationResource extends Resource
                     ->label('Apartment')
                     ->searchable()
                     ->sortable(),
+                Columns\TextColumn::make('reservations_count')
+                    ->label('Reservations')
+                    ->sortable(),
                 Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

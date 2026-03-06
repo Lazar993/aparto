@@ -8,6 +8,7 @@ use App\Notifications\ReservationCreated;
 use App\Notifications\ReservationCreatedForHost;
 use App\Notifications\ReservationConfirmed;
 use App\Notifications\ReservationCanceled;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ReservationObserver
@@ -23,11 +24,25 @@ class ReservationObserver
             'user_id' => $reservation->user_id,
         ]);
 
+        try {
+            $this->syncApartmentReservationCount((int) $reservation->apartment_id);
+        } catch (\Throwable $e) {
+            Log::error('Failed to sync reservations_count', [
+                'error' => $e->getMessage(),
+                'reservation_id' => $reservation->id,
+                'apartment_id' => $reservation->apartment_id,
+            ]);
+        }
+
         // Send reservation created notification
         try {
             if ($reservation->user_id) {
                 $user = User::find($reservation->user_id);
                 if ($user) {
+                    if (! $user->front_user) {
+                        $user->forceFill(['front_user' => true])->saveQuietly();
+                    }
+
                     // Check if this is a new user (created recently, within last minute)
                     $isNewUser = $user->created_at && $user->created_at->gt(now()->subMinute());
                     
@@ -78,6 +93,26 @@ class ReservationObserver
      */
     public function updated(Reservation $reservation): void
     {
+        if ($reservation->isDirty('status') || $reservation->isDirty('apartment_id')) {
+            try {
+                $this->syncApartmentReservationCount((int) $reservation->apartment_id);
+
+                if ($reservation->isDirty('apartment_id')) {
+                    $originalApartmentId = (int) $reservation->getOriginal('apartment_id');
+
+                    if ($originalApartmentId > 0 && $originalApartmentId !== (int) $reservation->apartment_id) {
+                        $this->syncApartmentReservationCount($originalApartmentId);
+                    }
+                }
+            } catch (\Throwable $e) {
+                Log::error('Failed to sync reservations_count on update', [
+                    'error' => $e->getMessage(),
+                    'reservation_id' => $reservation->id,
+                    'apartment_id' => $reservation->apartment_id,
+                ]);
+            }
+        }
+
         // Check if status was changed
         if ($reservation->isDirty('status')) {
             $oldStatus = $reservation->getOriginal('status');
@@ -142,6 +177,45 @@ class ReservationObserver
         }
     }
 
+    public function deleted(Reservation $reservation): void
+    {
+        try {
+            $this->syncApartmentReservationCount((int) $reservation->apartment_id);
+        } catch (\Throwable $e) {
+            Log::error('Failed to sync reservations_count on delete', [
+                'error' => $e->getMessage(),
+                'reservation_id' => $reservation->id,
+                'apartment_id' => $reservation->apartment_id,
+            ]);
+        }
+    }
+
+    public function restored(Reservation $reservation): void
+    {
+        try {
+            $this->syncApartmentReservationCount((int) $reservation->apartment_id);
+        } catch (\Throwable $e) {
+            Log::error('Failed to sync reservations_count on restore', [
+                'error' => $e->getMessage(),
+                'reservation_id' => $reservation->id,
+                'apartment_id' => $reservation->apartment_id,
+            ]);
+        }
+    }
+
+    public function forceDeleted(Reservation $reservation): void
+    {
+        try {
+            $this->syncApartmentReservationCount((int) $reservation->apartment_id);
+        } catch (\Throwable $e) {
+            Log::error('Failed to sync reservations_count on force delete', [
+                'error' => $e->getMessage(),
+                'reservation_id' => $reservation->id,
+                'apartment_id' => $reservation->apartment_id,
+            ]);
+        }
+    }
+
     private function notifyHostAboutNewReservation(Reservation $reservation): void
     {
         $reservation->loadMissing(['apartment.user']);
@@ -165,5 +239,17 @@ class ReservationObserver
             'host_id' => $host->id,
             'host_email' => $host->email,
         ]);
+    }
+
+    private function syncApartmentReservationCount(int $apartmentId): void
+    {
+        $count = Reservation::query()
+            ->where('apartment_id', $apartmentId)
+            ->where('status', 'confirmed')
+            ->count();
+
+        DB::table('reservations')
+            ->where('apartment_id', $apartmentId)
+            ->update(['reservations_count' => $count]);
     }
 }

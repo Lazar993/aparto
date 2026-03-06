@@ -20,9 +20,33 @@ return [
         'parking' => 'sa privatnim parkingom',
     ],
     'featured' => 'Izdvojeni stanovi',
+    'homepage_sections' => [
+        'popular' => 'Popularni stanovi',
+        'best_rated' => 'Najbolje ocenjeni stanovi',
+        'newest' => 'Najnoviji stanovi',
+        'empty' => 'Trenutno nema stanova u ovoj sekciji.',
+        'links' => [
+            'popular' => 'Pogledaj sve popularne stanove',
+            'reviewed' => 'Pogledaj sve stanove sa recenzijama',
+            'newest' => 'Pogledaj najnovije stanove',
+        ],
+        'badges' => [
+            'popular' => 'Najviše rezervacija u poslednjih :days dana',
+            'best_rated' => 'Najbolje ocene u poslednjih :days dana (min :reviews recenzije)',
+            'newest' => 'Najnoviji dodati oglasi',
+        ],
+    ],
     'apartments' => [
         'title' => 'Stanovi u Srbiji',
         'subtitle' => 'Pregledajte najnovije oglase i pošaljite zahtev za rezervaciju online za par minuta.',
+    ],
+    'apartments_popular' => [
+        'title' => 'Popularni stanovi',
+        'subtitle' => 'Stanovi sa najviše rezervacija.',
+    ],
+    'apartments_reviewed' => [
+        'title' => 'Stanovi sa recenzijama',
+        'subtitle' => 'Stanovi sa odobrenim recenzijama, rangirani po ocenama.',
     ],
     'filters' => [
         'search' => 'Pretraga',

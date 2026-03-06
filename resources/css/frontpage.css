@@ -223,10 +223,81 @@
     margin: 0 0 24px;
 }
 
+.aparto-home-sections {
+    display: grid;
+    gap: 34px;
+}
+
+.aparto-home-section {
+    display: grid;
+    gap: 16px;
+}
+
+.aparto-home-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.aparto-home-section-heading .aparto-section-title {
+    margin: 0;
+}
+
+.aparto-section-title--with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.aparto-section-title-icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 auto;
+}
+
+.aparto-section-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--aparto-forest);
+    background: linear-gradient(130deg, #ecf7f3, #f6ece4);
+    border: 1px solid rgba(32, 76, 69, 0.15);
+}
+
+.aparto-section-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--aparto-forest);
+    background: linear-gradient(130deg, #ecf7f3, #f6ece4);
+    border: 1px solid rgba(32, 76, 69, 0.15);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.aparto-section-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(32, 76, 69, 0.12);
+}
+
 .aparto-grid {
     display: grid;
     gap: 24px;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.aparto-grid--homepage {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .aparto-card {
@@ -234,6 +305,9 @@
     border-radius: 18px;
     overflow: hidden;
     box-shadow: 0 18px 40px rgba(33, 22, 16, 0.12);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -258,8 +332,10 @@
 
 .aparto-card-body {
     padding: 18px 18px 22px;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
+    flex: 1;
 }
 
 .aparto-card-title {
@@ -333,9 +409,9 @@
 .aparto-card-footer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 10px;
-    margin-top: 2px;
+    margin-top: auto;
 }
 
 .aparto-card-rating-summary {
@@ -1236,6 +1312,21 @@
     justify-content: flex-end;
 }
 
+.aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--city {
+    grid-column: span 4;
+}
+
+.aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--checkin,
+.aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--checkout {
+    grid-column: span 3;
+}
+
+.aparto-filter--home-simple .aparto-filter-primary .aparto-filter-actions {
+    grid-column: span 2;
+    justify-content: center;
+
+}
+
 .aparto-filter-advanced {
     margin-top: 10px;
     border-top: 1px solid #efe5d8;
@@ -1353,6 +1444,10 @@
         justify-content: flex-start;
     }
 
+    .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-actions {
+        grid-column: span 12;
+    }
+
     .aparto-filter-row--advanced .aparto-filter-field {
         grid-column: span 5;
     }
@@ -1381,6 +1476,29 @@
 
     .aparto-filter-row--advanced .aparto-filter-field {
         grid-column: span 10;
+    }
+
+    .aparto-filter--home-simple .aparto-filter-primary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px 12px;
+    }
+
+    .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--city {
+        grid-column: span 2;
+    }
+
+    .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--checkin,
+    .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--checkout {
+        grid-column: span 1;
+    }
+
+    .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-actions {
+        grid-column: span 2;
+        justify-content: stretch;
+    }
+
+    .aparto-filter--home-simple .aparto-filter-actions .aparto-button {
+        width: 100%;
     }
 }
 
@@ -1424,6 +1542,18 @@
     .aparto-filter-primary .aparto-filter-actions {
         justify-content: stretch;
     }
+
+    .aparto-filter--home-simple .aparto-filter-primary {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--city,
+    .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--checkin,
+    .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--checkout,
+    .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-actions {
+        grid-column: span 1;
+    }
 }
 
 .aparto-results--list .aparto-grid {
@@ -1439,6 +1569,34 @@
 @media (max-width: 720px) {
     .aparto-results--list .aparto-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .aparto-home-scroll-wrap {
+        overflow-x: auto;
+        padding: 2px 0 8px;
+        scrollbar-width: thin;
+    }
+
+    .aparto-home-scroll-wrap .aparto-grid--homepage {
+        display: flex;
+        gap: 12px;
+        width: max-content;
+    }
+
+    .aparto-home-scroll-wrap .aparto-card {
+        width: clamp(248px, 84vw, 296px);
+        min-height: 430px;
+        flex: 0 0 auto;
+    }
+
+    .aparto-home-scroll-wrap .aparto-card-media {
+        height: 170px;
+    }
+
+    .aparto-home-scroll-wrap .aparto-card-body {
+        padding: 14px 14px 18px;
     }
 }
 

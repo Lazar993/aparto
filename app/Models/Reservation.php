@@ -12,6 +12,7 @@ class Reservation extends Model
     
     protected $fillable = [
         'apartment_id',
+        'reservations_count',
         'user_id',
         'name',
         'email',
@@ -34,6 +35,7 @@ class Reservation extends Model
         'date_to' => 'date',
         'paid_at' => 'datetime',
         'review_reminder_sent_at' => 'datetime',
+        'reservations_count' => 'integer',
         'price_per_night' => 'decimal:2',
         'total_price' => 'decimal:2',
         'deposit_amount' => 'decimal:2',

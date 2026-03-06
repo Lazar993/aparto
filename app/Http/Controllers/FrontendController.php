@@ -3,26 +3,104 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApartmentListRequest;
-use App\Models\{Apartment, Page};
+use App\Models\{Apartment, Page, Reservation, Review};
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 
 class FrontendController extends Controller
 {
     public function index()
     {
-        $homepageLimit = max(1, (int) config('website.homepage_apartments_limit', 9));
+        $sectionLimit = min(8, max(4, (int) config('website.homepage_section_apartments_limit', 8)));
+        $periodDays = max(1, (int) config('website.homepage_trending_period_days', 30));
+        $bestRatedMinReviews = min(5, max(3, (int) config('website.homepage_best_rated_min_reviews', 3)));
+        $windowStart = now()->subDays($periodDays);
 
-        // Show a curated homepage set: reviewed listings first, then better rated and more recent.
-        $apartments = Apartment::where('active', true)
-            ->withCount(['approvedReviews as reviews_count'])
-            ->withAvg('approvedReviews as average_rating', 'rating')
-            ->orderByRaw('CASE WHEN reviews_count > 0 THEN 0 ELSE 1 END')
+        $usedApartmentIds = collect();
+
+        $popularApartmentIds = Reservation::query()
+            ->selectRaw('apartment_id, COUNT(*) as reservations_count, MAX(created_at) as latest_reservation_at')
+            ->where('status', '!=', 'canceled')
+            ->where('created_at', '>=', $windowStart)
+            ->whereHas('apartment', function (Builder $builder) {
+                $builder->where('active', true);
+            })
+            ->groupBy('apartment_id')
+            ->orderByDesc('reservations_count')
+            ->orderByDesc('latest_reservation_at')
+            ->limit($sectionLimit)
+            ->pluck('apartment_id');
+
+        $popularOrderMap = $popularApartmentIds->flip();
+
+        $popularApartments = $this->homepageApartmentBaseQuery()
+            ->whereIn('id', $popularApartmentIds)
+            ->get()
+            ->sortBy(function (Apartment $apartment) use ($popularOrderMap) {
+                return $popularOrderMap->get($apartment->id, PHP_INT_MAX);
+            })
+            ->values();
+
+        $usedApartmentIds = $usedApartmentIds
+            ->merge($popularApartments->pluck('id'))
+            ->values();
+
+        $bestRatedApartmentIdsQuery = Review::query()
+            ->selectRaw('apartment_id, AVG(rating) as average_rating, COUNT(*) as reviews_count, MAX(created_at) as latest_review_at')
+            ->where('status', 'approved')
+            ->where('created_at', '>=', $windowStart)
+            ->whereHas('apartment', function (Builder $builder) {
+                $builder->where('active', true);
+            });
+
+        if ($usedApartmentIds->isNotEmpty()) {
+            $bestRatedApartmentIdsQuery->whereNotIn('apartment_id', $usedApartmentIds);
+        }
+
+        $bestRatedApartmentIds = $bestRatedApartmentIdsQuery
+            ->groupBy('apartment_id')
+            ->havingRaw('COUNT(*) >= ?', [$bestRatedMinReviews])
             ->orderByDesc('average_rating')
             ->orderByDesc('reviews_count')
-            ->orderByRaw("CASE WHEN lead_image IS NULL OR lead_image = '' THEN 1 ELSE 0 END")
+            ->orderByDesc('latest_review_at')
+            ->limit($sectionLimit)
+            ->pluck('apartment_id');
+
+        $bestRatedOrderMap = $bestRatedApartmentIds->flip();
+
+        $bestRatedApartments = $this->homepageApartmentBaseQuery()
+            ->whereIn('id', $bestRatedApartmentIds)
+            ->get()
+            ->sortBy(function (Apartment $apartment) use ($bestRatedOrderMap) {
+                return $bestRatedOrderMap->get($apartment->id, PHP_INT_MAX);
+            })
+            ->values();
+
+        $usedApartmentIds = $usedApartmentIds
+            ->merge($bestRatedApartments->pluck('id'))
+            ->unique()
+            ->values();
+
+        $newestApartmentsQuery = $this->homepageApartmentBaseQuery();
+
+        if ($usedApartmentIds->isNotEmpty()) {
+            $newestApartmentsQuery->whereNotIn('id', $usedApartmentIds);
+        }
+
+        $newestApartments = $newestApartmentsQuery
+            ->orderByDesc('created_at')
             ->orderByDesc('id')
-            ->limit($homepageLimit)
+            ->limit($sectionLimit)
             ->get();
+
+        $homepageStats = Apartment::query()
+            ->where('active', true)
+            ->selectRaw('COUNT(*) as available_count')
+            ->selectRaw('MIN(price_per_night) as min_price')
+            ->selectRaw('SUM(CASE WHEN parking = 1 THEN 1 ELSE 0 END) as parking_count')
+            ->first();
 
         $cities = Apartment::where('active', true)
             ->whereNotNull('city')
@@ -31,7 +109,15 @@ class FrontendController extends Controller
             ->orderBy('city')
             ->pluck('city');
 
-        return view('frontend.index', compact('apartments', 'cities'));
+        return view('frontend.index', compact('popularApartments', 'bestRatedApartments', 'newestApartments', 'cities', 'homepageStats'));
+    }
+
+    private function homepageApartmentBaseQuery(): Builder
+    {
+        return Apartment::query()
+            ->where('active', true)
+            ->withCount(['approvedReviews as reviews_count'])
+            ->withAvg('approvedReviews as average_rating', 'rating');
     }
 
     public function show($id)
@@ -130,12 +216,106 @@ class FrontendController extends Controller
 
     public function list(ApartmentListRequest $request)
     {
+        $query = $this->homepageApartmentBaseQuery()
+            ->orderByDesc('id');
+
+        return $this->renderApartmentList(
+            request: $request,
+            query: $query,
+            pageTitle: __('frontpage.apartments.title'),
+            pageSubtitle: __('frontpage.apartments.subtitle'),
+            filterAction: route('apartments.index'),
+            resetUrl: route('apartments.index'),
+        );
+    }
+
+    public function popular(ApartmentListRequest $request)
+    {
+        $popularCountsSubquery = Reservation::query()
+            ->selectRaw('apartment_id, COUNT(*) as reservations_count, MAX(created_at) as latest_reservation_at')
+            ->where('status', '!=', 'canceled')
+            ->groupBy('apartment_id');
+
+        $query = $this->homepageApartmentBaseQuery()
+            ->joinSub($popularCountsSubquery, 'popular_counts', function ($join) {
+                $join->on('apartments.id', '=', 'popular_counts.apartment_id');
+            })
+            ->select('apartments.*')
+            ->orderByDesc('popular_counts.reservations_count')
+            ->orderByDesc('popular_counts.latest_reservation_at')
+            ->orderByDesc('apartments.id');
+
+        return $this->renderApartmentList(
+            request: $request,
+            query: $query,
+            pageTitle: __('frontpage.apartments_popular.title'),
+            pageSubtitle: __('frontpage.apartments_popular.subtitle'),
+            filterAction: route('apartments.popular'),
+            resetUrl: route('apartments.popular'),
+        );
+    }
+
+    public function reviewed(ApartmentListRequest $request)
+    {
+        $reviewedScoresSubquery = Review::query()
+            ->selectRaw('apartment_id, AVG(rating) as average_rating_all, COUNT(*) as reviews_count_all, MAX(created_at) as latest_review_at')
+            ->where('status', 'approved')
+            ->groupBy('apartment_id');
+
+        $query = $this->homepageApartmentBaseQuery()
+            ->joinSub($reviewedScoresSubquery, 'reviewed_scores', function ($join) {
+                $join->on('apartments.id', '=', 'reviewed_scores.apartment_id');
+            })
+            ->select('apartments.*')
+            ->orderByDesc('reviewed_scores.average_rating_all')
+            ->orderByDesc('reviewed_scores.reviews_count_all')
+            ->orderByDesc('reviewed_scores.latest_review_at')
+            ->orderByDesc('apartments.id');
+
+        return $this->renderApartmentList(
+            request: $request,
+            query: $query,
+            pageTitle: __('frontpage.apartments_reviewed.title'),
+            pageSubtitle: __('frontpage.apartments_reviewed.subtitle'),
+            filterAction: route('apartments.reviewed'),
+            resetUrl: route('apartments.reviewed'),
+        );
+    }
+
+    private function renderApartmentList(
+        ApartmentListRequest $request,
+        Builder $query,
+        string $pageTitle,
+        string $pageSubtitle,
+        string $filterAction,
+        string $resetUrl,
+    ): View|JsonResponse {
         $filters = $request->validated();
 
-        $query = Apartment::where('active', true)
-            ->withCount(['approvedReviews as reviews_count'])
-            ->withAvg('approvedReviews as average_rating', 'rating');
+        $this->applyApartmentListFilters($query, $filters);
 
+        $apartments = $query
+            ->paginate((int) config('website.apartments_per_page', 12))
+            ->appends($filters);
+
+        $cities = Apartment::where('active', true)
+            ->whereNotNull('city')
+            ->where('city', '!=', '')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        if ($request->ajax()) {
+            $html = view('frontend.partials.apartments-results', compact('apartments'))->render();
+
+            return response()->json(['html' => $html]);
+        }
+
+        return view('frontend.apartments', compact('apartments', 'cities', 'pageTitle', 'pageSubtitle', 'filterAction', 'resetUrl'));
+    }
+
+    private function applyApartmentListFilters(Builder $query, array $filters): void
+    {
         $search = trim((string) ($filters['q'] ?? ''));
         if ($search !== '') {
             $query->where(function ($builder) use ($search) {
@@ -186,25 +366,6 @@ class FrontendController extends Controller
                     ->where('date_to', '>=', $dateFrom);
             });
         }
-
-        $apartments = $query->orderByDesc('id')
-            ->paginate((int) config('website.apartments_per_page', 12))
-            ->appends($filters);
-
-        $cities = Apartment::where('active', true)
-            ->whereNotNull('city')
-            ->where('city', '!=', '')
-            ->distinct()
-            ->orderBy('city')
-            ->pluck('city');
-
-        if ($request->ajax()) {
-            $html = view('frontend.partials.apartments-results', compact('apartments'))->render();
-
-            return response()->json(['html' => $html]);
-        }
-
-        return view('frontend.apartments', compact('apartments', 'cities'));
     }
 
     public function page(string $slug)

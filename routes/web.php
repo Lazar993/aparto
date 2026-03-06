@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\App;
 Route::get('/', [FrontendController::class, 'index'])->name('home');
 
 Route::get('/apartments', [FrontendController::class, 'list'])->name('apartments.index');
+Route::get('/apartments/popular', [FrontendController::class, 'popular'])->name('apartments.popular');
+Route::get('/apartments/reviewed', [FrontendController::class, 'reviewed'])->name('apartments.reviewed');
 Route::get('/apartments/{id}', [FrontendController::class, 'show'])->name('apartments.show');
 Route::get('/pages/{slug}', [FrontendController::class, 'page'])
 	->where('slug', '[A-Za-z0-9\-]+')

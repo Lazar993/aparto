@@ -5,8 +5,8 @@
     @include('layouts.partials.header')
 
     <section class="aparto-fade-up aparto-delay-1">
-        <h1 class="aparto-section-title">{{ __('frontpage.apartments.title') }}</h1>
-        <p class="aparto-hero-subtitle">{{ __('frontpage.apartments.subtitle') }}</p>
+        <h1 class="aparto-section-title">{{ $pageTitle ?? __('frontpage.apartments.title') }}</h1>
+        <p class="aparto-hero-subtitle">{{ $pageSubtitle ?? __('frontpage.apartments.subtitle') }}</p>
 
         @php
             $hasAdvancedFilters = request()->filled('q')
@@ -21,7 +21,7 @@
                 . " --aparto-icon-parking: url('" . asset('images/icons/parking.svg') . "');";
         @endphp
 
-        <form class="aparto-filter aparto-filter--dense aparto-filter--premium" method="GET" action="{{ route('apartments.index') }}" style="{{ $filterIconVars }}">
+        <form class="aparto-filter aparto-filter--dense aparto-filter--premium" method="GET" action="{{ $filterAction ?? route('apartments.index') }}" style="{{ $filterIconVars }}">
             <div class="aparto-filter-primary">
                 <div class="aparto-filter-field aparto-filter-field--city">
                     <label class="aparto-filter-label" for="filter-city">{{ __('frontpage.filters.city') }}</label>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="aparto-filter-actions">
                     <button class="aparto-button primary" type="submit">{{ __('frontpage.filters.apply') }}</button>
-                    <a class="aparto-button ghost" href="{{ route('apartments.index') }}" data-filter-reset>{{ __('frontpage.filters.reset') }}</a>
+                    <a class="aparto-button ghost" href="{{ $resetUrl ?? route('apartments.index') }}" data-filter-reset>{{ __('frontpage.filters.reset') }}</a>
                 </div>
             </div>
 

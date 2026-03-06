@@ -115,6 +115,13 @@ class UserResource extends Resource
                     ->trueIcon('heroicon-o-check-badge')
                     ->falseIcon('heroicon-o-x-circle')
                     ->sortable(),
+
+                IconColumn::make('front_user')
+                    ->label('Front User')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-user-circle')
+                    ->falseIcon('heroicon-o-minus-circle')
+                    ->sortable(),
                     
                 TextColumn::make('created_at')
                     ->label('Created')

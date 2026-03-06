@@ -20,9 +20,33 @@ return [
         'parking' => 'with private spots',
     ],
     'featured' => 'Featured stays',
+    'homepage_sections' => [
+        'popular' => 'Popular apartments',
+        'best_rated' => 'Best rated apartments',
+        'newest' => 'Newest apartments',
+        'empty' => 'No apartments in this section right now.',
+        'links' => [
+            'popular' => 'See all popular apartments',
+            'reviewed' => 'See all apartments with reviews',
+            'newest' => 'See latest apartments',
+        ],
+        'badges' => [
+            'popular' => 'Most reserved in last :days days',
+            'best_rated' => 'Top rated in last :days days (min :reviews reviews)',
+            'newest' => 'Latest additions',
+        ],
+    ],
     'apartments' => [
         'title' => 'Apartments in Serbia',
         'subtitle' => 'Browse the latest listings and send your reservation request online in minutes.',
+    ],
+    'apartments_popular' => [
+        'title' => 'Popular apartments',
+        'subtitle' => 'Apartments with the most reservations.',
+    ],
+    'apartments_reviewed' => [
+        'title' => 'Apartments with reviews',
+        'subtitle' => 'Apartments with approved reviews, ranked by rating.',
     ],
     'filters' => [
         'search' => 'Search',

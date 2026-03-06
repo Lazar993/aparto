@@ -11,16 +11,16 @@
     </div>
     <div class="aparto-hero-card aparto-fade-up aparto-delay-2">
         <div class="aparto-hero-stat">
-            <strong>{{ $apartments->count() }}</strong>
+            <strong>{{ (int) ($homepageStats->available_count ?? 0) }}</strong>
             <span>{{ __('frontpage.stats.available') }}</span>
         </div>
         <div class="aparto-hero-stat">
-            <strong>{{ config('website.currency') }} {{ number_format($apartments->min('price_per_night') ?? 0, 0) }}</strong>
+            <strong>{{ config('website.currency') }} {{ number_format((float) ($homepageStats->min_price ?? 0), 0) }}</strong>
             <span>{{ __('frontpage.stats.starting') }}</span>
         </div>
         <div class="aparto-hero-stat">
             <strong>Parking</strong>
-            <span>{{ $apartments->where('parking', true)->count() }} {{ __('frontpage.stats.parking') }}</span>
+            <span>{{ (int) ($homepageStats->parking_count ?? 0) }} {{ __('frontpage.stats.parking') }}</span>
         </div>
     </div>
 </section>
