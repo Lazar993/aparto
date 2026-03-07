@@ -28,7 +28,7 @@ class ReviewResource extends Resource
                     ->relationship('apartment', 'title', function (Builder $query): void {
                         $user = auth()->user();
 
-                        if ($user && $user->hasRole('host')) {
+                        if ($user && ($user->isHost() || $user->hasRole('host'))) {
                             $query->where('user_id', $user->id);
                         }
                     })
@@ -160,7 +160,7 @@ class ReviewResource extends Resource
         $query = parent::getEloquentQuery();
         $user = auth()->user();
 
-        if ($user && $user->hasRole('host')) {
+        if ($user && ($user->isHost() || $user->hasRole('host'))) {
             $query->whereHas('apartment', function (Builder $apartmentQuery) use ($user): void {
                 $apartmentQuery->where('user_id', $user->id);
             });

@@ -25,6 +25,10 @@ class ReservationPolicy
      */
     public function view(User $user, Reservation $reservation): bool
     {
+        if ($this->isHost($user) && ! $this->ownsReservation($user, $reservation)) {
+            return false;
+        }
+
         return $this->hasPermission($user, 'view_reservation');
     }
 
@@ -41,6 +45,10 @@ class ReservationPolicy
      */
     public function update(User $user, Reservation $reservation): bool
     {
+        if ($this->isHost($user) && ! $this->ownsReservation($user, $reservation)) {
+            return false;
+        }
+
         return $this->hasPermission($user, 'update_reservation');
     }
 
@@ -49,6 +57,10 @@ class ReservationPolicy
      */
     public function delete(User $user, Reservation $reservation): bool
     {
+        if ($this->isHost($user) && ! $this->ownsReservation($user, $reservation)) {
+            return false;
+        }
+
         return $this->hasPermission($user, 'delete_reservation');
     }
 
@@ -65,6 +77,10 @@ class ReservationPolicy
      */
     public function forceDelete(User $user, Reservation $reservation): bool
     {
+        if ($this->isHost($user) && ! $this->ownsReservation($user, $reservation)) {
+            return false;
+        }
+
         return $this->hasPermission($user, 'force_delete_reservation');
     }
 
@@ -81,6 +97,10 @@ class ReservationPolicy
      */
     public function restore(User $user, Reservation $reservation): bool
     {
+        if ($this->isHost($user) && ! $this->ownsReservation($user, $reservation)) {
+            return false;
+        }
+
         return $this->hasPermission($user, 'restore_reservation');
     }
 
@@ -97,7 +117,27 @@ class ReservationPolicy
      */
     public function replicate(User $user, Reservation $reservation): bool
     {
+        if ($this->isHost($user) && ! $this->ownsReservation($user, $reservation)) {
+            return false;
+        }
+
         return $this->hasPermission($user, 'replicate_reservation');
+    }
+
+    private function isHost(User $user): bool
+    {
+        return $user->isHost() || $user->hasRole('host');
+    }
+
+    private function ownsReservation(User $user, Reservation $reservation): bool
+    {
+        if ($reservation->relationLoaded('apartment')) {
+            return (int) $reservation->apartment?->user_id === (int) $user->id;
+        }
+
+        return $reservation->apartment()
+            ->where('user_id', $user->id)
+            ->exists();
     }
 
     /**

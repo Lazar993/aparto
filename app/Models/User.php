@@ -14,6 +14,10 @@ class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
+    public const TYPE_ADMIN = 'admin';
+    public const TYPE_HOST = 'host';
+    public const TYPE_FRONT = 'front';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -23,8 +27,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'is_admin',
-        'front_user',
+        'user_type',
     ];
 
     /**
@@ -45,17 +48,39 @@ class User extends Authenticatable implements FilamentUser
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'is_admin' => 'boolean',
-        'front_user' => 'boolean',
+        'user_type' => 'string',
     ];
+
+    public static function userTypeOptions(): array
+    {
+        return [
+            self::TYPE_ADMIN => 'Admin',
+            self::TYPE_HOST => 'Host',
+            self::TYPE_FRONT => 'Front',
+        ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->user_type === self::TYPE_ADMIN;
+    }
+
+    public function isHost(): bool
+    {
+        return $this->user_type === self::TYPE_HOST;
+    }
+
+    public function isFrontUser(): bool
+    {
+        return $this->user_type === self::TYPE_FRONT;
+    }
 
     /**
      * Determine if the user can access the Filament admin panel.
      */
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
-        // Check if user has admin flag OR has admin roles
-        if ($this->is_admin) {
+        if ($this->isAdmin() || $this->isHost()) {
             return true;
         }
         

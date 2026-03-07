@@ -39,8 +39,8 @@ class ReservationObserver
             if ($reservation->user_id) {
                 $user = User::find($reservation->user_id);
                 if ($user) {
-                    if (! $user->front_user) {
-                        $user->forceFill(['front_user' => true])->saveQuietly();
+                    if (! $user->isFrontUser() && ! $user->isAdmin() && ! $user->isHost()) {
+                        $user->forceFill(['user_type' => User::TYPE_FRONT])->saveQuietly();
                     }
 
                     // Check if this is a new user (created recently, within last minute)

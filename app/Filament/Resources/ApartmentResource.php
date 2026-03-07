@@ -273,9 +273,10 @@ class ApartmentResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
+        $user = auth()->user();
 
-        if (auth()->user()->hasRole('host')) {
-            $query->where('user_id', auth()->id());
+        if ($user && ($user->isHost() || $user->hasRole('host'))) {
+            $query->where('user_id', $user->id);
         }
 
         return $query;

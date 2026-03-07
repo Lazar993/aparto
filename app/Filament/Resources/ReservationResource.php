@@ -23,7 +23,7 @@ class ReservationResource extends Resource
                     ->relationship('apartment', 'title', function (Builder $query): void {
                         $user = auth()->user();
 
-                        if ($user && $user->hasRole('host')) {
+                        if ($user && ($user->isHost() || $user->hasRole('host'))) {
                             $query->where('user_id', $user->id);
                         }
                     })
@@ -167,7 +167,7 @@ class ReservationResource extends Resource
         $query = parent::getEloquentQuery()->whereNull('deleted_at');
         $user = auth()->user();
 
-        if ($user && $user->hasRole('host')) {
+        if ($user && ($user->isHost() || $user->hasRole('host'))) {
             $query->whereHas('apartment', function (Builder $apartmentQuery) use ($user): void {
                 $apartmentQuery->where('user_id', $user->id);
             });

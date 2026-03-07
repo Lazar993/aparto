@@ -4,9 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
-use Filament\Forms\{Form, Components\Grid, Components\Section, Components\Select, Components\TextInput, Components\Toggle};
+use Filament\Forms\{Form, Components\Grid, Components\Section, Components\Select, Components\TextInput};
 use Filament\Resources\Resource;
-use Filament\Tables\{Table, Actions, Columns\IconColumn, Columns\TextColumn};
+use Filament\Tables\{Table, Actions, Columns\TextColumn};
 use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
@@ -70,12 +70,14 @@ class UserResource extends Resource
                             ->preload()
                             ->searchable()
                             ->helperText('Select one or more roles for this user'),
-                            
-                        Toggle::make('is_admin')
-                            ->label('Administrator')
-                            ->helperText('Grant full administrative access to this user')
-                            ->default(false)
-                            ->inline(false),
+
+                        Select::make('user_type')
+                            ->label('User Type')
+                            ->options(User::userTypeOptions())
+                            ->required()
+                            ->native(false)
+                            ->default(User::TYPE_FRONT)
+                            ->helperText('Defines primary app role: admin, host, or front user.'),
                     ])
                     ->collapsible(),
             ]);
@@ -109,18 +111,16 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
                     
-                IconColumn::make('is_admin')
-                    ->label('Admin')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-badge')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->sortable(),
-
-                IconColumn::make('front_user')
-                    ->label('Front User')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-user-circle')
-                    ->falseIcon('heroicon-o-minus-circle')
+                TextColumn::make('user_type')
+                    ->label('Type')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => User::userTypeOptions()[$state] ?? 'Unknown')
+                    ->color(fn (?string $state): string => match ($state) {
+                        User::TYPE_ADMIN => 'danger',
+                        User::TYPE_HOST => 'warning',
+                        User::TYPE_FRONT => 'info',
+                        default => 'gray',
+                    })
                     ->sortable(),
                     
                 TextColumn::make('created_at')

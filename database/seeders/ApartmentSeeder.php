@@ -5,20 +5,27 @@ namespace Database\Seeders;
 use App\Models\Apartment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
+use Spatie\Permission\Models\Role;
 
 class ApartmentSeeder extends Seeder
 {
+    private const APARTMENTS_COUNT = 50;
+
     public function run(): void
     {
         $leadImages = $this->getImagePaths('apartments/lead_images');
         $galleryImages = $this->getImagePaths('apartments/gallery_images');
 
-        $userIds = User::query()->pluck('id');
+        $hostIds = $this->resolveHostIds();
 
-        if ($userIds->isEmpty()) {
-            $userIds = User::factory()->count(5)->create()->pluck('id');
+        $minimumHosts = 12;
+        if ($hostIds->count() < $minimumHosts) {
+            $this->createAdditionalHosts($minimumHosts - $hostIds->count());
+            $hostIds = $this->resolveHostIds();
         }
 
         $cities = [
@@ -33,35 +40,44 @@ class ApartmentSeeder extends Seeder
             'Zrenjanin',
             'Kraljevo',
             'Raska',
+            'Zlatibor',
+            'Kopaonik',
+            'Pirot',
         ];
 
-        for ($i = 1; $i <= 50; $i++) {
+        $titlePrefixes = ['Modern', 'Cozy', 'Urban', 'Quiet', 'Panorama', 'Central', 'Family', 'Premium'];
+        $titleTypes = ['Studio', 'Apartment', 'Loft', 'Suite', 'Retreat', 'Residence'];
+
+        for ($i = 1; $i <= self::APARTMENTS_COUNT; $i++) {
             $city = Arr::random($cities);
-            $minNights = fake()->numberBetween(1, 4);
+            $rooms = fake()->numberBetween(1, 5);
+            $guestNumber = fake()->numberBetween(max(2, $rooms), min(10, $rooms * 2 + 2));
+            $basePrice = fake()->numberBetween(38, 260);
+            $minNights = fake()->numberBetween(1, min(5, $rooms + 1));
             $discountNights = fake()->boolean(60)
-                ? fake()->numberBetween(max(3, $minNights + 1), 10)
+                ? fake()->numberBetween(max(3, $minNights + 1), 14)
                 : null;
 
             Apartment::query()->create([
-                'user_id' => $userIds->random(),
-                'title' => fake()->randomElement(['Modern Stay', 'City Escape', 'Cozy Retreat', 'Sunset Loft', 'Quiet Apartment']) . ' in ' . $city,
-                'description' => fake()->paragraphs(2, true),
+                'user_id' => $hostIds->random(),
+                'title' => Arr::random($titlePrefixes) . ' ' . Arr::random($titleTypes) . ' in ' . $city,
+                'description' => fake()->paragraphs(fake()->numberBetween(2, 4), true),
                 'city' => $city,
                 'address' => fake()->streetAddress(),
                 'latitude' => fake()->latitude(42.0, 46.6),
                 'longitude' => fake()->longitude(13.0, 19.5),
-                'price_per_night' => fake()->numberBetween(45, 240),
+                'price_per_night' => $basePrice,
                 'min_nights' => $minNights,
                 'discount_nights' => $discountNights,
-                'discount_percentage' => $discountNights ? fake()->randomElement([5, 10, 12.5, 15, 20]) : null,
+                'discount_percentage' => $discountNights ? fake()->randomElement([5, 10, 12.5, 15, 18, 20]) : null,
                 'blocked_dates' => $this->generateBlockedDates(),
                 'custom_pricing' => $this->generateCustomPricing(),
-                'rooms' => fake()->numberBetween(1, 5),
-                'guest_number' => fake()->numberBetween(1, 10),
-                'active' => fake()->boolean(90),
-                'parking' => fake()->boolean(55),
+                'rooms' => $rooms,
+                'guest_number' => $guestNumber,
+                'active' => fake()->boolean(88),
+                'parking' => fake()->boolean(60),
                 'wifi' => fake()->boolean(95),
-                'pet_friendly' => fake()->boolean(35),
+                'pet_friendly' => fake()->boolean(30),
                 'lead_image' => $this->pickLeadImage($leadImages),
                 'gallery_images' => $this->pickGalleryImages($galleryImages),
             ]);
@@ -81,6 +97,50 @@ class ApartmentSeeder extends Seeder
             ->map(fn ($file) => $directory . '/' . $file->getFilename())
             ->values()
             ->all();
+    }
+
+    private function resolveHostIds(): Collection
+    {
+        $hosts = User::query()
+            ->where('user_type', User::TYPE_HOST);
+
+        if ($this->rolesAvailable()) {
+            $hosts->whereHas('roles', function ($query): void {
+                $query->where('name', 'host');
+            });
+        }
+
+        return $hosts->pluck('id');
+    }
+
+    private function createAdditionalHosts(int $count): void
+    {
+        if ($count <= 0) {
+            return;
+        }
+
+        $createdHosts = User::factory()
+            ->count($count)
+            ->create([
+                'user_type' => User::TYPE_HOST,
+                'email_verified_at' => now(),
+            ]);
+
+        if (! $this->rolesAvailable()) {
+            return;
+        }
+
+        $hostWeb = Role::findOrCreate('host', 'web');
+        $hostAdmin = Role::findOrCreate('host', 'admin');
+
+        $createdHosts->each(function (User $host) use ($hostWeb, $hostAdmin): void {
+            $host->syncRoles([$hostWeb, $hostAdmin]);
+        });
+    }
+
+    private function rolesAvailable(): bool
+    {
+        return Schema::hasTable('roles') && Schema::hasTable('model_has_roles');
     }
 
     private function pickLeadImage(array $leadImages): ?string
@@ -113,13 +173,20 @@ class ApartmentSeeder extends Seeder
             return null;
         }
 
-        $from = fake()->dateTimeBetween('+2 weeks', '+6 months');
-        $to = (clone $from)->modify('+' . fake()->numberBetween(2, 8) . ' days');
+        $periods = [];
+        $periodCount = fake()->numberBetween(1, 2);
 
-        return [[
-            'from' => $from->format('Y-m-d'),
-            'to' => $to->format('Y-m-d'),
-        ]];
+        for ($i = 0; $i < $periodCount; $i++) {
+            $from = fake()->dateTimeBetween('+' . (14 + ($i * 20)) . ' days', '+' . (130 + ($i * 20)) . ' days');
+            $to = (clone $from)->modify('+' . fake()->numberBetween(2, 7) . ' days');
+
+            $periods[] = [
+                'from' => $from->format('Y-m-d'),
+                'to' => $to->format('Y-m-d'),
+            ];
+        }
+
+        return $periods;
     }
 
     private function generateCustomPricing(): ?array
@@ -128,13 +195,20 @@ class ApartmentSeeder extends Seeder
             return null;
         }
 
-        $from = fake()->dateTimeBetween('+1 week', '+5 months');
-        $to = (clone $from)->modify('+' . fake()->numberBetween(3, 12) . ' days');
+        $periods = [];
+        $periodCount = fake()->numberBetween(1, 3);
 
-        return [[
-            'from' => $from->format('Y-m-d'),
-            'to' => $to->format('Y-m-d'),
-            'price' => fake()->numberBetween(55, 280),
-        ]];
+        for ($i = 0; $i < $periodCount; $i++) {
+            $from = fake()->dateTimeBetween('+' . (7 + ($i * 15)) . ' days', '+' . (150 + ($i * 20)) . ' days');
+            $to = (clone $from)->modify('+' . fake()->numberBetween(3, 10) . ' days');
+
+            $periods[] = [
+                'from' => $from->format('Y-m-d'),
+                'to' => $to->format('Y-m-d'),
+                'price' => fake()->numberBetween(50, 320),
+            ];
+        }
+
+        return $periods;
     }
 }
