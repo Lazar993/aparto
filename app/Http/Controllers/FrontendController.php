@@ -3,14 +3,151 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApartmentListRequest;
+use App\Models\Contact;
 use App\Models\{Apartment, Page, Reservation, Review};
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class FrontendController extends Controller
 {
+    public function contact(): View
+    {
+        return view('frontend.contact');
+    }
+
+    public function contactSubmit(Request $request)
+    {
+        $siteKey = (string) config('services.hcaptcha.site_key');
+        $secret = (string) config('services.hcaptcha.secret');
+
+        if ($siteKey === '' || $secret === '') {
+            Log::warning('hCaptcha configuration is missing for contact form.');
+
+            return back()
+                ->withInput()
+                ->withErrors(['hcaptcha' => __('frontpage.contact_page.validation.captcha_unavailable')]);
+        }
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:80'],
+            'surname' => ['required', 'string', 'max:80'],
+            'email' => ['required', 'email', 'max:160'],
+            'message' => ['required', 'string', 'max:3000'],
+            'h-captcha-response' => ['required', 'string'],
+        ], [
+            'required' => __('frontpage.contact_page.validation.required'),
+            'email' => __('frontpage.contact_page.validation.email'),
+            'max' => __('frontpage.contact_page.validation.max'),
+            'h-captcha-response.required' => __('frontpage.contact_page.validation.captcha_required'),
+        ], [
+            'name' => __('frontpage.contact_page.form.name'),
+            'surname' => __('frontpage.contact_page.form.surname'),
+            'email' => __('frontpage.contact_page.form.email'),
+            'message' => __('frontpage.contact_page.form.message'),
+            'h-captcha-response' => __('frontpage.contact_page.form.captcha'),
+        ]);
+
+        [$captchaSuccess, $captchaErrors] = $this->verifyHcaptchaToken(
+            $data['h-captcha-response'],
+            (string) $request->ip()
+        );
+
+        if (! $captchaSuccess) {
+            Log::info('hCaptcha verification failed on contact form.', [
+                'ip' => $request->ip(),
+                'errors' => $captchaErrors,
+            ]);
+
+            return back()
+                ->withInput()
+                ->withErrors(['hcaptcha' => __('frontpage.contact_page.validation.captcha_failed')]);
+        }
+
+        $contact = Contact::create([
+            'name' => $data['name'],
+            'surname' => $data['surname'],
+            'email' => $data['email'],
+            'message' => $data['message'],
+            'ip_address' => $request->ip(),
+            'user_agent' => (string) $request->userAgent(),
+        ]);
+
+        $fullName = trim($data['name'] . ' ' . $data['surname']);
+        $adminEmail = (string) config('website.contact_email');
+
+        $mailBody = implode(PHP_EOL, [
+            'New contact request from front website.',
+            '',
+            'Name: ' . $fullName,
+            'Email: ' . $data['email'],
+            'Contact ID: ' . $contact->id,
+            'Message:',
+            $data['message'],
+            '',
+            'Sent at: ' . now()->toDateTimeString(),
+        ]);
+
+        try {
+            Mail::raw($mailBody, function ($message) use ($adminEmail, $fullName, $data) {
+                $message->to($adminEmail)
+                    ->replyTo($data['email'], $fullName)
+                    ->subject('Aparto contact form');
+            });
+        } catch (\Throwable $exception) {
+            Log::error('Contact form email send failed', [
+                'email' => $data['email'],
+                'error' => $exception->getMessage(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->withErrors(['contact' => __('frontpage.contact_page.send_error')]);
+        }
+
+        return redirect()
+            ->route('contact.show')
+            ->with('success', __('frontpage.contact_page.success'));
+    }
+
+    private function verifyHcaptchaToken(string $token, string $ip): array
+    {
+        try {
+            $response = Http::asForm()
+                ->timeout(5)
+                ->post('https://api.hcaptcha.com/siteverify', [
+                    'secret' => (string) config('services.hcaptcha.secret'),
+                    'response' => $token,
+                    'remoteip' => $ip,
+                    'sitekey' => (string) config('services.hcaptcha.site_key'),
+                ]);
+
+            if (! $response->ok()) {
+                return [false, ['request-failed']];
+            }
+
+            $json = $response->json() ?? [];
+
+            if (! empty($json['success'])) {
+                return [true, []];
+            }
+
+            return [false, $json['error-codes'] ?? []];
+        } catch (\Throwable $exception) {
+            Log::warning('hCaptcha verification request failed.', [
+                'ip' => $ip,
+                'error' => $exception->getMessage(),
+            ]);
+
+            return [false, ['request-failed']];
+        }
+    }
+
     public function index()
     {
         $sectionLimit = min(8, max(4, (int) config('website.homepage_section_apartments_limit', 8)));

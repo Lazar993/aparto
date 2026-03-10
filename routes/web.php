@@ -23,6 +23,8 @@ Route::get('/apartments', [FrontendController::class, 'list'])->name('apartments
 Route::get('/apartments/popular', [FrontendController::class, 'popular'])->name('apartments.popular');
 Route::get('/apartments/reviewed', [FrontendController::class, 'reviewed'])->name('apartments.reviewed');
 Route::get('/apartments/{id}', [FrontendController::class, 'show'])->name('apartments.show');
+Route::get('/contact', [FrontendController::class, 'contact'])->name('contact.show');
+Route::post('/contact', [FrontendController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/pages/{slug}', [FrontendController::class, 'page'])
 	->where('slug', '[A-Za-z0-9\-]+')
 	->name('pages.show');
@@ -148,6 +150,11 @@ Route::get('/osm/search', function (Request $request) {
 
 Route::post('/apartments/{apartment}/reserve', [ReservationController::class, 'store'])
     ->name('reserve');
+
+Route::middleware('auth')->group(function () {
+	Route::get('/my-reservations', [ReservationController::class, 'myReservations'])
+		->name('reservations.mine');
+});
 
 Route::get('/test-payments', [TestPaymentController::class, 'index'])
 	->name('test.payments.index');

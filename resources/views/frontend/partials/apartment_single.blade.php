@@ -73,9 +73,12 @@
             </div>
 
             @if($reviews->count() > 0)
-                <div class="aparto-reviews-list">
+                @php
+                    $reviewsStep = 10;
+                @endphp
+                <div class="aparto-reviews-list" data-reviews-list data-reviews-step="{{ $reviewsStep }}">
                     @foreach($reviews as $review)
-                        <div class="aparto-review-item">
+                        <div class="aparto-review-item {{ $loop->index >= $reviewsStep ? 'is-hidden' : '' }}" data-review-item>
                             <div class="aparto-review-header">
                                 <div class="aparto-review-author">
                                     <strong>{{ $review->user->name }}</strong>
@@ -93,6 +96,13 @@
                         </div>
                     @endforeach
                 </div>
+                @if($reviews->count() > $reviewsStep)
+                    <div class="aparto-reviews-load-more-wrap">
+                        <button type="button" class="aparto-button ghost aparto-reviews-load-more" data-reviews-load-more>
+                            {{ __('frontpage.reviews.show_more') }}
+                        </button>
+                    </div>
+                @endif
             @else
                 <div class="aparto-reviews-empty">
                     <p>{{ __('frontpage.reviews.no_reviews') }}</p>

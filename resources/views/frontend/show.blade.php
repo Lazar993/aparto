@@ -625,6 +625,55 @@
         });
     </script>
     <script>
+        // Reviews load-more (show 10 at a time)
+        document.addEventListener('DOMContentLoaded', function () {
+            var reviewsList = document.querySelector('[data-reviews-list]');
+            var loadMoreButton = document.querySelector('[data-reviews-load-more]');
+
+            if (!reviewsList || !loadMoreButton) {
+                return;
+            }
+
+            var step = parseInt(reviewsList.dataset.reviewsStep || '10', 10);
+            if (!Number.isFinite(step) || step < 1) {
+                step = 10;
+            }
+
+            var reviewItems = Array.from(reviewsList.querySelectorAll('[data-review-item]'));
+
+            function visibleCount() {
+                return reviewItems.filter(function (item) {
+                    return !item.classList.contains('is-hidden');
+                }).length;
+            }
+
+            function refreshButtonState() {
+                if (visibleCount() >= reviewItems.length) {
+                    loadMoreButton.classList.add('is-hidden');
+                    return;
+                }
+
+                loadMoreButton.classList.remove('is-hidden');
+            }
+
+            loadMoreButton.addEventListener('click', function () {
+                var revealed = 0;
+
+                for (var i = 0; i < reviewItems.length && revealed < step; i += 1) {
+                    if (reviewItems[i].classList.contains('is-hidden')) {
+                        reviewItems[i].classList.remove('is-hidden');
+                        revealed += 1;
+                    }
+                }
+
+                refreshButtonState();
+            });
+
+            refreshButtonState();
+        });
+
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             var reserveSection = document.querySelector('.aparto-detail');
             var reserveStash = document.querySelector('[data-reservation-stash]');
