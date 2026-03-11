@@ -207,5 +207,25 @@ return [
     'footer' => [
         'explore' => 'Istražite',
         'pages' => 'Stranice',
+    ],
+    'ai' => [
+        'ask' => 'Pitaj AI',
+        'assistant' => 'AI asistent za stanove',
+        'placeholder' => 'Pitaj AI za stan...',
+        'send' => 'Pošalji',
+        'js' => [
+            'typing' => '🤖 ...',
+            'no_response' => 'Nema odgovora.',
+            'connection_error' => 'Greška pri povezivanju sa AI servisom.',
+            'apartment_fallback_title' => 'Pogledaj stan',
+        ],
+        'responses' => [
+            'not_understood' => 'Izvini, nisam razumeo tvoju poruku. Molim te, pokušaj ponovo sa više detalja o tome šta tražiš.',
+            'missing_city' => 'Molim te, pokušaj ponovo i uključi naziv grada.',
+            'no_results' => 'Nažalost, nisam pronašao nijedan stan koji odgovara tvojim kriterijumima. Možda možeš pokušati sa drugačijim parametrima ili još uvek nema dostupnih stanova.',
+            'found_one' => 'Pronašao sam :count stan za tebe.',
+            'found_few' => 'Pronašao sam :count stana koji odgovaraju tvojim kriterijumima.',
+            'found_many' => 'Pronašao sam :count stanova za tebe.',
+        ],
     ]
 ];

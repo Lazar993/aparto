@@ -26,6 +26,7 @@
             </div>
             <div class="aparto-filter-actions">
                 <button class="aparto-button primary" type="submit">{{ __('frontpage.filters.search') }}</button>
+                <x-ai-chat />
             </div>
         </div>
     </form>

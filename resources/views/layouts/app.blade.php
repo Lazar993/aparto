@@ -19,9 +19,5 @@
     </main>
     @include('layouts.partials.footer')
 
-    @if(app()->getLocale() === 'sr')
-        <x-ai-chat />
-    @endif
-
 </body>
 </html>

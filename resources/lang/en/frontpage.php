@@ -207,5 +207,25 @@ return [
     'footer' => [
         'explore' => 'Explore',
         'pages' => 'Pages',
-    ]
+    ],
+    'ai' => [
+        'ask' => 'Ask AI',
+        'assistant' => 'AI apartment assistant',
+        'placeholder' => 'Ask AI about apartments...',
+        'send' => 'Send',
+        'js' => [
+            'typing' => '🤖 ...',
+            'no_response' => 'No response.',
+            'connection_error' => 'Error connecting to AI service.',
+            'apartment_fallback_title' => 'View apartment',
+        ],
+        'responses' => [
+            'not_understood' => 'Sorry, I did not understand your message. Please try again with a few more details about what you are looking for.',
+            'missing_city' => 'Please try again and include the city name.',
+            'no_results' => 'Unfortunately, I could not find any apartments that match your criteria. Try different filters or check again later for new availability.',
+            'found_one' => 'I found :count apartment for you.',
+            'found_few' => 'I found :count apartments that match your criteria.',
+            'found_many' => 'I found :count apartments for you.',
+        ],
+    ],
 ];

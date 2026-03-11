@@ -1331,18 +1331,30 @@
 }
 
 .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--city {
-    grid-column: span 4;
+    grid-column: span 5;
 }
 
 .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--checkin,
 .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-field--checkout {
-    grid-column: span 3;
+    grid-column: span 2;
 }
 
 .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-actions {
-    grid-column: span 2;
-    justify-content: center;
+    grid-column: span 3;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
 
+}
+
+.aparto-filter--home-simple .aparto-filter-actions .aparto-button {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.aparto-filter--home-simple .aparto-filter-actions #ai-chat-open {
+    flex: 0 0 auto;
+    min-width: 150px;
 }
 
 .aparto-filter-advanced {
@@ -1513,10 +1525,11 @@
     .aparto-filter--home-simple .aparto-filter-primary .aparto-filter-actions {
         grid-column: span 2;
         justify-content: stretch;
+        gap: 10px;
     }
 
     .aparto-filter--home-simple .aparto-filter-actions .aparto-button {
-        width: 100%;
+        width: auto;
     }
 }
 
@@ -1663,46 +1676,107 @@
     }
 }
 
-/* Floating AI Chat Button */
+/* Homepage AI Chat Trigger */
 #ai-chat-open {
-    position: fixed;
-    right: 1.2rem;
-    bottom: 1.2rem;
-    z-index: 60;
+    position: relative;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.6rem;
-    padding: 0.65rem 1.1rem;
-    min-width: 110px;
+    padding: 0.7rem 1rem;
+    min-width: 150px;
     border-radius: 9999px;
-    background: linear-gradient(135deg, #60A5FA, #3B82F6);
+    background: linear-gradient(120deg, #0ea5e9 0%, #2563eb 50%, #4338ca 100%);
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(37, 99, 235, 0.45);
     font-weight: 700;
-    font-size: 0.95rem;
-    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25);
-    transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    font-size: 0.93rem;
+    letter-spacing: 0.2px;
+    box-shadow: 0 14px 32px rgba(37, 99, 235, 0.3);
+    transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
     cursor: pointer;
-    animation: aiPulse 4s ease-in-out infinite;
+    overflow: hidden;
 }
 
 #ai-chat-open .ai-icon {
-    font-size: 18px;
+    font-size: 17px;
+    line-height: 1;
+    animation: aiSparkle 1.6s ease-in-out infinite;
+}
+
+#ai-chat-open .ai-text {
+    white-space: nowrap;
     line-height: 1;
 }
 
+#ai-chat-open::before {
+    content: "";
+    position: absolute;
+    inset: -16px;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(circle at 30% 30%, rgba(125, 211, 252, 0.65), transparent 50%),
+        radial-gradient(circle at 75% 70%, rgba(99, 102, 241, 0.45), transparent 52%);
+    filter: blur(16px);
+    animation: aiButtonGlow 4s ease-in-out infinite;
+}
+
+#ai-chat-open::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -45%;
+    width: 36%;
+    height: 100%;
+    transform: skewX(-18deg);
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+    animation: aiButtonShine 2.8s ease-in-out infinite;
+}
+
 #ai-chat-open:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 20px 45px rgba(37, 99, 235, 0.35);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 22px 46px rgba(37, 99, 235, 0.38);
+    filter: saturate(1.08);
 }
 
-#ai-chat-open.hidden {
-    opacity: 0;
-    pointer-events: none;
+#ai-chat-open:active {
+    transform: translateY(0) scale(0.99);
 }
 
-/* Pulse animation */
-@keyframes aiPulse {
+#ai-chat-open:focus-visible {
+    outline: 2px solid rgba(125, 211, 252, 0.9);
+    outline-offset: 3px;
+}
+
+@keyframes aiButtonGlow {
+
+    0%,
+    100% {
+        opacity: 0.65;
+        transform: scale(0.98);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.04);
+    }
+}
+
+@keyframes aiButtonShine {
+
+    0%,
+    25% {
+        left: -45%;
+    }
+
+    60%,
+    100% {
+        left: 135%;
+    }
+}
+
+@keyframes aiSparkle {
 
     0%,
     100% {
@@ -1710,20 +1784,14 @@
     }
 
     50% {
-        transform: scale(1.05);
+        transform: scale(1.12) rotate(-6deg);
     }
 }
 
-/* Responsive text */
 @media (max-width: 640px) {
-    #ai-chat-open .ai-text {
-        display: none;
-        /* sakrije tekst na mobilnom, ostaje samo ikona */
-    }
-
     #ai-chat-open {
-        padding: 0.5rem 0.8rem;
-        min-width: 50px;
+        min-width: 0;
+        padding: 0.65rem 0.75rem;
         font-size: 0.85rem;
     }
 }
@@ -2018,7 +2086,6 @@
 .aparto-contact-section {
     max-width: 860px;
     margin: 30px auto 0;
-    padding: 0 24px;
 }
 
 .aparto-contact-card {

@@ -66,27 +66,27 @@ class OpenAiService
 
     public function parseReservationIntent(string $message): array
     {
-        $system = 'Izvlačiš strukturirane podatke za rezervaciju apartmana.';
         $today = now();
         $todayDate = $today->toDateString();
         $currentYear = $today->year;
         $nextYear = $today->copy()->addYear()->year;
         $guestNumber = $this->extractGuestNumber($message);
+        $locale = app()->getLocale();
+
+        $languageContext = $this->intentLanguageContext($locale, $todayDate, $currentYear, $nextYear);
+        $system = $languageContext['system'];
+        $intro = $languageContext['intro'];
+        $rules = $languageContext['rules'];
+        $guestHint = $languageContext['guest_hint'];
+        $messageLabel = $languageContext['message_label'];
 
         $prompt = <<<PROMPT
-            Izvlači podatke o rezervaciji iz sledeće poruke.
-            Vrati samo JSON sa sledećim ključevima: city, date_from, date_to, max_price, guests. 
+            {$intro}
+            {$rules}
 
-            Datum mora biti u formatu YYYY-MM-DD. Ako nešto nedostaje, vrati null.
-            Današnji datum je {$todayDate}.
-            Ako korisnik ne navede godinu (npr. "9.3"), koristi {$currentYear}.
-            Ako bi tako dobijeni datum bio pre današnjeg datuma, koristi {$nextYear}.
+            {$guestHint}: {$guestNumber}
 
-            Broj gostiju: {$guestNumber} (ako je naveden u poruci, inače null).
-
-            Ne vraćaj nikakva objašnjenja, samo JSON!!!
-
-            Poruka: 
+            {$messageLabel}:
             "$message"
             PROMPT; 
 
@@ -115,11 +115,38 @@ class OpenAiService
 
     private function extractGuestNumber(string $message): ?int
     {
-        if (preg_match('/\b(\d+)\s*(guests?|people|persons|gosta|gostiju|osoba|ljudi)\b/i', $message, $matches)) {
+        if (preg_match('/\b(\d+)\s*(guests?|people|persons|gosta|gostiju|osoba|ljudi|гостей|гостя|гость|человек|человека|персон|людей)\b/iu', $message, $matches)) {
             return (int) $matches[1];
         }
 
         return null;
+    }
+
+    private function intentLanguageContext(string $locale, string $todayDate, int $currentYear, int $nextYear): array
+    {
+        return match ($locale) {
+            'en' => [
+                'system' => 'You extract structured apartment reservation data.',
+                'intro' => 'Extract reservation information from the message below. Return only JSON with keys: city, date_from, date_to, max_price, guests.',
+                'rules' => "Date format must be YYYY-MM-DD. If a value is missing, return null.\nToday is {$todayDate}. If user does not specify a year (e.g. \"9.3\"), use {$currentYear}. If that date is before today, use {$nextYear}.\nDo not return any explanation, only JSON.",
+                'guest_hint' => 'Detected guest count (if present in message, otherwise null)',
+                'message_label' => 'Message',
+            ],
+            'ru' => [
+                'system' => 'Ты извлекаешь структурированные данные для бронирования апартаментов.',
+                'intro' => 'Извлеки данные бронирования из сообщения ниже. Верни только JSON с ключами: city, date_from, date_to, max_price, guests.',
+                'rules' => "Формат даты: YYYY-MM-DD. Если значение отсутствует, верни null.\nСегодня {$todayDate}. Если пользователь не указал год (например, \"9.3\"), используй {$currentYear}. Если такая дата уже прошла, используй {$nextYear}.\nНе добавляй объяснений, только JSON.",
+                'guest_hint' => 'Количество гостей (если указано в сообщении, иначе null)',
+                'message_label' => 'Сообщение',
+            ],
+            default => [
+                'system' => 'Izvlačiš strukturirane podatke za rezervaciju apartmana.',
+                'intro' => 'Izvlači podatke o rezervaciji iz sledeće poruke. Vrati samo JSON sa ključevima: city, date_from, date_to, max_price, guests.',
+                'rules' => "Datum mora biti u formatu YYYY-MM-DD. Ako nešto nedostaje, vrati null.\nDanašnji datum je {$todayDate}. Ako korisnik ne navede godinu (npr. \"9.3\"), koristi {$currentYear}. Ako je taj datum pre današnjeg datuma, koristi {$nextYear}.\nNe vraćaj objašnjenja, samo JSON.",
+                'guest_hint' => 'Broj gostiju (ako je naveden u poruci, inače null)',
+                'message_label' => 'Poruka',
+            ],
+        };
     }
 
 
