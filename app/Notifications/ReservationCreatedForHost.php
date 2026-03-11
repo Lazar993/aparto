@@ -28,22 +28,22 @@ class ReservationCreatedForHost extends Notification implements ShouldQueue
         $reservation->loadMissing('apartment');
         $apartment = $reservation->apartment;
 
-        $apartmentTitle = $apartment?->title ?? ('Apartment #' . $reservation->apartment_id);
+        $apartmentTitle = $apartment?->title ?? ('Stan #' . $reservation->apartment_id);
 
         $adminReservationUrl = $this->resolveAdminReservationUrl($notifiable, $reservation);
 
         return (new MailMessage)
-            ->subject('New Reservation Request - ' . $apartmentTitle)
-            ->greeting('Hello ' . ($notifiable->name ?? 'Host') . '!')
-            ->line('A new reservation request has been submitted for your apartment.')
-            ->line('**Apartment:** ' . $apartmentTitle)
-            ->line('**Guest:** ' . $reservation->name . ' (' . $reservation->email . ')')
-            ->line('**Check-in:** ' . $reservation->date_from->format('F j, Y'))
-            ->line('**Check-out:** ' . $reservation->date_to->format('F j, Y'))
-            ->line('**Nights:** ' . $reservation->nights)
-            ->line('**Total Price:** $' . number_format((float) $reservation->total_price, 2))
-            ->action('Open Reservation in Admin', $adminReservationUrl)
-            ->line('Please review this reservation in your admin panel.');
+            ->subject('Novi zahtev za rezervaciju - ' . $apartmentTitle)
+            ->greeting('Pozdrav ' . ($notifiable->name ?? 'Domaćin') . '!')
+            ->line('Podnet je novi zahtev za rezervaciju vašeg stana.')
+            ->line('**Stan:** ' . $apartmentTitle)
+            ->line('**Gost:** ' . $reservation->name . ' (' . $reservation->email . ')')
+            ->line('**Datum dolaska:** ' . $reservation->date_from->format('F j, Y'))
+            ->line('**Datum odlaska:** ' . $reservation->date_to->format('F j, Y'))
+            ->line('**Noći:** ' . $reservation->nights)
+            ->line('**Ukupna cena:** $' . number_format((float) $reservation->total_price, 2))
+            ->action('Otvori rezervaciju u administraciji', $adminReservationUrl)
+            ->line('Molimo pregledajte ovu rezervaciju u vašem administrativnom panelu.');
     }
 
     protected function resolveAdminReservationUrl($notifiable, Reservation $reservation): string

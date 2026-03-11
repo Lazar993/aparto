@@ -153,6 +153,12 @@ class ReservationController extends Controller
         $depositRate = (float) config('website.deposit_rate', 0.3);
         $deposit = round($total * $depositRate, 2);
 
+        $allowedLocales = ['en', 'sr', 'ru'];
+        $reservationLocale = app()->getLocale();
+        if (! in_array($reservationLocale, $allowedLocales, true)) {
+            $reservationLocale = (string) config('app.locale', 'en');
+        }
+
         // Find or create user (only if user_id column exists in reservations table)
         $userId = null;
         $isNewUser = false;
@@ -195,6 +201,7 @@ class ReservationController extends Controller
             'apartment_id' => $apartment->id,
             'name' => $data['name'],
             'email' => $data['email'],
+            'locale' => $reservationLocale,
             'phone' => $data['phone'],
             'date_from' => $data['date_from'],
             'date_to' => $data['date_to'],

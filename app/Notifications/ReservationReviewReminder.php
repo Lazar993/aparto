@@ -31,12 +31,12 @@ class ReservationReviewReminder extends Notification implements ShouldQueue
         $reviewUrl = route('apartments.show', ['id' => $reservation->apartment_id]);
 
         return (new MailMessage)
-            ->subject('How Was Your Stay? Leave a Review')
-            ->greeting('Hello ' . $reservation->name . '!')
-            ->line('Thank you for staying with us.')
-            ->line('Your stay at **' . $apartmentTitle . '** has ended, and we would love to hear your feedback.')
-            ->line('Your review helps other guests make better booking decisions.')
-            ->action('Leave a Review', $reviewUrl)
-            ->line('Thank you for your time and support.');
+            ->subject(__('notifications.review_reminder.subject'))
+            ->greeting(__('notifications.greeting', ['name' => $reservation->name]))
+            ->line(__('notifications.review_reminder.intro'))
+            ->line(__('notifications.review_reminder.stay_ended', ['apartment' => $apartmentTitle]))
+            ->line(__('notifications.review_reminder.impact'))
+            ->action(__('notifications.review_reminder.action'), $reviewUrl)
+            ->line(__('notifications.review_reminder.outro'));
     }
 }

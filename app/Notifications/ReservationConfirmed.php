@@ -28,28 +28,30 @@ class ReservationConfirmed extends Notification implements ShouldQueue
     {
         $reservation = $this->reservation;
         $apartment = $reservation->apartment;
+        $checkIn = \Carbon\Carbon::parse($reservation->date_from)->translatedFormat('F j, Y');
+        $checkOut = \Carbon\Carbon::parse($reservation->date_to)->translatedFormat('F j, Y');
         
         $message = (new MailMessage)
-            ->subject('Reservation Confirmed - ' . $apartment->title)
-            ->greeting('Hello ' . $reservation->name . '!')
-            ->line('Great news! Your reservation has been confirmed.')
-            ->line('**Apartment:** ' . $apartment->title)
-            ->line('**Check-in:** ' . \Carbon\Carbon::parse($reservation->date_from)->format('F j, Y'))
-            ->line('**Check-out:** ' . \Carbon\Carbon::parse($reservation->date_to)->format('F j, Y'))
-            ->line('**Nights:** ' . $reservation->nights)
-            ->line('**Total Price:** $' . number_format($reservation->total_price, 2))
-            ->line('**Deposit Amount:** $' . number_format($reservation->deposit_amount, 2))
-            ->line('**Balance Due:** $' . number_format(max(0, $reservation->total_price - ($reservation->deposit_amount ?? 0)), 2));
+            ->subject(__('notifications.reservation_confirmed.subject', ['apartment' => $apartment->title]))
+            ->greeting(__('notifications.greeting', ['name' => $reservation->name]))
+            ->line(__('notifications.reservation_confirmed.intro'))
+            ->line('**' . __('notifications.fields.apartment') . ':** ' . $apartment->title)
+            ->line('**' . __('notifications.fields.check_in') . ':** ' . $checkIn)
+            ->line('**' . __('notifications.fields.check_out') . ':** ' . $checkOut)
+            ->line('**' . __('notifications.fields.nights') . ':** ' . $reservation->nights)
+            ->line('**' . __('notifications.fields.total_price') . ':** $' . number_format($reservation->total_price, 2))
+            ->line('**' . __('notifications.fields.deposit_amount') . ':** $' . number_format($reservation->deposit_amount, 2))
+            ->line('**' . __('notifications.fields.balance_due') . ':** $' . number_format(max(0, $reservation->total_price - ($reservation->deposit_amount ?? 0)), 2));
 
         if ($apartment->address) {
             $message->line('')
-                ->line('**Address:** ' . $apartment->address);
+                ->line('**' . __('notifications.fields.address') . ':** ' . $apartment->address);
         }
 
         $message->line('')
-            ->line('We look forward to hosting you!')
-            ->line('If you have any questions or special requests, please don\'t hesitate to contact us.')
-            ->salutation('Best regards, ' . config('app.name'));
+            ->line(__('notifications.reservation_confirmed.outro_one'))
+            ->line(__('notifications.reservation_confirmed.outro_two'))
+            ->salutation(__('notifications.salutation', ['app' => config('app.name')]));
 
         return $message;
     }

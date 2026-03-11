@@ -32,18 +32,20 @@ class ReservationCreated extends Notification implements ShouldQueue
     {
         $reservation = $this->reservation;
         $apartment = $reservation->apartment;
+        $checkIn = \Carbon\Carbon::parse($reservation->date_from)->translatedFormat('F j, Y');
+        $checkOut = \Carbon\Carbon::parse($reservation->date_to)->translatedFormat('F j, Y');
         
         $message = (new MailMessage)
-            ->subject('Reservation Confirmation - ' . $apartment->title)
-            ->greeting('Hello ' . $reservation->name . '!')
-            ->line('Thank you for your reservation request.')
-            ->line('**Apartment:** ' . $apartment->title)
-            ->line('**Check-in:** ' . \Carbon\Carbon::parse($reservation->date_from)->format('F j, Y'))
-            ->line('**Check-out:** ' . \Carbon\Carbon::parse($reservation->date_to)->format('F j, Y'))
-            ->line('**Nights:** ' . $reservation->nights)
-            ->line('**Total Price:** $' . number_format($reservation->total_price, 2))
-            ->line('**Deposit Amount:** $' . number_format($reservation->deposit_amount, 2))
-            ->line('Your reservation is currently pending confirmation. We will review it and get back to you shortly.');
+            ->subject(__('notifications.reservation_created.subject', ['apartment' => $apartment->title]))
+            ->greeting(__('notifications.greeting', ['name' => $reservation->name]))
+            ->line(__('notifications.reservation_created.intro'))
+            ->line('**' . __('notifications.fields.apartment') . ':** ' . $apartment->title)
+            ->line('**' . __('notifications.fields.check_in') . ':** ' . $checkIn)
+            ->line('**' . __('notifications.fields.check_out') . ':** ' . $checkOut)
+            ->line('**' . __('notifications.fields.nights') . ':** ' . $reservation->nights)
+            ->line('**' . __('notifications.fields.total_price') . ':** $' . number_format($reservation->total_price, 2))
+            ->line('**' . __('notifications.fields.deposit_amount') . ':** $' . number_format($reservation->deposit_amount, 2))
+            ->line(__('notifications.reservation_created.pending_notice'));
 
         if ($this->isNewUser && $this->passwordResetToken) {
             $resetUrl = url(route('password.reset', [
@@ -52,19 +54,19 @@ class ReservationCreated extends Notification implements ShouldQueue
             ], false));
             
             $message->line('')
-                ->line('**Welcome! Your Account Has Been Created**')
-                ->line('To access your account and view your reservations, please set your password by clicking the button below:')
-                ->action('Set Your Password', $resetUrl)
-                ->line('This link will expire in 60 minutes.');
+                ->line('**' . __('notifications.reservation_created.account_created_title') . '**')
+                ->line(__('notifications.reservation_created.account_created_intro'))
+                ->action(__('notifications.reservation_created.set_password_action'), $resetUrl)
+                ->line(__('notifications.reservation_created.set_password_expiry'));
         } elseif ($this->isNewUser) {
             // Fallback if no token (shouldn't happen)
             $message->line('')
-                ->line('**Account Created**')
-                ->line('An account has been created for you. Please use the "Forgot Password" option on the login page to set your password.');
+                ->line('**' . __('notifications.reservation_created.account_created_fallback_title') . '**')
+                ->line(__('notifications.reservation_created.account_created_fallback_body'));
         }
 
-        $message->line('If you have any questions, please contact us.')
-            ->salutation('Best regards, ' . config('app.name'));
+        $message->line(__('notifications.reservation_created.outro'))
+            ->salutation(__('notifications.salutation', ['app' => config('app.name')]));
 
         return $message;
     }

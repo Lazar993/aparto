@@ -28,16 +28,18 @@ class ReservationCanceled extends Notification implements ShouldQueue
     {
         $reservation = $this->reservation;
         $apartment = $reservation->apartment;
+        $checkIn = \Carbon\Carbon::parse($reservation->date_from)->translatedFormat('F j, Y');
+        $checkOut = \Carbon\Carbon::parse($reservation->date_to)->translatedFormat('F j, Y');
         
         $message = (new MailMessage)
-            ->subject('Reservation Canceled - ' . $apartment->title)
-            ->greeting('Hello ' . $reservation->name . ',')
-            ->line('Your reservation has been canceled.')
-            ->line('**Apartment:** ' . $apartment->title)
-            ->line('**Check-in:** ' . \Carbon\Carbon::parse($reservation->date_from)->format('F j, Y'))
-            ->line('**Check-out:** ' . \Carbon\Carbon::parse($reservation->date_to)->format('F j, Y'))
-            ->line('If you did not request this cancellation or have any questions, please contact us immediately.')
-            ->salutation('Best regards, ' . config('app.name'));
+            ->subject(__('notifications.reservation_canceled.subject', ['apartment' => $apartment->title]))
+            ->greeting(__('notifications.greeting_comma', ['name' => $reservation->name]))
+            ->line(__('notifications.reservation_canceled.intro'))
+            ->line('**' . __('notifications.fields.apartment') . ':** ' . $apartment->title)
+            ->line('**' . __('notifications.fields.check_in') . ':** ' . $checkIn)
+            ->line('**' . __('notifications.fields.check_out') . ':** ' . $checkOut)
+            ->line(__('notifications.reservation_canceled.outro'))
+            ->salutation(__('notifications.salutation', ['app' => config('app.name')]));
 
         return $message;
     }

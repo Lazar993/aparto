@@ -57,7 +57,8 @@ class SendReservationReviewReminders extends Command
                 }
 
                 try {
-                    $notification = new ReservationReviewReminder($reservation);
+                    $notification = (new ReservationReviewReminder($reservation))
+                        ->locale($this->resolveReservationLocale($reservation));
 
                     if ($reservation->user_id && $reservation->user) {
                         $reservation->user->notify($notification);
@@ -88,5 +89,18 @@ class SendReservationReviewReminders extends Command
         $this->info("Review reminder run completed. Sent: {$sent}, Failed: {$failed}");
 
         return $failed > 0 ? self::FAILURE : self::SUCCESS;
+    }
+
+    private function resolveReservationLocale(Reservation $reservation): string
+    {
+        $allowed = ['en', 'sr', 'ru'];
+        $fallback = (string) config('app.locale', 'en');
+        $locale = (string) ($reservation->locale ?? $fallback);
+
+        if (! in_array($locale, $allowed, true)) {
+            return $fallback;
+        }
+
+        return $locale;
     }
 }

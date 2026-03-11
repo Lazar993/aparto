@@ -36,6 +36,8 @@ class ReservationObserver
 
         // Send reservation created notification
         try {
+            $locale = $this->resolveReservationLocale($reservation);
+
             if ($reservation->user_id) {
                 $user = User::find($reservation->user_id);
                 if ($user) {
@@ -52,7 +54,7 @@ class ReservationObserver
                         $passwordResetToken = app('auth.password.broker')->createToken($user);
                     }
                     
-                    $user->notify(new ReservationCreated($reservation, $isNewUser, $passwordResetToken));
+                    $user->notify((new ReservationCreated($reservation, $isNewUser, $passwordResetToken))->locale($locale));
                     
                     Log::info('ReservationCreated email sent', [
                         'reservation_id' => $reservation->id,
@@ -63,7 +65,7 @@ class ReservationObserver
             } else {
                 // Guest reservation (no user account)
                 \Illuminate\Support\Facades\Notification::route('mail', $reservation->email)
-                    ->notify(new ReservationCreated($reservation, false, null));
+                    ->notify((new ReservationCreated($reservation, false, null))->locale($locale));
                     
                 Log::info('ReservationCreated email sent to guest', [
                     'reservation_id' => $reservation->id,
@@ -145,6 +147,8 @@ class ReservationObserver
                 }
 
                 if ($notification) {
+                    $notification->locale($this->resolveReservationLocale($reservation));
+
                     if ($reservation->user_id) {
                         $user = User::find($reservation->user_id);
                         if ($user) {
@@ -251,5 +255,18 @@ class ReservationObserver
         DB::table('reservations')
             ->where('apartment_id', $apartmentId)
             ->update(['reservations_count' => $count]);
+    }
+
+    private function resolveReservationLocale(Reservation $reservation): string
+    {
+        $allowed = ['en', 'sr', 'ru'];
+        $fallback = (string) config('app.locale', 'en');
+        $locale = (string) ($reservation->locale ?? $fallback);
+
+        if (! in_array($locale, $allowed, true)) {
+            return $fallback;
+        }
+
+        return $locale;
     }
 }
