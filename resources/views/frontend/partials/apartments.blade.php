@@ -1,4 +1,6 @@
 @php
+	$wishlistApartmentIds = array_map('intval', $wishlistApartmentIds ?? []);
+
 	$homepageSections = [
 		[
 			'title' => __('frontpage.homepage_sections.popular'),
@@ -47,12 +49,50 @@
 				<div class="aparto-home-scroll-wrap">
 					<div class="aparto-grid aparto-grid--homepage">
 						@foreach($section['items'] as $apartment)
+							@php
+								$isWishlisted = in_array((int) $apartment->id, $wishlistApartmentIds, true);
+							@endphp
+
 							<article class="aparto-card">
-								<a class="aparto-card-media" href="{{ route('apartments.show', $apartment->id) }}">
-									@if($apartment->lead_image)
-										<img src="{{ asset('storage/' . $apartment->lead_image) }}" alt="{{ $apartment->title }}">
-									@endif
-								</a>
+								<div class="aparto-card-media-wrap">
+									<a class="aparto-card-media" href="{{ route('apartments.show', $apartment->id) }}">
+										@if($apartment->lead_image)
+											<img src="{{ asset('storage/' . $apartment->lead_image) }}" alt="{{ $apartment->title }}">
+										@endif
+									</a>
+
+									<div class="aparto-card-wishlist">
+										@auth
+											<form method="POST" action="{{ route('wishlist.toggle', $apartment->id) }}" class="aparto-wishlist-form">
+												@csrf
+												<input type="hidden" name="redirect_to" value="{{ request()->fullUrl() }}">
+												<button
+													type="submit"
+													class="aparto-wishlist-button {{ $isWishlisted ? 'is-active' : '' }}"
+													data-wishlist-button
+													data-wishlisted="{{ $isWishlisted ? '1' : '0' }}"
+													data-icon-empty="{{ asset('images/icons/heart-empty.svg') }}"
+													data-icon-full="{{ asset('images/icons/heart-full.svg') }}"
+													data-label-add="{{ __('frontpage.card.add_to_wishlist') }}"
+													data-label-remove="{{ __('frontpage.card.remove_from_wishlist') }}"
+													aria-label="{{ $isWishlisted ? __('frontpage.card.remove_from_wishlist') : __('frontpage.card.add_to_wishlist') }}"
+													title="{{ $isWishlisted ? __('frontpage.card.remove_from_wishlist') : __('frontpage.card.add_to_wishlist') }}"
+												>
+													<img src="{{ asset($isWishlisted ? 'images/icons/heart-full.svg' : 'images/icons/heart-empty.svg') }}" alt="" class="aparto-wishlist-icon" aria-hidden="true">
+												</button>
+											</form>
+										@else
+											<a
+												href="{{ route('login', ['redirect' => request()->fullUrl(), 'notice' => 'wishlist']) }}"
+												class="aparto-wishlist-button"
+												aria-label="{{ __('frontpage.card.add_to_wishlist') }}"
+												title="{{ __('frontpage.card.add_to_wishlist') }}"
+											>
+												<img src="{{ asset('images/icons/heart-empty.svg') }}" alt="" class="aparto-wishlist-icon" aria-hidden="true">
+											</a>
+										@endauth
+									</div>
+								</div>
 								<div class="aparto-card-body">
 									<h3 class="aparto-card-title">
 										<a class="aparto-card-title-link" href="{{ route('apartments.show', $apartment->id) }}">

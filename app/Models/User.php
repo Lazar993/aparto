@@ -110,4 +110,21 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Review::class);
     }
+
+    /**
+     * Get all wishlist entries created by the user.
+     */
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    /**
+     * Get all apartments saved in user's wishlist.
+     */
+    public function wishlistApartments()
+    {
+        return $this->belongsToMany(Apartment::class, 'wishlists')
+            ->withPivot('created_at');
+    }
 }

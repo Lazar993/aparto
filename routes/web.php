@@ -3,8 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
-use App\Http\Controllers\{FrontendController, ReservationController, TestPaymentController, AiSearchController, ReviewController};
+use App\Http\Controllers\{FrontendController, ReservationController, TestPaymentController, AiSearchController, ReviewController, WishlistController};
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -152,8 +154,15 @@ Route::post('/apartments/{apartment}/reserve', [ReservationController::class, 's
     ->name('reserve');
 
 Route::middleware('auth')->group(function () {
-	Route::get('/my-reservations', [ReservationController::class, 'myReservations'])
+	Route::get('/my-profile', [ReservationController::class, 'myReservations'])
 		->name('reservations.mine');
+
+	Route::get('/my-reservations', function () {
+		return redirect()->route('reservations.mine');
+	})->name('reservations.mine.legacy');
+
+	Route::post('/wishlist/{apartment}/toggle', [WishlistController::class, 'toggle'])
+		->name('wishlist.toggle');
 });
 
 Route::get('/test-payments', [TestPaymentController::class, 'index'])
@@ -169,12 +178,59 @@ Route::post('/ai-search', [AiSearchController::class, 'search'])
 Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
 # Authentication routes
-Route::get('/login', function () {
+Route::get('/login', function (Request $request) {
     if (auth()->check()) {
         return redirect()->route('home');
     }
+
+	$redirect = trim((string) $request->query('redirect', ''));
+	if ($redirect !== '') {
+		$host = parse_url($redirect, PHP_URL_HOST);
+
+		if ($host === null || $host === $request->getHost()) {
+			$request->session()->put('url.intended', $redirect);
+		}
+	}
+
     return view('auth.login');
 })->name('login');
+
+Route::get('/register', function (Request $request) {
+	if (auth()->check()) {
+		return redirect()->route('home');
+	}
+
+	$redirect = trim((string) $request->query('redirect', ''));
+	if ($redirect !== '') {
+		$host = parse_url($redirect, PHP_URL_HOST);
+
+		if ($host === null || $host === $request->getHost()) {
+			$request->session()->put('url.intended', $redirect);
+		}
+	}
+
+	return view('auth.register');
+})->name('register');
+
+Route::post('/register', function (Request $request) {
+	$data = $request->validate([
+		'name' => ['required', 'string', 'max:120'],
+		'email' => ['required', 'email', 'max:160', 'unique:users,email'],
+		'password' => ['required', 'string', 'min:8', 'confirmed'],
+	]);
+
+	$user = User::create([
+		'name' => $data['name'],
+		'email' => $data['email'],
+		'password' => Hash::make($data['password']),
+		'user_type' => User::TYPE_FRONT,
+	]);
+
+	auth()->login($user);
+	$request->session()->regenerate();
+
+	return redirect()->intended('/');
+})->name('register.post');
 
 Route::post('/login', function (Request $request) {
     $credentials = $request->validate([

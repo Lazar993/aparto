@@ -81,6 +81,8 @@ return [
         'price_prefix' => 'Od',
         'price_suffix' => 'po noćenju',
         'details' => 'Detalji',
+        'add_to_wishlist' => 'Dodaj u listu želja',
+        'remove_from_wishlist' => 'Ukloni iz liste želja',
     ],
     'contact' => [
         'title' => 'Isplanirajte boravak',
@@ -165,6 +167,7 @@ return [
     'my_reservations' => [
         'title' => 'Moje rezervacije',
         'subtitle' => 'Pregled svih zahteva za rezervaciju povezanih sa vašim nalogom.',
+        'reservations_title' => 'Rezervacije',
         'empty_title' => 'Još nemate rezervacije',
         'empty_subtitle' => 'Kada rezervišete stan, prikazaće se ovde.',
         'browse_apartments' => 'Pogledaj stanove',
@@ -178,6 +181,10 @@ return [
         'status_pending' => 'Na čekanju',
         'status_confirmed' => 'Potvrđena',
         'status_canceled' => 'Otkazana',
+        'wishlist_title' => 'Lista želja',
+        'wishlist_subtitle' => 'Sačuvani stanovi kojima se možete vratiti u svakom trenutku.',
+        'wishlist_empty_title' => 'Lista želja je prazna',
+        'wishlist_empty_subtitle' => 'Kliknite na srce na kartici stana da biste ga sačuvali ovde.',
     ],
     'gallery' => [
         'show' => 'Prikaži galeriju',
@@ -227,5 +234,8 @@ return [
             'found_few' => 'Pronašao sam :count stana koji odgovaraju tvojim kriterijumima.',
             'found_many' => 'Pronašao sam :count stanova za tebe.',
         ],
-    ]
+    ],
+    'auth' => [
+        'wishlist_notice' => 'Da biste sačuvali stan u listu želja, prvo se prijavite ili napravite nalog.',
+    ],
 ];

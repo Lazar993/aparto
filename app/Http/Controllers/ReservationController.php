@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\Apartment;
 use App\Models\Reservation;
 use App\Models\User;
+use App\Models\Wishlist;
 use Carbon\Carbon;
 
 class ReservationController extends Controller
@@ -30,7 +31,25 @@ class ReservationController extends Controller
             ->orderByDesc('created_at')
             ->paginate(config('website.apartments_per_page'));
 
-        return view('frontend.my-reservations', compact('reservations'));
+        $wishlistApartmentIds = Wishlist::query()
+            ->where('user_id', (int) $user->id)
+            ->pluck('apartment_id')
+            ->map(static fn ($id) => (int) $id)
+            ->all();
+
+        $wishlistApartments = Apartment::query()
+            ->withCount(['approvedReviews as reviews_count'])
+            ->withAvg('approvedReviews as average_rating', 'rating')
+            ->join('wishlists', function ($join) use ($user) {
+                $join->on('apartments.id', '=', 'wishlists.apartment_id')
+                    ->where('wishlists.user_id', '=', (int) $user->id);
+            })
+            ->where('apartments.active', true)
+            ->select('apartments.*')
+            ->orderByDesc('wishlists.created_at')
+            ->paginate((int) config('website.apartments_per_page', 12), ['apartments.*'], 'wishlist_page');
+
+        return view('frontend.my-profile', compact('reservations', 'wishlistApartments', 'wishlistApartmentIds'));
     }
 
     public function store(Request $request, Apartment $apartment)

@@ -74,6 +74,16 @@ class Apartment extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function wishlistedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'wishlists');
+    }
+
     public function isAvailable($from, $to)
     {
         // Check if dates are blocked

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ApartmentListRequest;
 use App\Models\Contact;
-use App\Models\{Apartment, Page, Reservation, Review};
+use App\Models\{Apartment, Page, Reservation, Review, Wishlist};
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -246,7 +246,9 @@ class FrontendController extends Controller
             ->orderBy('city')
             ->pluck('city');
 
-        return view('frontend.index', compact('popularApartments', 'bestRatedApartments', 'newestApartments', 'cities', 'homepageStats'));
+        $wishlistApartmentIds = $this->getWishlistApartmentIdsForCurrentUser();
+
+        return view('frontend.index', compact('popularApartments', 'bestRatedApartments', 'newestApartments', 'cities', 'homepageStats', 'wishlistApartmentIds'));
     }
 
     private function homepageApartmentBaseQuery(): Builder
@@ -442,13 +444,28 @@ class FrontendController extends Controller
             ->orderBy('city')
             ->pluck('city');
 
+        $wishlistApartmentIds = $this->getWishlistApartmentIdsForCurrentUser();
+
         if ($request->ajax()) {
-            $html = view('frontend.partials.apartments-results', compact('apartments'))->render();
+            $html = view('frontend.partials.apartments-results', compact('apartments', 'wishlistApartmentIds'))->render();
 
             return response()->json(['html' => $html]);
         }
 
-        return view('frontend.apartments', compact('apartments', 'cities', 'pageTitle', 'pageSubtitle', 'filterAction', 'resetUrl'));
+        return view('frontend.apartments', compact('apartments', 'cities', 'pageTitle', 'pageSubtitle', 'filterAction', 'resetUrl', 'wishlistApartmentIds'));
+    }
+
+    private function getWishlistApartmentIdsForCurrentUser(): array
+    {
+        if (! auth()->check()) {
+            return [];
+        }
+
+        return Wishlist::query()
+            ->where('user_id', (int) auth()->id())
+            ->pluck('apartment_id')
+            ->map(static fn ($id) => (int) $id)
+            ->all();
     }
 
     private function applyApartmentListFilters(Builder $query, array $filters): void

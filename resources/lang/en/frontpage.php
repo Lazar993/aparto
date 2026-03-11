@@ -81,6 +81,8 @@ return [
         'price_prefix' => 'From',
         'price_suffix' => 'per night',
         'details' => 'View details',
+        'add_to_wishlist' => 'Add to wishlist',
+        'remove_from_wishlist' => 'Remove from wishlist',
     ],
     'contact' => [
         'title' => 'Plan your stay',
@@ -165,6 +167,7 @@ return [
     'my_reservations' => [
         'title' => 'My reservations',
         'subtitle' => 'View all reservation requests linked to your account.',
+        'reservations_title' => 'Reservations',
         'empty_title' => 'No reservations yet',
         'empty_subtitle' => 'When you reserve an apartment, it will appear here.',
         'browse_apartments' => 'Browse apartments',
@@ -178,6 +181,10 @@ return [
         'status_pending' => 'Pending',
         'status_confirmed' => 'Confirmed',
         'status_canceled' => 'Canceled',
+        'wishlist_title' => 'Wishlist',
+        'wishlist_subtitle' => 'Saved apartments you can come back to anytime.',
+        'wishlist_empty_title' => 'Your wishlist is empty',
+        'wishlist_empty_subtitle' => 'Tap the heart on any apartment card to save it here.',
     ],
     'gallery' => [
         'show' => 'Show gallery',
@@ -227,5 +234,8 @@ return [
             'found_few' => 'I found :count apartments that match your criteria.',
             'found_many' => 'I found :count apartments for you.',
         ],
+    ],
+    'auth' => [
+        'wishlist_notice' => 'To save apartments to wishlist, please login or create an account first.',
     ],
 ];
