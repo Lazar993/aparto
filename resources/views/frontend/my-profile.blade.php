@@ -69,7 +69,7 @@
             @endif
         </div>
 
-        <div class="aparto-reservations-block">
+        <div class="aparto-reservations-block" data-profile-wishlist-section>
             <h1 class="aparto-section-title">{{ __('frontpage.my_reservations.wishlist_title') }}</h1>
             <p class="aparto-hero-subtitle">{{ __('frontpage.my_reservations.wishlist_subtitle') }}</p>
 
@@ -80,10 +80,18 @@
                     <a href="{{ route('apartments.index') }}" class="aparto-button primary">{{ __('frontpage.my_reservations.browse_apartments') }}</a>
                 </div>
             @else
-                @include('frontend.partials.apartments-results', [
-                    'apartments' => $wishlistApartments,
-                    'wishlistApartmentIds' => $wishlistApartmentIds,
-                ])
+                <div data-profile-wishlist-results>
+                    @include('frontend.partials.apartments-results', [
+                        'apartments' => $wishlistApartments,
+                        'wishlistApartmentIds' => $wishlistApartmentIds,
+                    ])
+                </div>
+
+                <div class="aparto-empty aparto-reservations-empty" data-profile-wishlist-empty style="display: none;">
+                    <h3 class="aparto-card-title">{{ __('frontpage.my_reservations.wishlist_empty_title') }}</h3>
+                    <p class="aparto-hero-subtitle">{{ __('frontpage.my_reservations.wishlist_empty_subtitle') }}</p>
+                    <a href="{{ route('apartments.index') }}" class="aparto-button primary">{{ __('frontpage.my_reservations.browse_apartments') }}</a>
+                </div>
             @endif
         </div>
     </section>

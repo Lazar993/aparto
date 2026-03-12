@@ -68,8 +68,36 @@ document.addEventListener('submit', async function (event) {
         if (nextIcon) {
             icon.setAttribute('src', nextIcon);
         }
+
+        const profileWishlistSection = form.closest('[data-profile-wishlist-section]');
+
+        if (profileWishlistSection && !isWishlisted) {
+            const card = form.closest('.aparto-card');
+            if (card) {
+                card.remove();
+            }
+
+            const hasAnyWishlistCard = profileWishlistSection.querySelector('.aparto-card') !== null;
+
+            if (!hasAnyWishlistCard) {
+                const resultsWrap = profileWishlistSection.querySelector('[data-profile-wishlist-results]');
+                const emptyState = profileWishlistSection.querySelector('[data-profile-wishlist-empty]');
+
+                if (resultsWrap) {
+                    resultsWrap.style.display = 'none';
+                }
+
+                if (emptyState) {
+                    emptyState.style.display = 'grid';
+                }
+            }
+        }
     } catch (error) {
-        form.submit();
+        const profileWishlistSection = form.closest('[data-profile-wishlist-section]');
+
+        if (!profileWishlistSection) {
+            form.submit();
+        }
     } finally {
         button.disabled = false;
         button.dataset.loading = '0';
