@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use App\Models\Apartment;
 use App\Models\Reservation;
 use App\Models\User;
@@ -146,103 +148,107 @@ class ReservationController extends Controller
             ])->withInput();
         }
 
-        if (! $apartment->isAvailable($data['date_from'], $data['date_to'])) {
-            return back()->withErrors([
-                'date_from' => __('frontpage.reservation.validation.unavailable'),
-            ])->withInput();
-        }
-
-        // Check minimum nights requirement
-        if ($apartment->min_nights && $days < $apartment->min_nights) {
-            Log::warning('Minimum nights not met', [
-                'apartment_id' => $apartment->id,
-                'required_nights' => $apartment->min_nights,
-                'selected_nights' => $days,
-            ]);
-            
-            return back()->withErrors([
-                'date_to' => __('frontpage.reservation.validation.min_nights', ['min' => $apartment->min_nights]) 
-                    . ' ' . __('You selected :selected nights.', ['selected' => $days]),
-            ])->withInput();
-        }
-
-        // Calculate price using the new method that considers custom pricing and discounts
-        $priceDetails = $apartment->calculatePrice($data['date_from'], $data['date_to']);
-        $total = $priceDetails['total'];
-        $depositRate = (float) config('website.deposit_rate', 0.3);
-        $deposit = round($total * $depositRate, 2);
-
         $allowedLocales = ['en', 'sr', 'ru'];
         $reservationLocale = app()->getLocale();
         if (! in_array($reservationLocale, $allowedLocales, true)) {
             $reservationLocale = (string) config('app.locale', 'en');
         }
 
-        // Find or create user (only if user_id column exists in reservations table)
-        $userId = null;
-        $isNewUser = false;
-        $passwordResetToken = null;
-        
         try {
-            // Check if user_id column exists by checking the fillable array includes it
-            if (in_array('user_id', (new Reservation)->getFillable())) {
-                $user = User::where('email', $data['email'])->first();
+            $reservation = DB::transaction(function () use ($apartment, $data, $days, $reservationLocale) {
+                // Lock apartment row so two checkout requests for the same apartment cannot pass availability together.
+                $lockedApartment = Apartment::query()
+                    ->whereKey($apartment->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
-                if (!$user) {
-                    // Create new user with random password (without firing events to prevent duplicate emails)
-                    $user = User::withoutEvents(function () use ($data) {
-                        return User::create([
-                            'name' => $data['name'],
-                            'email' => $data['email'],
-                            'password' => Hash::make(Str::random(32)), // Random password
-                        ]);
-                    });
-
-                    $isNewUser = true;
-                    
-                    // Generate password reset token for new users
-                    $passwordResetToken = app('auth.password.broker')->createToken($user);
-                    Log::info('Password reset token generated for new user', [
-                        'user_email' => $user->email,
-                        'user_id' => $user->id,
-                        'token_generated' => !empty($passwordResetToken),
+                if (! $lockedApartment->isAvailable($data['date_from'], $data['date_to'])) {
+                    throw ValidationException::withMessages([
+                        'date_from' => __('frontpage.reservation.validation.unavailable'),
                     ]);
                 }
 
-                $userId = $user->id;
-            }
-        } catch (\Exception $e) {
-            // If user creation fails, continue without user_id
-            Log::warning('Failed to create user for reservation: ' . $e->getMessage());
+                if ($lockedApartment->min_nights && $days < $lockedApartment->min_nights) {
+                    Log::warning('Minimum nights not met', [
+                        'apartment_id' => $lockedApartment->id,
+                        'required_nights' => $lockedApartment->min_nights,
+                        'selected_nights' => $days,
+                    ]);
+
+                    throw ValidationException::withMessages([
+                        'date_to' => __('frontpage.reservation.validation.min_nights', ['min' => $lockedApartment->min_nights])
+                            . ' ' . __('You selected :selected nights.', ['selected' => $days]),
+                    ]);
+                }
+
+                // Calculate price inside transaction to keep it consistent with locked apartment data.
+                $priceDetails = $lockedApartment->calculatePrice($data['date_from'], $data['date_to']);
+                $total = $priceDetails['total'];
+                $depositRate = (float) config('website.deposit_rate', 0.3);
+                $deposit = round($total * $depositRate, 2);
+
+                // Find or create user (only if user_id column exists in reservations table)
+                $userId = null;
+
+                try {
+                    // Check if user_id column exists by checking the fillable array includes it
+                    if (in_array('user_id', (new Reservation)->getFillable())) {
+                        $user = User::where('email', $data['email'])->first();
+
+                        if (!$user) {
+                            // Create new user with random password (without firing events to prevent duplicate emails)
+                            $user = User::withoutEvents(function () use ($data) {
+                                return User::create([
+                                    'name' => $data['name'],
+                                    'email' => $data['email'],
+                                    'password' => Hash::make(Str::random(32)), // Random password
+                                ]);
+                            });
+
+                            $passwordResetToken = app('auth.password.broker')->createToken($user);
+                            Log::info('Password reset token generated for new user', [
+                                'user_email' => $user->email,
+                                'user_id' => $user->id,
+                                'token_generated' => !empty($passwordResetToken),
+                            ]);
+                        }
+
+                        $userId = $user->id;
+                    }
+                } catch (\Exception $e) {
+                    // If user creation fails, continue without user_id
+                    Log::warning('Failed to create user for reservation: ' . $e->getMessage());
+                }
+
+                $reservationData = [
+                    'apartment_id' => $lockedApartment->id,
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'locale' => $reservationLocale,
+                    'phone' => $data['phone'],
+                    'date_from' => $data['date_from'],
+                    'date_to' => $data['date_to'],
+                    'nights' => $days,
+                    'price_per_night' => $priceDetails['price_per_night'],
+                    'total_price' => $total,
+                    'deposit_amount' => $deposit,
+                    'note' => $data['note'] ?? null,
+                ];
+
+                if ($userId) {
+                    $reservationData['user_id'] = $userId;
+                }
+
+                return Reservation::create($reservationData);
+            }, 3);
+        } catch (ValidationException $exception) {
+            return back()->withErrors($exception->errors())->withInput();
         }
-
-        $reservationData = [
-            'apartment_id' => $apartment->id,
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'locale' => $reservationLocale,
-            'phone' => $data['phone'],
-            'date_from' => $data['date_from'],
-            'date_to' => $data['date_to'],
-            'nights' => $days,
-            'price_per_night' => $priceDetails['price_per_night'],
-            'total_price' => $total,
-            'deposit_amount' => $deposit,
-            'note' => $data['note'] ?? null,
-        ];
-
-        // Add user_id only if we have one
-        if ($userId) {
-            $reservationData['user_id'] = $userId;
-        }
-
-        // Create reservation - observer will handle email notifications
-        $reservation = Reservation::create($reservationData);
 
         Log::info('Reservation created successfully', [
             'reservation_id' => $reservation->id,
-            'user_id' => $userId,
-            'email' => $reservationData['email'],
+            'user_id' => $reservation->user_id,
+            'email' => $reservation->email,
         ]);
 
         return back()->with('success', __('frontpage.reservation.success'));

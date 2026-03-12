@@ -266,7 +266,8 @@ class FrontendController extends Controller
             ->findOrFail($id);
 
         $reservationRanges = $apartment->reservations()
-            ->where('status', 'confirmed')
+            // Keep frontend picker aligned with backend: only canceled reservations are available again.
+            ->where('status', '!=', 'canceled')
             ->whereNull('deleted_at')
             ->get(['date_from', 'date_to'])
             ->map(function ($reservation) {
@@ -283,7 +284,8 @@ class FrontendController extends Controller
             ->map(function ($blocked) {
                 return [
                     'from' => Carbon::parse($blocked->date_from)->toDateString(),
-                    'to' => Carbon::parse($blocked->date_to)->toDateString(),
+                    // Blocked periods are stored with inclusive end dates, while picker expects exclusive end.
+                    'to' => Carbon::parse($blocked->date_to)->addDay()->toDateString(),
                 ];
             })
             ->values();
@@ -292,9 +294,13 @@ class FrontendController extends Controller
         if ($blockedDates->isEmpty() && !empty($apartment->blocked_dates)) {
             $blockedDates = collect($apartment->blocked_dates)
                 ->map(function ($blocked) {
+                    $from = isset($blocked['from']) ? Carbon::parse($blocked['from'])->toDateString() : null;
+                    $toInclusive = isset($blocked['to']) ? Carbon::parse($blocked['to']) : null;
+
                     return [
-                        'from' => isset($blocked['from']) ? Carbon::parse($blocked['from'])->toDateString() : null,
-                        'to' => isset($blocked['to']) ? Carbon::parse($blocked['to'])->toDateString() : null,
+                        'from' => $from,
+                        // Legacy JSON dates are also inclusive in admin UI.
+                        'to' => $toInclusive ? $toInclusive->addDay()->toDateString() : null,
                     ];
                 })
                 ->filter(function ($blocked) {
