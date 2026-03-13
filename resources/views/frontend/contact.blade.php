@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+    
 @section('content')
     @include('layouts.partials.header')
 
@@ -52,7 +52,7 @@
                 <div class="aparto-contact-captcha">
                     <div class="h-captcha" data-sitekey="{{ config('services.hcaptcha.site_key') }}"></div>
                 </div>
-                <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+                <script src="https://js.hcaptcha.com/1/api.js?hl={{ str_replace('_', '-', app()->getLocale()) }}" async defer></script>
 
                 <button type="submit" class="aparto-button primary">{{ __('frontpage.contact_page.form.submit') }}</button>
             </form>

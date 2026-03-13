@@ -77,11 +77,11 @@ $reservationShouldOpen = session('success') || $errors->any();
                     <span class="aparto-reservation-total-amount" data-reservation-pay-value>{{ config('website.currency') }} 0.00</span>
                 </div>
             </div>
-            <div class="aparto-reservation-captcha-note">{{ __('frontpage.reservation.captcha_note') }}</div>
+            {{-- <div class="aparto-reservation-captcha-note">{{ __('frontpage.reservation.captcha_note') }}</div> --}}
             <div class="aparto-reservation-captcha">
                 <div class="h-captcha" data-sitekey="{{ config('services.hcaptcha.site_key') }}"></div>
             </div>
-            <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+            <script src="https://js.hcaptcha.com/1/api.js?hl={{ str_replace('_', '-', app()->getLocale()) }}" async defer></script>
             <div class="aparto-filter-actions">
                 <button class="aparto-button primary" type="submit">{{ __('frontpage.reservation.submit') }}</button>
                 <button class="aparto-button ghost" type="button" data-reserve-cancel>{{ __('frontpage.reservation.cancel') }}</button>
