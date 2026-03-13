@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
             ->everyFifteenMinutes();
 
         $schedule->command('app:send-review-reminders')
-            ->dailyAt('10:00');
+            ->dailyAt('10:00')->between('09:59', '10:05');
     }
 
     /**
