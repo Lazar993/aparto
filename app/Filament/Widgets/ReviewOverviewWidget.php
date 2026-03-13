@@ -2,12 +2,15 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\AppliesDashboardTimeFilter;
 use App\Models\Review;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ReviewOverviewWidget extends StatsOverviewWidget
 {
+    use AppliesDashboardTimeFilter;
+
     protected static ?int $sort = 3;
 
     protected ?string $heading = 'Reviews';
@@ -26,6 +29,8 @@ class ReviewOverviewWidget extends StatsOverviewWidget
                 $apartmentQuery->where('user_id', auth()->id());
             });
         }
+
+        $query = $this->applyDashboardTimeFilter($query);
 
         $total = (clone $query)->count();
         $approved = (clone $query)->where('status', 'approved')->count();

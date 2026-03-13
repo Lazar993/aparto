@@ -2,12 +2,15 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\AppliesDashboardTimeFilter;
 use App\Models\Apartment;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ApartmentOverviewWidget extends StatsOverviewWidget
 {
+    use AppliesDashboardTimeFilter;
+
     protected static ?int $sort = 1;
 
     protected ?string $heading = 'Apartments';
@@ -25,11 +28,11 @@ class ApartmentOverviewWidget extends StatsOverviewWidget
             $query->where('user_id', auth()->id());
         }
 
+        $query = $this->applyDashboardTimeFilter($query);
+
         $total = (clone $query)->count();
         $active = (clone $query)->where('active', true)->count();
-        $newThisMonth = (clone $query)
-            ->where('created_at', '>=', now()->startOfMonth())
-            ->count();
+        $inactive = (clone $query)->where('active', false)->count();
 
         return [
             Stat::make('Total apartments', (string) $total)
@@ -38,9 +41,9 @@ class ApartmentOverviewWidget extends StatsOverviewWidget
             Stat::make('Active apartments', (string) $active)
                 ->description('Currently visible listings')
                 ->color('success'),
-            Stat::make('New this month', (string) $newThisMonth)
-                ->description('Recently added apartments')
-                ->color('info'),
+            Stat::make('Inactive apartments', (string) $inactive)
+                ->description('Currently hidden listings')
+                ->color('warning'),
         ];
     }
 

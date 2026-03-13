@@ -2,12 +2,15 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\AppliesDashboardTimeFilter;
 use App\Models\Reservation;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ReservationOverviewWidget extends StatsOverviewWidget
 {
+    use AppliesDashboardTimeFilter;
+
     protected static ?int $sort = 2;
 
     protected ?string $heading = 'Reservations';
@@ -26,6 +29,8 @@ class ReservationOverviewWidget extends StatsOverviewWidget
                 $apartmentQuery->where('user_id', auth()->id());
             });
         }
+
+        $query = $this->applyDashboardTimeFilter($query);
 
         $total = (clone $query)->count();
         $pending = (clone $query)->where('status', 'pending')->count();
