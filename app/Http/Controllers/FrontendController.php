@@ -7,6 +7,7 @@ use App\Models\Contact;
 use App\Models\{Apartment, Page, Reservation, Review, Wishlist};
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -356,7 +357,17 @@ class FrontendController extends Controller
             $userCanReview = $hasPastReservation && !$userHasReviewed;
         }
 
-        return view('frontend.show', compact('apartment', 'reservationRanges', 'customPricing', 'reviews', 'userCanReview', 'userHasReviewed'));
+        $reviewLoginUrl = route('apartments.review.entry', ['apartment' => $apartment->getKey()]);
+
+        return view('frontend.show', compact('apartment', 'reservationRanges', 'customPricing', 'reviews', 'userCanReview', 'userHasReviewed', 'reviewLoginUrl'));
+    }
+
+    public function reviewEntry(Apartment $apartment): RedirectResponse
+    {
+        return redirect()->route('apartments.show', [
+            'id' => $apartment->getKey(),
+            'review' => 'write',
+        ]);
     }
 
     public function list(ApartmentListRequest $request)

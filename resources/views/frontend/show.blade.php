@@ -572,6 +572,19 @@
             toggle.dataset.showText = '{{ __('frontpage.reviews.show') }}';
             toggle.dataset.hideText = '{{ __('frontpage.reviews.hide') }}';
 
+            function openReviews() {
+                if (!reviews.classList.contains('is-hidden')) {
+                    return;
+                }
+
+                reviews.classList.remove('is-hidden');
+                toggle.classList.add('is-active');
+                toggle.textContent = toggle.dataset.hideText;
+                reviews.style.animation = 'none';
+                reviews.offsetHeight;
+                reviews.style.animation = '';
+            }
+
             toggle.addEventListener('click', function () {
                 var isHidden = reviews.classList.contains('is-hidden');
                 reviews.classList.toggle('is-hidden');
@@ -583,6 +596,17 @@
                     reviews.style.animation = '';
                 }
             });
+
+            var params = new URLSearchParams(window.location.search);
+            var hasReviewSuccessFlash = @json((bool) session('review_success'));
+
+            if (hasReviewSuccessFlash || params.get('review') === 'write' || window.location.hash === '#reviews') {
+                openReviews();
+
+                requestAnimationFrame(function () {
+                    reviews.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
         });
 
         // Star rating selector

@@ -157,6 +157,9 @@ Route::middleware('auth')->group(function () {
 	Route::get('/my-profile', [ReservationController::class, 'myReservations'])
 		->name('reservations.mine');
 
+	Route::get('/apartments/{apartment}/review', [FrontendController::class, 'reviewEntry'])
+		->name('apartments.review.entry');
+
 	Route::get('/my-reservations', function () {
 		return redirect()->route('reservations.mine');
 	})->name('reservations.mine.legacy');

@@ -48,6 +48,8 @@ return [
         'stay_ended' => 'Your stay at **:apartment** has ended, and we would love to hear your feedback.',
         'impact' => 'Your review helps other guests make better booking decisions.',
         'action' => 'Leave a Review',
+        'already_reviewed' => 'Thank you for choosing :apartment again and for already sharing your review.',
+        'already_reviewed_outro' => 'We hope to welcome you back again soon.',
         'outro' => 'Thank you for your time and support.',
     ],
 ];

@@ -251,7 +251,7 @@ class ReservationController extends Controller
             'email' => $reservation->email,
         ]);
 
-        return back()->with('success', __('frontpage.reservation.success'));
+        return back()->with('reservation_success', __('frontpage.reservation.success'));
     }
 
     private function verifyHcaptchaToken(string $token, string $ip): array

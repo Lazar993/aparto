@@ -1,14 +1,14 @@
 @php
-$reservationShouldOpen = session('success') || $errors->any();
+$reservationShouldOpen = session('reservation_success') || $errors->any();
 @endphp
 <div class="aparto-reservation-stash" data-reservation-stash>
     <div class="aparto-detail-card aparto-reservation-card is-hidden" data-reservation-card data-open="{{ $reservationShouldOpen ? 'true' : 'false' }}">
         <h2 class="aparto-reservation-title">{{ __('frontpage.reservation.title') }}</h2>
         <p class="aparto-hero-subtitle">{{ __('frontpage.reservation.subtitle') }}</p>
 
-        @if(session('success'))
+        @if(session('reservation_success'))
         <div class="aparto-form-message is-success">
-            {{ session('success') }}
+            {{ session('reservation_success') }}
         </div>
         @endif
 

@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Reservation;
+use App\Models\Review;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -28,7 +29,17 @@ class ReservationReviewReminder extends Notification implements ShouldQueue
         $apartment = $reservation->apartment;
 
         $apartmentTitle = $apartment?->title ?? ('Apartment #' . $reservation->apartment_id);
-        $reviewUrl = route('apartments.show', ['id' => $reservation->apartment_id]);
+
+        if ($this->hasAlreadyReviewed($reservation)) {
+            return (new MailMessage)
+                ->subject(__('notifications.review_reminder.subject'))
+                ->greeting(__('notifications.greeting', ['name' => $reservation->name]))
+                ->line(__('notifications.review_reminder.intro'))
+                ->line(__('notifications.review_reminder.already_reviewed', ['apartment' => $apartmentTitle]))
+                ->line(__('notifications.review_reminder.already_reviewed_outro'));
+        }
+
+        $reviewUrl = route('apartments.review.entry', ['apartment' => $reservation->apartment_id]);
 
         return (new MailMessage)
             ->subject(__('notifications.review_reminder.subject'))
@@ -38,5 +49,25 @@ class ReservationReviewReminder extends Notification implements ShouldQueue
             ->line(__('notifications.review_reminder.impact'))
             ->action(__('notifications.review_reminder.action'), $reviewUrl)
             ->line(__('notifications.review_reminder.outro'));
+    }
+
+    private function hasAlreadyReviewed(Reservation $reservation): bool
+    {
+        return Review::query()
+            ->where('apartment_id', $reservation->apartment_id)
+            ->where(function ($query) use ($reservation) {
+                if ($reservation->user_id) {
+                    $query->where('user_id', $reservation->user_id);
+                }
+
+                if (! empty($reservation->email)) {
+                    $emailCondition = $reservation->user_id ? 'orWhereHas' : 'whereHas';
+
+                    $query->{$emailCondition}('user', function ($userQuery) use ($reservation) {
+                        $userQuery->where('email', $reservation->email);
+                    });
+                }
+            })
+            ->exists();
     }
 }

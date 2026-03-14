@@ -48,6 +48,8 @@ return [
         'stay_ended' => 'Vaš boravak u objektu **:apartment** je završen i voleli bismo da čujemo vaše utiske.',
         'impact' => 'Vaša recenzija pomaže drugim gostima da donesu bolju odluku pri rezervaciji.',
         'action' => 'Ostavite recenziju',
+        'already_reviewed' => 'Hvala vam što ste ponovo izabrali :apartment i što ste već ostavili recenziju.',
+        'already_reviewed_outro' => 'Nadamo se da ćemo vas uskoro ponovo ugostiti.',
         'outro' => 'Hvala vam na vremenu i podršci.',
     ],
 ];

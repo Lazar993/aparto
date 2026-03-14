@@ -72,6 +72,12 @@
                 @endif
             </div>
 
+            @if(session('review_success'))
+                <div class="aparto-form-message is-success aparto-review-success-message">
+                    {{ session('review_success') }}
+                </div>
+            @endif
+
             @if($reviews->count() > 0)
                 @php
                     $reviewsStep = 10;
@@ -148,7 +154,10 @@
                     <p class="aparto-review-notice">{{ __('frontpage.reviews.reservation_required') }}</p>
                 @endif
             @else
-                <p class="aparto-review-notice">{{ __('frontpage.reviews.login_required') }}</p>
+                <div class="aparto-review-guest-cta">
+                    <p class="aparto-review-notice">{{ __('frontpage.reviews.login_required') }}</p>
+                    <a href="{{ $reviewLoginUrl }}" class="aparto-button primary">{{ __('frontpage.reviews.login_action') }}</a>
+                </div>
             @endauth
         </div>
         @if($apartment->latitude && $apartment->longitude)

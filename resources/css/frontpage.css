@@ -2093,6 +2093,28 @@
     text-align: center;
 }
 
+.aparto-review-success-message {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.aparto-review-guest-cta {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.aparto-review-guest-cta .aparto-review-notice {
+    margin-top: 0;
+}
+
+.aparto-review-guest-cta .aparto-button {
+    margin-top: 14px;
+    min-width: 220px;
+    text-align: center;
+}
+
 .aparto-error {
     display: block;
     margin-top: 6px;
@@ -2119,6 +2141,15 @@
     .aparto-detail-actions .aparto-button {
         flex: 1 1 auto;
         min-width: 120px;
+    }
+
+    .aparto-review-guest-cta {
+        align-items: stretch;
+    }
+
+    .aparto-review-guest-cta .aparto-button {
+        width: 100%;
+        min-width: 0;
     }
 }
 

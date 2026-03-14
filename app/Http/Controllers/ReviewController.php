@@ -29,7 +29,7 @@ class ReviewController extends Controller
             ->exists();
 
         if (! $hasReservation) {
-            abort(403, __('You are not allowed to review this apartment.'));
+            abort(403, __('frontpage.reviews.not_allowed'));
         }
 
         Review::create([
@@ -40,6 +40,6 @@ class ReviewController extends Controller
             'status' => 'pending',
         ]);
 
-        return back()->with('success', __('Thank you for your review! It will be visible once approved by our team.'));
+        return back()->with('review_success', __('frontpage.reviews.thank_you'));
     }
 }
