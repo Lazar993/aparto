@@ -27,9 +27,21 @@ class CheckPaymentStatus extends Command
      */
     public function handle()
     {
-        Reservation::where('status', 'pending')
+        $reservations = Reservation::where('status', 'pending')
             ->where('created_at', '<', Carbon::now()->subMinutes(30))
-            ->delete();
+            ->get();
+        try {
+            if($reservations) {
+                foreach ($reservations as $reservation) {
+                    $reservation->status = 'cancelled';
+                    $reservation->delete();
+                }
+            }
+            $this->info('Found ' . $reservations->count() . ' pending reservations older than 30 minutes.');
+        } catch (\Exception $e) {
+            $this->error('Error fetching reservations: ' . $e->getMessage());
+            return Command::FAILURE;
+        }
 
         return Command::SUCCESS;
     }
