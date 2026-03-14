@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -539,12 +540,23 @@ class FrontendController extends Controller
         }
     }
 
-    public function page(string $slug)
+    public function page(Request $request, string $locale, string $slug): View
     {
+        $allowedLocales = ['sr', 'en', 'ru'];
+
+        if (in_array($locale, $allowedLocales, true)) {
+            App::setLocale($locale);
+            $request->session()->put('locale', $locale);
+        }
+
         $page = Page::where('is_active', true)
             ->where('slug', $slug)
             ->firstOrFail();
 
-        return view('frontend.page', compact('page'));
+        return view('frontend.page', [
+            'page' => $page,
+            'pageSlug' => $slug,
+            'availableLocales' => $allowedLocales,
+        ]);
     }
 }

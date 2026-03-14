@@ -27,9 +27,21 @@ Route::get('/apartments/reviewed', [FrontendController::class, 'reviewed'])->nam
 Route::get('/apartments/{id}', [FrontendController::class, 'show'])->name('apartments.show');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact.show');
 Route::post('/contact', [FrontendController::class, 'contactSubmit'])->name('contact.submit');
-Route::get('/pages/{slug}', [FrontendController::class, 'page'])
+
+Route::get('/{locale}/pages/{slug}', [FrontendController::class, 'page'])
+	->where('locale', 'sr|en|ru')
 	->where('slug', '[A-Za-z0-9\-]+')
 	->name('pages.show');
+
+Route::get('/pages/{slug}', function (string $slug) {
+	return redirect()->route('pages.show', [
+		'locale' => app()->getLocale(),
+		'slug' => $slug,
+	], 301);
+})
+	->where('slug', '[A-Za-z0-9\-]+')
+	->name('pages.show.legacy');
+
 Route::get('/lang/{locale}', function (string $locale) {
 	$allowed = ['en', 'sr', 'ru'];
 

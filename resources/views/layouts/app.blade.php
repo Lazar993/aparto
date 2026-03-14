@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="{{ __('frontpage.hero.seo_description') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @stack('head')
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- Vite assets -->

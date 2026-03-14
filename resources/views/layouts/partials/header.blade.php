@@ -1,4 +1,15 @@
 <header class="aparto-header aparto-fade-up">
+    @php
+        $currentPageSlug = request()->route('slug');
+        $isLocalizedPage = request()->routeIs('pages.show') && is_string($currentPageSlug) && $currentPageSlug !== '';
+        $switchUrl = static function (string $locale) use ($isLocalizedPage, $currentPageSlug): string {
+            if ($isLocalizedPage) {
+                return route('pages.show', ['locale' => $locale, 'slug' => $currentPageSlug]);
+            }
+
+            return route('locale.switch', $locale);
+        };
+    @endphp
     <div>
         <div class="aparto-brand">
             <a href="{{ route('home') }}">{{ config('app.name') }}</a>
@@ -31,9 +42,9 @@
             </a>
         @endauth
         <div class="aparto-lang">
-            <a href="{{ route('locale.switch', 'sr') }}" class="{{ app()->getLocale() === 'sr' ? 'is-active' : '' }}">SR</a>
-            <a href="{{ route('locale.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'is-active' : '' }}">EN</a>
-            <a href="{{ route('locale.switch', 'ru') }}" class="{{ app()->getLocale() === 'ru' ? 'is-active' : '' }}">RU</a>
+            <a href="{{ $switchUrl('sr') }}" class="{{ app()->getLocale() === 'sr' ? 'is-active' : '' }}">SR</a>
+            <a href="{{ $switchUrl('en') }}" class="{{ app()->getLocale() === 'en' ? 'is-active' : '' }}">EN</a>
+            <a href="{{ $switchUrl('ru') }}" class="{{ app()->getLocale() === 'ru' ? 'is-active' : '' }}">RU</a>
         </div>
     </div>
 </header>

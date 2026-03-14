@@ -18,7 +18,7 @@
                     <div>
                         <h4>{{ __('frontpage.footer.pages') }}</h4>
                         @foreach($pages as $page)
-                            <a href="{{ route('pages.show', $page->slug) }}">{{ $page->title }}</a>
+                            <a href="{{ route('pages.show', ['locale' => app()->getLocale(), 'slug' => $page->slug]) }}">{{ $page->title }}</a>
                         @endforeach
                     </div>
                 @endif
