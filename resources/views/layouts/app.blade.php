@@ -9,7 +9,7 @@
     <meta name="image" content="{{ asset('images/default-image.png') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
 
     <meta property="og:locale" content="sr">
     <meta property="og:site_name" content="Aparto">
