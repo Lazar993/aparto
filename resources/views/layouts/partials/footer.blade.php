@@ -12,7 +12,7 @@
                     <h4>{{ __('frontpage.footer.explore') }}</h4>
                     <a href="{{ route('home') }}">{{ __('frontpage.nav.home') }}</a>
                     <a href="{{ route('apartments.index') }}">{{ __('frontpage.nav.apartments') }}</a>
-                    <a href="{{ route('home') }}#contact">{{ __('frontpage.nav.contact') }}</a>
+                    <a href="{{ route('contact.show') }}">{{ __('frontpage.nav.contact') }}</a>
                 </div>
                 @if(!empty($pages) && $pages->isNotEmpty())
                     <div>
