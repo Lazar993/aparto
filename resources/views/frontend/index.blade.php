@@ -10,6 +10,6 @@
         'bestRatedApartments' => $bestRatedApartments,
         'newestApartments' => $newestApartments,
     ])
-    @include('frontend.partials.info')
+    {{-- @include('frontend.partials.info') --}}
     
 @endsection

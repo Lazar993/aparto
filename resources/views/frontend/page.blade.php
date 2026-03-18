@@ -21,6 +21,6 @@
         </div>
     </section>
 
-    @include('frontend.partials.info')
+    {{-- @include('frontend.partials.info') --}}
     
 @endsection
