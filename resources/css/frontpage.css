@@ -835,6 +835,22 @@
     animation: apartoDescHighlight 0.45s ease;
 }
 
+.aparto-detail-description h2 {
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    line-height: 1.3;
+}
+
+.aparto-detail-description h3 {
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    line-height: 1.4;
+}
+
 .aparto-detail-description ol {
     list-style-type: decimal;
     margin-left: 1.5em;
