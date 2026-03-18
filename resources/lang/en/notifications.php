@@ -52,4 +52,36 @@ return [
         'already_reviewed_outro' => 'We hope to welcome you back again soon.',
         'outro' => 'Thank you for your time and support.',
     ],
+
+    'host_approved' => [
+        'subject' => 'Welcome to :app — Your Host Account Is Ready',
+        'intro' => 'Congratulations! Your request to become a host on :app has been approved.',
+        'account_ready' => 'Your host account has been created. To get started, please set your password by clicking the button below:',
+        'set_password_action' => 'Set Your Password',
+        'set_password_expiry' => 'This link will expire in 60 minutes. If it expires, you can use the "Forgot Password" option on the login page.',
+        'outro' => 'Once you set your password, you can log in to the admin panel and start managing your apartments.',
+    ],
+
+    'host_rejected' => [
+        'subject' => 'Update on Your Host Application - :app',
+        'intro' => 'Thank you for your interest in becoming a host on :app.',
+        'rejection_notice' => 'After careful consideration, we regret to inform you that your application to become a host has not been approved at this time.',
+        'outro' => 'We appreciate the time and effort you put into your application. If you have any questions or would like feedback on your application, please feel free to contact us.',
+    ],
+
+    'host_request_admin' => [
+        'subject' => 'New Host Request from :name',
+        'greeting' => 'Hello Admin!',
+        'intro' => 'A new host request has been submitted.',
+        'fields' => [
+            'name' => 'Name',
+            'email' => 'Email',
+            'phone' => 'Phone',
+            'city' => 'City',
+            'listing_url' => 'Listing URL',
+            'apartments' => 'Number of apartments',
+        ],
+        'action' => 'Review in Admin Panel',
+        'outro' => 'Please review and approve or reject this request.',
+    ],
 ];

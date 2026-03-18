@@ -5,6 +5,7 @@ return [
         'home' => 'Početna',
         'apartments' => 'Stanovi',
         'contact' => 'Kontakt',
+        'become_host' => 'Postani domaćin',
         'my_reservations' => 'Moje rezervacije',
     ],
     'hero' => [
@@ -240,5 +241,29 @@ return [
     ],
     'auth' => [
         'wishlist_notice' => 'Da biste sačuvali stan u listu želja, prvo se prijavite ili napravite nalog.',
+    ],
+    'become_host' => [
+        'title' => 'Postani domaćin',
+        'subtitle' => 'Pošaljite svoje podatke i kontaktiraćemo vas u vezi sa postavljanjem vašeg objekta na našu platformu.',
+        'error_title' => 'Molimo ispravite sledeće greške:',
+        'success' => 'Vaš zahtev je uspešno poslat. Pregledaćemo ga i javiti vam se uskoro.',
+        'send_error' => 'Nismo mogli da pošaljemo vaš zahtev. Molimo pokušajte ponovo.',
+        'form' => [
+            'name' => 'Ime',
+            'email' => 'Email',
+            'phone' => 'Broj telefona',
+            'city' => 'Grad',
+            'listing_url' => 'Link ka Booking ili Airbnb',
+            'listing_url_placeholder' => 'https://www.booking.com/hotel/...',
+            'number_of_apartments' => 'Broj stanova',
+            'submit' => 'Pošalji zahtev',
+        ],
+        'validation' => [
+            'required' => 'Polje :attribute je obavezno.',
+            'email' => 'Molimo unesite validnu email adresu.',
+            'phone' => 'Broj telefona mora imati najmanje 9 cifara.',
+            'url' => 'Molimo unesite validan URL.',
+            'integer' => 'Broj stanova mora biti validan broj.',
+        ],
     ],
 ];

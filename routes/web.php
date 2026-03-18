@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
-use App\Http\Controllers\{FrontendController, ReservationController, TestPaymentController, AiSearchController, ReviewController, WishlistController};
+use App\Http\Controllers\{FrontendController, HostRequestController, ReservationController, TestPaymentController, AiSearchController, ReviewController, WishlistController};
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -27,6 +27,9 @@ Route::get('/apartments/reviewed', [FrontendController::class, 'reviewed'])->nam
 Route::get('/apartments/{id}', [FrontendController::class, 'show'])->name('apartments.show');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact.show');
 Route::post('/contact', [FrontendController::class, 'contactSubmit'])->name('contact.submit');
+
+Route::get('/become-a-host', [HostRequestController::class, 'show'])->name('become-host.show');
+Route::post('/become-a-host', [HostRequestController::class, 'submit'])->name('become-host.submit');
 
 Route::get('/{locale}/pages/{slug}', [FrontendController::class, 'page'])
 	->where('locale', 'sr|en|ru')
@@ -313,6 +316,6 @@ Route::post('/reset-password', function (Request $request) {
     );
 
     return $status === \Illuminate\Support\Facades\Password::PASSWORD_RESET
-        ? redirect()->route('home')->with('status', __($status))
+        ? redirect()->to(auth()->user()?->isHost() ? '/admin' : route('home'))->with('status', __($status))
         : back()->withErrors(['email' => [__($status)]]);
 })->name('password.update');

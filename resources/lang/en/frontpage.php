@@ -5,6 +5,7 @@ return [
         'home' => 'Home',
         'apartments' => 'Apartments',
         'contact' => 'Contact',
+        'become_host' => 'Become a host',
         'my_reservations' => 'My reservations',
     ],
     'hero' => [
@@ -240,5 +241,29 @@ return [
     ],
     'auth' => [
         'wishlist_notice' => 'To save apartments to wishlist, please login or create an account first.',
+    ],
+    'become_host' => [
+        'title' => 'Become a host',
+        'subtitle' => 'Submit your details and we will contact you about listing your property on our platform.',
+        'error_title' => 'Please fix the highlighted issues:',
+        'success' => 'Your request has been submitted successfully. We will review it and get back to you soon.',
+        'send_error' => 'We could not submit your request right now. Please try again in a moment.',
+        'form' => [
+            'name' => 'Name',
+            'email' => 'Email',
+            'phone' => 'Phone number',
+            'city' => 'City',
+            'listing_url' => 'Link to Booking or Airbnb',
+            'listing_url_placeholder' => 'https://www.booking.com/hotel/...',
+            'number_of_apartments' => 'Number of apartments',
+            'submit' => 'Submit request',
+        ],
+        'validation' => [
+            'required' => 'The :attribute field is required.',
+            'email' => 'Please enter a valid email address.',
+            'phone' => 'Phone number must be at least 9 digits.',
+            'url' => 'Please enter a valid URL.',
+            'integer' => 'Number of apartments must be a valid number.',
+        ],
     ],
 ];
