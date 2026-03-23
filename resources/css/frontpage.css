@@ -724,36 +724,62 @@
     display: block;
 }
 
-.aparto-gallery {
-    margin-top: 18px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 18px;
-    background: #f6efe7;
-}
-
-.aparto-gallery.is-hidden {
-    display: none;
-}
-
+/* ── Gallery Toggle ── */
 .aparto-gallery-toggle {
     margin-top: 18px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
-    border-radius: 999px;
-    border: 1px solid var(--aparto-forest);
+    padding: 11px 22px;
+    border-radius: 25px;
+    border: 1.5px solid var(--aparto-forest);
     background: transparent;
     color: var(--aparto-forest);
     font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.aparto-gallery-toggle:hover {
+    background: var(--aparto-forest);
+    color: #fff;
+}
+
+.aparto-gallery-toggle svg {
+    flex-shrink: 0;
+}
+
+.aparto-gallery-toggle-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--aparto-forest);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    transition: all 0.25s ease;
+}
+
+.aparto-gallery-toggle:hover .aparto-gallery-toggle-count {
+    background: #fff;
+    color: var(--aparto-forest);
 }
 
 .aparto-gallery-toggle.is-active {
     background: var(--aparto-forest);
     color: #fff;
-    box-shadow: 0 12px 24px rgba(32, 76, 69, 0.25);
+    box-shadow: 0 8px 24px rgba(32, 76, 69, 0.2);
+}
+
+.aparto-gallery-toggle.is-active .aparto-gallery-toggle-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
 }
 
 .aparto-detail-actions .aparto-button.is-active {
@@ -762,14 +788,49 @@
     box-shadow: 0 12px 24px rgba(32, 76, 69, 0.25);
 }
 
+.aparto-detail-actions .aparto-button.primary[data-reserve-toggle] {
+    background: var(--aparto-ember);
+    color: #fff;
+    font-size: 16px;
+    padding: 13px 28px;
+    box-shadow: 0 8px 24px rgba(164, 91, 60, 0.35);
+    animation: apartoBookPulse 2.5s ease-in-out 3;
+}
+
+.aparto-detail-actions .aparto-button.primary[data-reserve-toggle]:hover {
+    box-shadow: 0 12px 32px rgba(164, 91, 60, 0.45);
+    transform: translateY(-1px);
+}
+
+@keyframes apartoBookPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 8px 24px rgba(164, 91, 60, 0.35);
+    }
+
+    50% {
+        box-shadow: 0 8px 32px rgba(164, 91, 60, 0.55), 0 0 0 6px rgba(164, 91, 60, 0.12);
+    }
+}
+
+/* ── Gallery Container ── */
 .aparto-gallery {
-    animation: apartoGalleryFade 0.35s ease;
+    margin-top: 16px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #f6efe7;
+    animation: apartoGalleryFade 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.aparto-gallery.is-hidden {
+    display: none;
 }
 
 @keyframes apartoGalleryFade {
     from {
         opacity: 0;
-        transform: translateY(6px);
+        transform: translateY(10px);
     }
 
     to {
@@ -778,16 +839,33 @@
     }
 }
 
+/* ── Viewport (slider area) ── */
+.aparto-gallery-viewport {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px 20px 0 0;
+    touch-action: pan-y pinch-zoom;
+}
+
+/* ── Track & Slides ── */
 .aparto-gallery-track {
     display: flex;
-    transition: transform 0.4s ease;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.aparto-gallery-track.is-dragging {
+    transition: none;
+    cursor: grabbing;
 }
 
 .aparto-gallery-slide {
     min-width: 100%;
-    height: 220px;
-    background: linear-gradient(130deg, #f1ded1, #d6ebe6);
+    height: 380px;
+    background: linear-gradient(135deg, #f1ded1, #d6ebe6);
+    position: relative;
 }
 
 .aparto-gallery-slide img {
@@ -795,88 +873,169 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    cursor: pointer;
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
+/* ── Nav Buttons ── */
 .aparto-gallery-button {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 36px;
-    height: 36px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     border: none;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
     color: var(--aparto-forest);
-    font-size: 18px;
     cursor: pointer;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 2;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+}
+
+.aparto-gallery-viewport:hover .aparto-gallery-button,
+.aparto-gallery-button:focus-visible {
+    opacity: 1;
+}
+
+.aparto-gallery-button:hover {
+    background: #fff;
+    transform: translateY(-50%) scale(1.08);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
 }
 
 .aparto-gallery-button.prev {
-    left: 10px;
+    left: 14px;
 }
 
 .aparto-gallery-button.next {
-    right: 10px;
+    right: 14px;
 }
 
-.aparto-gallery-dots {
+/* ── Image Counter (on slider) ── */
+.aparto-gallery-counter {
     position: absolute;
-    left: 50%;
-    bottom: 10px;
-    transform: translateX(-50%);
+    bottom: 14px;
+    right: 14px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    z-index: 2;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+
+/* ── Thumbnail Strip ── */
+.aparto-gallery-thumbs {
     display: flex;
     gap: 6px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 6px 10px;
-    border-radius: 999px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    background: #f6efe7;
 }
 
-.aparto-gallery-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(32, 76, 69, 0.3);
+.aparto-gallery-thumbs::-webkit-scrollbar {
+    display: none;
 }
 
-.aparto-gallery-dot.is-active {
-    background: var(--aparto-forest);
+.aparto-gallery-thumb {
+    flex-shrink: 0;
+    width: 64px;
+    height: 48px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2.5px solid transparent;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: all 0.2s ease;
+    background: none;
 }
 
-/* Lightbox Styles */
+.aparto-gallery-thumb:hover {
+    opacity: 0.85;
+}
+
+.aparto-gallery-thumb.is-active {
+    border-color: var(--aparto-forest);
+    opacity: 1;
+    box-shadow: 0 2px 8px rgba(32, 76, 69, 0.2);
+}
+
+.aparto-gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 7px;
+}
+
+/* ── Lightbox ── */
 .aparto-lightbox {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.95);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.96);
     z-index: 9999;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .aparto-lightbox.is-active {
     display: flex;
+    opacity: 1;
+    animation: apartoLightboxIn 0.3s ease forwards;
+}
+
+@keyframes apartoLightboxIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .aparto-lightbox-content {
     position: relative;
-    max-width: 90vw;
-    max-height: 90vh;
+    max-width: 92vw;
+    max-height: 88vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    touch-action: pan-y pinch-zoom;
 }
 
 .aparto-lightbox-content img {
     max-width: 100%;
-    max-height: 90vh;
+    max-height: 88vh;
     object-fit: contain;
     display: block;
-    border-radius: 8px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .aparto-lightbox-close {
@@ -887,95 +1046,142 @@
     height: 44px;
     border-radius: 50%;
     border: none;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--aparto-forest);
-    font-size: 24px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
     cursor: pointer;
     z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .aparto-lightbox-close:hover {
-    background: #fff;
-    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.08);
 }
 
 .aparto-lightbox-button {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     border: none;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--aparto-forest);
-    font-size: 28px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
     cursor: pointer;
     z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .aparto-lightbox-button:hover {
-    background: #fff;
-    transform: translateY(-50%) scale(1.1);
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-50%) scale(1.08);
 }
 
 .aparto-lightbox-button.prev {
-    left: 30px;
+    left: 24px;
 }
 
 .aparto-lightbox-button.next {
-    right: 30px;
+    right: 24px;
 }
 
 .aparto-lightbox-counter {
     position: absolute;
-    bottom: 30px;
+    bottom: 28px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--aparto-forest);
-    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    padding: 8px 20px;
     border-radius: 999px;
     font-weight: 600;
     font-size: 14px;
     z-index: 10000;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    letter-spacing: 0.04em;
 }
 
+/* ── Gallery Responsive ── */
 @media (max-width: 768px) {
+    .aparto-gallery-toggle {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .aparto-gallery-slide {
+        height: 260px;
+    }
+
+    .aparto-gallery-viewport {
+        border-radius: 16px 16px 0 0;
+    }
+
+    .aparto-gallery-button {
+        width: 36px;
+        height: 36px;
+        opacity: 1;
+    }
+
+    .aparto-gallery-button.prev {
+        left: 10px;
+    }
+
+    .aparto-gallery-button.next {
+        right: 10px;
+    }
+
+    .aparto-gallery-button svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .aparto-gallery-thumb {
+        width: 54px;
+        height: 40px;
+    }
+
     .aparto-lightbox-button {
         width: 40px;
         height: 40px;
-        font-size: 24px;
     }
 
     .aparto-lightbox-button.prev {
-        left: 15px;
+        left: 12px;
     }
 
     .aparto-lightbox-button.next {
-        right: 15px;
+        right: 12px;
+    }
+
+    .aparto-lightbox-button svg {
+        width: 20px;
+        height: 20px;
     }
 
     .aparto-lightbox-close {
-        top: 15px;
-        right: 15px;
+        top: 14px;
+        right: 14px;
         width: 40px;
         height: 40px;
-        font-size: 20px;
     }
 
     .aparto-lightbox-counter {
-        bottom: 20px;
+        bottom: 18px;
         font-size: 12px;
-        padding: 8px 16px;
+        padding: 6px 16px;
     }
 }
 
@@ -1022,6 +1228,51 @@
         font-size: 13px;
         padding: 10px 12px;
     }
+}
+
+/* ── Floating "Book Now" FAB ── */
+.aparto-fab-book {
+    position: fixed;
+    bottom: 28px;
+    right: 20px;
+    z-index: 90;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border: none;
+    border-radius: 999px;
+    background: var(--aparto-ember);
+    color: #fff;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    box-shadow: 0 8px 28px rgba(207, 143, 109, 0.45), 0 2px 8px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s ease;
+}
+
+.aparto-fab-book.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.aparto-fab-book:hover {
+    box-shadow: 0 12px 36px rgba(207, 143, 109, 0.55), 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.aparto-fab-book:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.aparto-fab-book svg {
+    flex-shrink: 0;
 }
 
 .aparto-detail-description {

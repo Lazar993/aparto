@@ -12,7 +12,7 @@
                 @if($host->profile_image)
                     <img src="{{ asset('storage/' . $host->profile_image) }}" alt="{{ $host->name }}">
                 @else
-                    <img src="{{ asset('images/default-profile-image.png') }}" alt="{{ $host->name }}">
+                    <img src="{{ asset('images/default-profile-image.svg') }}" alt="{{ $host->name }}">
                 @endif
             </div>
             <div class="aparto-host-page-info">

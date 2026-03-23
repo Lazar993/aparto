@@ -75,7 +75,7 @@ class ProfileResource extends Resource
                     ->label('Photo')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(asset('images/default-profile-image.png')),
+                    ->defaultImageUrl(asset('images/default-profile-image.svg')),
 
                 Columns\TextColumn::make('name')
                     ->label('Name')
