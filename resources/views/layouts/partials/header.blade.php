@@ -1,13 +1,7 @@
 <header class="aparto-header aparto-fade-up">
     @php
-        $currentPageSlug = request()->route('slug');
-        $isLocalizedPage = request()->routeIs('pages.show') && is_string($currentPageSlug) && $currentPageSlug !== '';
-        $switchUrl = static function (string $locale) use ($isLocalizedPage, $currentPageSlug): string {
-            if ($isLocalizedPage) {
-                return route('pages.show', ['locale' => $locale, 'slug' => $currentPageSlug]);
-            }
-
-            return route('locale.switch', $locale);
+        $switchUrl = static function (string $locale): string {
+            return route('locale.switch', ['locale' => $locale]);
         };
 
         $currentRoute = request()->route()?->getName();
@@ -18,7 +12,7 @@
             <a href="{{ route('home') }}">{{ config('app.name') }}</a>
         </div>
         <nav class="aparto-nav aparto-nav--desktop">
-            <a href="{{ url('/') }}" class="{{ $currentRoute === 'home' ? 'is-active' : '' }}">{{ __('frontpage.nav.home') }}</a>
+            <a href="{{ route('home') }}" class="{{ $currentRoute === 'home' ? 'is-active' : '' }}">{{ __('frontpage.nav.home') }}</a>
             <a href="{{ route('apartments.index') }}" class="{{ $currentRoute === 'apartments.index' ? 'is-active' : '' }}">{{ __('frontpage.nav.apartments') }}</a>
             <a href="{{ route('contact.show') }}" class="{{ $currentRoute === 'contact.show' ? 'is-active' : '' }}">{{ __('frontpage.nav.contact') }}</a>
             <a href="{{ route('become-host.show') }}" class="{{ $currentRoute === 'become-host.show' ? 'is-active' : '' }}">{{ __('frontpage.nav.become_host') }}</a>
@@ -35,14 +29,14 @@
                     @csrf
                     <button type="submit" class="aparto-logout-btn aparto-auth-link aparto-auth-link--logout" aria-label="{{ __('Logout') }}">
                         <img src="{{ asset('images/icons/logout.svg') }}" alt="" class="aparto-auth-icon aparto-auth-icon--logout" aria-hidden="true">
-                        <span class="aparto-auth-label">{{ __('Logout') }}</span>
+                        <span class="aparto-auth-label">{{ __('frontpage.nav.logout') }}</span>
                     </button>
                 </form>
             </div>
         @else
             <a href="{{ route('login') }}" class="aparto-nav-link aparto-auth-link aparto-auth-link--login" style="font-weight: 600;" aria-label="{{ __('Login') }}">
                 <img src="{{ asset('images/icons/login.svg') }}" alt="" class="aparto-auth-icon aparto-auth-icon--login" aria-hidden="true">
-                <span class="aparto-auth-label">{{ __('Login') }}</span>
+                <span class="aparto-auth-label">{{ __('frontpage.nav.login') }}</span>
             </a>
         @endauth
         <div class="aparto-lang">
@@ -72,7 +66,7 @@
         style="display:none; position:absolute; top:100%; right:0; z-index:9999; width:280px; background:#ffffff; border:1px solid rgba(32,76,69,0.12); border-radius:16px; padding:20px; box-shadow:0 20px 50px rgba(34,24,18,0.16);"
     >
         <nav class="aparto-mobile-nav">
-            <a href="{{ url('/') }}" class="{{ $currentRoute === 'home' ? 'is-active' : '' }}">{{ __('frontpage.nav.home') }}</a>
+            <a href="{{ route('home') }}" class="{{ $currentRoute === 'home' ? 'is-active' : '' }}">{{ __('frontpage.nav.home') }}</a>
             <a href="{{ route('apartments.index') }}" class="{{ $currentRoute === 'apartments.index' ? 'is-active' : '' }}">{{ __('frontpage.nav.apartments') }}</a>
             <a href="{{ route('contact.show') }}" class="{{ $currentRoute === 'contact.show' ? 'is-active' : '' }}">{{ __('frontpage.nav.contact') }}</a>
             <a href="{{ route('become-host.show') }}" class="{{ $currentRoute === 'become-host.show' ? 'is-active' : '' }}">{{ __('frontpage.nav.become_host') }}</a>

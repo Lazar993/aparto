@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('seo_title', $seoTitle ?? __('frontpage.seo.apartments_index.title'))
+@section('seo_description', $seoDescription ?? __('frontpage.seo.apartments_index.description'))
+@section('seo_keywords', $seoKeywords ?? __('frontpage.seo.apartments_index.keywords'))
+
 @section('content')
 
     @include('layouts.partials.header')

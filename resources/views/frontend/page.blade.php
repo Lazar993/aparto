@@ -1,12 +1,8 @@
 @extends('layouts.app')
 
-@push('head')
-    <link rel="canonical" href="{{ route('pages.show', ['locale' => app()->getLocale(), 'slug' => $pageSlug]) }}">
-    @foreach($availableLocales as $locale)
-        <link rel="alternate" hreflang="{{ $locale }}" href="{{ route('pages.show', ['locale' => $locale, 'slug' => $pageSlug]) }}">
-    @endforeach
-    <link rel="alternate" hreflang="x-default" href="{{ route('pages.show', ['locale' => 'sr', 'slug' => $pageSlug]) }}">
-@endpush
+@section('seo_title', $page->title)
+@section('seo_description', Str::limit(strip_tags($page->content), 160))
+@section('seo_keywords', $page->title . ', Aparto')
 
 @section('content')
 

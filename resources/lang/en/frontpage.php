@@ -7,6 +7,8 @@ return [
         'contact' => 'Contact',
         'become_host' => 'Become a host',
         'my_reservations' => 'My reservations',
+        'logout' => 'Logout',
+        'login' => 'Login',
     ],
     'hero' => [
         'title' => 'Apartments for short stays across Serbia.',
@@ -14,7 +16,9 @@ return [
         'footer_text' => 'Embark on an adventure exploring Serbia through our carefully curated apartments. Whether you are planning a weekend getaway, a business trip, or a longer vacation, our platform provides an easy way to find the perfect accommodation that will make your stay unforgettable.',
         'cta_primary' => 'Browse apartments',
         'cta_secondary' => 'Contact us',
+        'seo_title' => 'Book apartments across Serbia',
         'seo_description' => 'Aparto is a platform for booking apartments in Serbia. Find the ideal accommodation quickly and easily, with online deposit payment and the rest in person.',
+        'seo_keywords' => 'apartments Serbia, short stay, apartment booking, accommodation Serbia, apartments Belgrade, apartments Novi Sad',
     ],
     'stats' => [
         'available' => 'active apartments available today',
@@ -279,6 +283,48 @@ return [
         'apartments_count_few' => 'apartments',
         'apartments_count_many' => 'apartments',
         'view_profile' => 'View host profile',
+    ],
+    'seo' => [
+        'apartments_index' => [
+            'title' => 'Apartments in Serbia',
+            'description' => 'Browse short-stay apartments across Serbia. Compare prices, locations, and book online in minutes.',
+            'keywords' => 'apartments Serbia, short stay, accommodation, book online',
+        ],
+        'apartments_popular' => [
+            'title' => 'Popular apartments',
+            'description' => 'Most popular apartments in Serbia - highest number of bookings and best guest ratings.',
+            'keywords' => 'popular apartments, best accommodation Serbia, top apartments, most booked',
+        ],
+        'apartments_reviewed' => [
+            'title' => 'Reviewed apartments',
+            'description' => 'Apartments with approved guest reviews, ranked by rating. Read experiences and choose verified accommodation.',
+            'keywords' => 'reviewed apartments, guest ratings, verified accommodation Serbia, rated apartments',
+        ],
+        'apartment_show' => [
+            'title' => ':title - :city',
+            'description' => ':title in :city. Starting from :price :currency per night. Book online on Aparto.',
+            'keywords' => ':title, :city, apartment rental, short stay :city, accommodation :city',
+        ],
+        'contact' => [
+            'title' => 'Contact',
+            'description' => 'Contact the Aparto team for help finding accommodation in Serbia. We respond promptly.',
+            'keywords' => 'contact, Aparto, help, accommodation Serbia, support',
+        ],
+        'become_host' => [
+            'title' => 'Become a host',
+            'description' => 'Join the Aparto platform as a host. List your apartment and start receiving bookings.',
+            'keywords' => 'become a host, list apartment, Aparto host, rent apartment',
+        ],
+        'host_profile' => [
+            'title' => 'Host :name',
+            'description' => 'Host :name profile on Aparto. Browse their apartments and guest reviews.',
+            'keywords' => 'host :name, apartments :name, host profile, Aparto',
+        ],
+        'my_profile' => [
+            'title' => 'My reservations',
+            'description' => 'View your reservations and wishlist on Aparto.',
+            'keywords' => 'my reservations, wishlist, Aparto profile',
+        ],
     ],
     '404' => [
         'title' => 'Page not found',

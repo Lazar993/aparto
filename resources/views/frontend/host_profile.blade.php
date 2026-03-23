@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@section('seo_title', __('frontpage.seo.host_profile.title', ['name' => $host->name]))
+@section('seo_description', __('frontpage.seo.host_profile.description', ['name' => $host->name]))
+@section('seo_keywords', __('frontpage.seo.host_profile.keywords', ['name' => $host->name]))
+@if($host->profile_image)
+@section('seo_image', asset('storage/' . $host->profile_image))
+@endif
+
 @section('content')
 
     @include('layouts.partials.header')
@@ -52,7 +59,7 @@
                 @foreach($apartments as $apartment)
                     <article class="aparto-card">
                         <div class="aparto-card-media-wrap">
-                            <a class="aparto-card-media" href="{{ route('apartments.show', $apartment->id) }}">
+                            <a class="aparto-card-media" href="{{ route('apartments.show', ['id' => $apartment->id]) }}">
                                 @if($apartment->lead_image)
                                     <img src="{{ asset('storage/' . $apartment->lead_image) }}" alt="{{ $apartment->title }}">
                                 @endif
@@ -60,7 +67,7 @@
                         </div>
                         <div class="aparto-card-body">
                             <h3 class="aparto-card-title">
-                                <a class="aparto-card-title-link" href="{{ route('apartments.show', $apartment->id) }}">
+                                <a class="aparto-card-title-link" href="{{ route('apartments.show', ['id' => $apartment->id]) }}">
                                     {{ $apartment->title }}
                                 </a>
                             </h3>

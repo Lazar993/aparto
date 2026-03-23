@@ -1,4 +1,8 @@
 @extends('layouts.app')
+
+@section('seo_title', __('frontpage.seo.contact.title'))
+@section('seo_description', __('frontpage.seo.contact.description'))
+@section('seo_keywords', __('frontpage.seo.contact.keywords'))
     
 @section('content')
     @include('layouts.partials.header')

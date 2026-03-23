@@ -261,7 +261,7 @@ class FrontendController extends Controller
             ->withAvg('approvedReviews as average_rating', 'rating');
     }
 
-    public function show($id)
+    public function show(string $locale, $id)
     {
         $apartment = Apartment::withCount(['approvedReviews as reviews_count'])
             ->withAvg('approvedReviews as average_rating', 'rating')
@@ -392,7 +392,7 @@ class FrontendController extends Controller
         ));
     }
 
-    public function hostProfile($id)
+    public function hostProfile(string $locale, $id)
     {
         $host = User::where('user_type', User::TYPE_HOST)->findOrFail($id);
 
@@ -440,6 +440,9 @@ class FrontendController extends Controller
             pageSubtitle: __('frontpage.apartments.subtitle'),
             filterAction: route('apartments.index'),
             resetUrl: route('apartments.index'),
+            seoTitle: __('frontpage.seo.apartments_index.title'),
+            seoDescription: __('frontpage.seo.apartments_index.description'),
+            seoKeywords: __('frontpage.seo.apartments_index.keywords'),
         );
     }
 
@@ -466,6 +469,9 @@ class FrontendController extends Controller
             pageSubtitle: __('frontpage.apartments_popular.subtitle'),
             filterAction: route('apartments.popular'),
             resetUrl: route('apartments.popular'),
+            seoTitle: __('frontpage.seo.apartments_popular.title'),
+            seoDescription: __('frontpage.seo.apartments_popular.description'),
+            seoKeywords: __('frontpage.seo.apartments_popular.keywords'),
         );
     }
 
@@ -493,6 +499,9 @@ class FrontendController extends Controller
             pageSubtitle: __('frontpage.apartments_reviewed.subtitle'),
             filterAction: route('apartments.reviewed'),
             resetUrl: route('apartments.reviewed'),
+            seoTitle: __('frontpage.seo.apartments_reviewed.title'),
+            seoDescription: __('frontpage.seo.apartments_reviewed.description'),
+            seoKeywords: __('frontpage.seo.apartments_reviewed.keywords'),
         );
     }
 
@@ -503,6 +512,9 @@ class FrontendController extends Controller
         string $pageSubtitle,
         string $filterAction,
         string $resetUrl,
+        string $seoTitle = '',
+        string $seoDescription = '',
+        string $seoKeywords = '',
     ): View|JsonResponse {
         $filters = $request->validated();
 
@@ -527,7 +539,7 @@ class FrontendController extends Controller
             return response()->json(['html' => $html]);
         }
 
-        return view('frontend.apartments', compact('apartments', 'cities', 'pageTitle', 'pageSubtitle', 'filterAction', 'resetUrl', 'wishlistApartmentIds'));
+        return view('frontend.apartments', compact('apartments', 'cities', 'pageTitle', 'pageSubtitle', 'filterAction', 'resetUrl', 'wishlistApartmentIds', 'seoTitle', 'seoDescription', 'seoKeywords'));
     }
 
     private function getWishlistApartmentIdsForCurrentUser(): array
@@ -600,11 +612,6 @@ class FrontendController extends Controller
     public function page(Request $request, string $locale, string $slug): View
     {
         $allowedLocales = ['sr', 'en', 'ru'];
-
-        if (in_array($locale, $allowedLocales, true)) {
-            App::setLocale($locale);
-            $request->session()->put('locale', $locale);
-        }
 
         $page = Page::where('is_active', true)
             ->where('slug', $slug)

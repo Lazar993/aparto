@@ -7,6 +7,8 @@ return [
         'contact' => 'Kontakt',
         'become_host' => 'Postani domaćin',
         'my_reservations' => 'Moje rezervacije',
+        'logout' => 'Odjavi se',
+        'login' => 'Prijavi se',
     ],
     'hero' => [
         'title' => 'Stanovi za kratki boravak širom Srbije.',
@@ -14,7 +16,9 @@ return [
         'footer_text' => 'Usputite se u avanturu istraživanja Srbije kroz naše pažljivo odabrane stanove. Bilo da planirate vikend izlet, poslovno putovanje ili duži odmor, naša platforma vam pruža jednostavan način da pronađete savršen smeštaj koji će učiniti vaš boravak nezaboravnim.',
         'cta_primary' => 'Pogledaj stanove',
         'cta_secondary' => 'Kontaktiraj nas',
+        'seo_title' => 'Rezerviši stan širom Srbije',
         'seo_description' => 'Aparto je platforma za rezervaciju stanova u Srbiji. Pronađite idealan smeštaj brzo i jednostavno, uz plaćanje depozita online i ostatak uživo.',
+        'seo_keywords' => 'stan na dan, stanovi Srbija, kratki boravak, rezervacija stanova, smeštaj Srbija, apartmani Beograd, apartmani Novi Sad',
     ],
     'stats' => [
         'available' => 'aktivnih stanova dostupno danas',
@@ -279,6 +283,48 @@ return [
         'apartments_count_few' => 'stana',
         'apartments_count_many' => 'stanova',
         'view_profile' => 'Pogledaj profil domaćina',
+    ],
+    'seo' => [
+        'apartments_index' => [
+            'title' => 'Stanovi u Srbiji',
+            'description' => 'Pregledajte stanove za kratki boravak širom Srbije. Uporedite cene, lokacije i rezervišite online za par minuta.',
+            'keywords' => 'stanovi Srbija, apartmani, kratki boravak, smeštaj, rezervacija online',
+        ],
+        'apartments_popular' => [
+            'title' => 'Popularni stanovi',
+            'description' => 'Najpopularniji stanovi u Srbiji - najviše rezervacija i najbolje ocene gostiju.',
+            'keywords' => 'popularni stanovi, najbolji smeštaj Srbija, top apartmani, najviše rezervacija',
+        ],
+        'apartments_reviewed' => [
+            'title' => 'Stanovi sa recenzijama',
+            'description' => 'Stanovi sa odobrenim recenzijama gostiju, rangirani po ocenama. Pročitajte iskustva i izaberite provereni smeštaj.',
+            'keywords' => 'stanovi recenzije, ocene gostiju, provereni smeštaj Srbija, apartmani sa ocenama',
+        ],
+        'apartment_show' => [
+            'title' => ':title - :city',
+            'description' => ':title u gradu :city. Cena od :price :currency po noćenju. Rezervišite online na Aparto platformi.',
+            'keywords' => ':title, :city, stan za izdavanje, kratki boravak :city, smeštaj :city',
+        ],
+        'contact' => [
+            'title' => 'Kontakt',
+            'description' => 'Kontaktirajte Aparto tim za pomoć pri pronalaženju smeštaja u Srbiji. Odgovaramo u najkraćem roku.',
+            'keywords' => 'kontakt, Aparto, pomoć, smeštaj Srbija, podrška',
+        ],
+        'become_host' => [
+            'title' => 'Postani domaćin',
+            'description' => 'Pridružite se Aparto platformi kao domaćin. Postavite svoj stan i počnite da primate rezervacije.',
+            'keywords' => 'postani domaćin, izdaj stan, Aparto domaćin, iznajmljivanje stanova',
+        ],
+        'host_profile' => [
+            'title' => 'Domaćin :name',
+            'description' => 'Profil domaćina :name na Aparto platformi. Pregledajte stanove i recenzije gostiju.',
+            'keywords' => 'domaćin :name, stanovi :name, profil domaćina, Aparto',
+        ],
+        'my_profile' => [
+            'title' => 'Moje rezervacije',
+            'description' => 'Pregled vaših rezervacija i liste želja na Aparto platformi.',
+            'keywords' => 'moje rezervacije, lista želja, Aparto profil',
+        ],
     ],
     '404' => [
         'title' => 'Stranica nije pronađena',

@@ -19,24 +19,34 @@ use App\Models\User;
 |
 */
 
-Route::get('/', [FrontendController::class, 'index'])->name('home');
+// ─── Root redirect ───────────────────────────────────────────────
+Route::get('/', function () {
+	$locale = session('locale', 'sr');
+	return redirect()->route('home', ['locale' => $locale]);
+});
 
-Route::get('/apartments', [FrontendController::class, 'list'])->name('apartments.index');
-Route::get('/apartments/popular', [FrontendController::class, 'popular'])->name('apartments.popular');
-Route::get('/apartments/reviewed', [FrontendController::class, 'reviewed'])->name('apartments.reviewed');
-Route::get('/apartments/{id}', [FrontendController::class, 'show'])->name('apartments.show');
-Route::get('/host/{id}', [FrontendController::class, 'hostProfile'])->name('host.profile');
-Route::get('/contact', [FrontendController::class, 'contact'])->name('contact.show');
-Route::post('/contact', [FrontendController::class, 'contactSubmit'])->name('contact.submit');
-
-Route::get('/become-a-host', [HostRequestController::class, 'show'])->name('become-host.show');
-Route::post('/become-a-host', [HostRequestController::class, 'submit'])->name('become-host.submit');
-
-Route::get('/{locale}/pages/{slug}', [FrontendController::class, 'page'])
-	->where('locale', 'sr|en|ru')
-	->where('slug', '[A-Za-z0-9\-]+')
-	->name('pages.show');
-
+// ─── Legacy URL redirects (301) for old non-prefixed URLs ────────
+Route::get('/apartments', function () {
+	return redirect(url('/' . app()->getLocale() . '/apartments?' . http_build_query(request()->query())), 301);
+});
+Route::get('/apartments/popular', function () {
+	return redirect(url('/' . app()->getLocale() . '/apartments/popular?' . http_build_query(request()->query())), 301);
+});
+Route::get('/apartments/reviewed', function () {
+	return redirect(url('/' . app()->getLocale() . '/apartments/reviewed?' . http_build_query(request()->query())), 301);
+});
+Route::get('/apartments/{id}', function ($id) {
+	return redirect()->route('apartments.show', ['locale' => app()->getLocale(), 'id' => $id], 301);
+})->where('id', '[0-9]+');
+Route::get('/host/{id}', function ($id) {
+	return redirect()->route('host.profile', ['locale' => app()->getLocale(), 'id' => $id], 301);
+})->where('id', '[0-9]+');
+Route::get('/contact', function () {
+	return redirect()->route('contact.show', ['locale' => app()->getLocale()], 301);
+});
+Route::get('/become-a-host', function () {
+	return redirect()->route('become-host.show', ['locale' => app()->getLocale()], 301);
+});
 Route::get('/pages/{slug}', function (string $slug) {
 	return redirect()->route('pages.show', [
 		'locale' => app()->getLocale(),
@@ -46,17 +56,55 @@ Route::get('/pages/{slug}', function (string $slug) {
 	->where('slug', '[A-Za-z0-9\-]+')
 	->name('pages.show.legacy');
 
+// ─── Locale-prefixed frontend routes ─────────────────────────────
+Route::prefix('{locale}')
+	->where(['locale' => 'sr|en|ru'])
+	->group(function () {
+		Route::get('/', [FrontendController::class, 'index'])->name('home');
+
+		Route::get('/apartments', [FrontendController::class, 'list'])->name('apartments.index');
+		Route::get('/apartments/popular', [FrontendController::class, 'popular'])->name('apartments.popular');
+		Route::get('/apartments/reviewed', [FrontendController::class, 'reviewed'])->name('apartments.reviewed');
+		Route::get('/apartments/{id}', [FrontendController::class, 'show'])->name('apartments.show');
+		Route::get('/host/{id}', [FrontendController::class, 'hostProfile'])->name('host.profile');
+		Route::get('/contact', [FrontendController::class, 'contact'])->name('contact.show');
+		Route::post('/contact', [FrontendController::class, 'contactSubmit'])->name('contact.submit');
+
+		Route::get('/become-a-host', [HostRequestController::class, 'show'])->name('become-host.show');
+		Route::post('/become-a-host', [HostRequestController::class, 'submit'])->name('become-host.submit');
+
+		Route::get('/pages/{slug}', [FrontendController::class, 'page'])
+			->where('slug', '[A-Za-z0-9\-]+')
+			->name('pages.show');
+
+		Route::middleware('auth')->group(function () {
+			Route::get('/my-profile', [ReservationController::class, 'myReservations'])
+				->name('reservations.mine');
+		});
+	});
+
 Route::get('/lang/{locale}', function (string $locale) {
 	$allowed = ['en', 'sr', 'ru'];
 
 	if (! in_array($locale, $allowed, true)) {
-		$locale = config('app.locale');
+		$locale = config('app.locale', 'sr');
 	}
 
 	session(['locale' => $locale]);
 	App::setLocale($locale);
 
-	return redirect()->back();
+	// Replace locale prefix in the referring URL so the user lands on the same page
+	$previous = url()->previous();
+	$path = parse_url($previous, PHP_URL_PATH) ?? '/';
+	$redirectPath = preg_replace('#^/(sr|en|ru)(/|$)#', '/' . $locale . '$2', $path);
+
+	if ($redirectPath === $path && ! preg_match('#^/(sr|en|ru)(/|$)#', $path)) {
+		$redirectPath = '/' . $locale;
+	}
+
+	$query = parse_url($previous, PHP_URL_QUERY);
+
+	return redirect($redirectPath . ($query ? '?' . $query : ''));
 })->name('locale.switch');
 
 Route::get('/osm/search', function (Request $request) {
@@ -169,10 +217,12 @@ Route::get('/osm/search', function (Request $request) {
 Route::post('/apartments/{apartment}/reserve', [ReservationController::class, 'store'])
     ->name('reserve');
 
-Route::middleware('auth')->group(function () {
-	Route::get('/my-profile', [ReservationController::class, 'myReservations'])
-		->name('reservations.mine');
+// Legacy redirect for old /my-profile URL
+Route::get('/my-profile', function () {
+	return redirect()->route('reservations.mine', ['locale' => app()->getLocale()], 301);
+});
 
+Route::middleware('auth')->group(function () {
 	Route::get('/apartments/{apartment}/review', [FrontendController::class, 'reviewEntry'])
 		->name('apartments.review.entry');
 

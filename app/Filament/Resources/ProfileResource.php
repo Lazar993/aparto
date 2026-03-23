@@ -61,8 +61,8 @@ class ProfileResource extends Resource
                             ->imageCropAspectRatio('1:1')
                             ->imageResizeTargetWidth('400')
                             ->imageResizeTargetHeight('400')
-                            ->maxSize(2048)
-                            ->helperText('Upload a profile photo (max 2MB). Will be cropped to square.'),
+                            ->maxSize(5120) // 5MB
+                            ->helperText('Upload a profile photo (max 5MB). Will be cropped to square.'),
                     ]),
             ]);
     }

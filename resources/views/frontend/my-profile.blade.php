@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('seo_title', __('frontpage.seo.my_profile.title'))
+@section('seo_description', __('frontpage.seo.my_profile.description'))
+@section('seo_keywords', __('frontpage.seo.my_profile.keywords'))
+
 @section('content')
 
     @include('layouts.partials.header')
@@ -30,7 +34,7 @@
 
                         <article class="aparto-reservation-item">
                             @if($reservation->apartment && $reservation->apartment->lead_image)
-                                <a href="{{ route('apartments.show', $reservation->apartment->id) }}" class="aparto-reservation-image">
+                                <a href="{{ route('apartments.show', ['id' => $reservation->apartment->id]) }}" class="aparto-reservation-image">
                                     <img src="{{ asset('storage/' . $reservation->apartment->lead_image) }}" alt="{{ $reservation->apartment->title }}">
                                 </a>
                             @else
@@ -54,7 +58,7 @@
                                 </div>
 
                                 @if($reservation->apartment)
-                                    <a href="{{ route('apartments.show', $reservation->apartment->id) }}" class="aparto-button ghost aparto-reservation-link">
+                                    <a href="{{ route('apartments.show', ['id' => $reservation->apartment->id]) }}" class="aparto-button ghost aparto-reservation-link">
                                         {{ __('frontpage.my_reservations.view_apartment') }}
                                     </a>
                                 @endif

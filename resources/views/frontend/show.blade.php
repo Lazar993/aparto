@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@section('seo_title', __('frontpage.seo.apartment_show.title', ['title' => $apartment->title, 'city' => $apartment->city]))
+@section('seo_description', __('frontpage.seo.apartment_show.description', ['title' => $apartment->title, 'city' => $apartment->city, 'price' => number_format($apartment->price_per_night, 0), 'currency' => config('website.currency')]))
+@section('seo_keywords', __('frontpage.seo.apartment_show.keywords', ['title' => $apartment->title, 'city' => $apartment->city]))
+@if($apartment->lead_image)
+@section('seo_image', asset('storage/' . $apartment->lead_image))
+@endif
+
 @section('content')
     
     @include('layouts.partials.header')

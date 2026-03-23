@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('seo_title', __('frontpage.seo.become_host.title'))
+@section('seo_description', __('frontpage.seo.become_host.description'))
+@section('seo_keywords', __('frontpage.seo.become_host.keywords'))
+
 @section('content')
     @include('layouts.partials.header')
 
