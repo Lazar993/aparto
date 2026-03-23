@@ -198,5 +198,12 @@
             <div class="aparto-lightbox-counter" data-lightbox-counter></div>
         </div>
         @endif
+
+        @include('frontend.partials.host_profile', [
+            'host' => $host ?? $apartment->user,
+            'hostTotalReviews' => $hostTotalReviews ?? 0,
+            'hostAverageRating' => $hostAverageRating ?? null,
+            'hostApartmentsCount' => $hostApartmentsCount ?? 0,
+        ])
     </div>
 </section>

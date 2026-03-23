@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ApartmentListRequest;
 use App\Models\Contact;
-use App\Models\{Apartment, Page, Reservation, Review, Wishlist};
+use App\Models\{Apartment, Page, Reservation, Review, User, Wishlist};
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -360,7 +360,64 @@ class FrontendController extends Controller
 
         $reviewLoginUrl = route('apartments.review.entry', ['apartment' => $apartment->getKey()]);
 
-        return view('frontend.show', compact('apartment', 'reservationRanges', 'customPricing', 'reviews', 'userCanReview', 'userHasReviewed', 'reviewLoginUrl'));
+        // Host profile data for "Meet your host" section
+        $host = $apartment->user;
+        $hostTotalReviews = 0;
+        $hostAverageRating = null;
+
+        $hostApartmentsCount = 0;
+
+        if ($host) {
+            $hostReviewStats = Review::whereHas('apartment', function (Builder $q) use ($host) {
+                $q->where('user_id', $host->id);
+            })
+                ->where('status', 'approved')
+                ->selectRaw('COUNT(*) as total, SUM(rating) as rating_sum')
+                ->first();
+
+            $hostTotalReviews = (int) $hostReviewStats->total;
+            $hostAverageRating = $hostTotalReviews > 0
+                ? round($hostReviewStats->rating_sum / $hostTotalReviews, 1)
+                : null;
+
+            $hostApartmentsCount = Apartment::where('user_id', $host->id)
+                ->where('active', true)
+                ->count();
+        }
+
+        return view('frontend.show', compact(
+            'apartment', 'reservationRanges', 'customPricing', 'reviews',
+            'userCanReview', 'userHasReviewed', 'reviewLoginUrl',
+            'host', 'hostTotalReviews', 'hostAverageRating', 'hostApartmentsCount'
+        ));
+    }
+
+    public function hostProfile($id)
+    {
+        $host = User::where('user_type', User::TYPE_HOST)->findOrFail($id);
+
+        $apartments = Apartment::where('user_id', $host->id)
+            ->where('active', true)
+            ->withCount(['approvedReviews as reviews_count'])
+            ->withAvg('approvedReviews as average_rating', 'rating')
+            ->orderByDesc('id')
+            ->get();
+
+        $hostReviewStats = Review::whereHas('apartment', function (Builder $q) use ($host) {
+            $q->where('user_id', $host->id);
+        })
+            ->where('status', 'approved')
+            ->selectRaw('COUNT(*) as total, SUM(rating) as rating_sum')
+            ->first();
+
+        $hostTotalReviews = (int) $hostReviewStats->total;
+        $hostAverageRating = $hostTotalReviews > 0
+            ? round($hostReviewStats->rating_sum / $hostTotalReviews, 1)
+            : null;
+
+        return view('frontend.host_profile', compact(
+            'host', 'apartments', 'hostTotalReviews', 'hostAverageRating'
+        ));
     }
 
     public function reviewEntry(Apartment $apartment): RedirectResponse

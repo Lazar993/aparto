@@ -1094,6 +1094,189 @@
     overflow: hidden;
 }
 
+/* ── Meet your host ── */
+.aparto-host-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: var(--aparto-shadow);
+    margin-top: 18px;
+}
+
+.aparto-host-title {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: 20px;
+    margin: 0 0 20px;
+    color: var(--aparto-text);
+}
+
+.aparto-host-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+}
+
+.aparto-host-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: linear-gradient(130deg, #f1ded1, #d6ebe6);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.aparto-host-avatar:hover {
+    transform: scale(1.05);
+}
+
+.aparto-host-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.aparto-host-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+a.aparto-host-name {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--aparto-text);
+    text-decoration: none;
+}
+
+a.aparto-host-name:hover {
+    text-decoration: underline;
+}
+
+.aparto-host-badges {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.aparto-host-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: var(--aparto-surface, #f8f6f3);
+    border-radius: 14px;
+    padding: 10px 16px;
+    min-width: 72px;
+    flex: 1;
+}
+
+.aparto-host-badge-value {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--aparto-text);
+    line-height: 1.2;
+}
+
+.aparto-host-badge-label {
+    font-size: 12px;
+    color: var(--aparto-muted);
+    text-transform: lowercase;
+    line-height: 1.2;
+}
+
+.aparto-host-view-link {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--aparto-border, #eae6e1);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--aparto-primary, #204c45);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.aparto-host-view-link:hover {
+    color: var(--aparto-primary-dark, #163633);
+    text-decoration: underline;
+}
+
+/* ── Host profile page ── */
+.aparto-host-page-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.aparto-host-page-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: linear-gradient(130deg, #f1ded1, #d6ebe6);
+}
+
+.aparto-host-page-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.aparto-host-page-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.aparto-host-page-name {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--aparto-text);
+}
+
+.aparto-host-page-email {
+    color: var(--aparto-muted);
+    font-size: 15px;
+}
+
+.aparto-host-page-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--aparto-muted);
+    margin-top: 2px;
+}
+
+.aparto-host-page-stats strong {
+    color: var(--aparto-text);
+}
+
+.aparto-host-page-stats .aparto-star.filled {
+    color: #f5a623;
+    font-size: 16px;
+}
+
+.aparto-host-apartments-title {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-size: 22px;
+    margin: 0 0 18px;
+}
+
 .aparto-reservation-title {
     font-family: 'Fraunces', 'Times New Roman', serif;
     font-size: 22px;

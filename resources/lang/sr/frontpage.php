@@ -266,4 +266,23 @@ return [
             'integer' => 'Broj stanova mora biti validan broj.',
         ],
     ],
+    'host' => [
+        'meet_title' => 'Upoznajte domaćina',        
+        'page_title' => 'O domaćinu',
+        'apartments_title' => 'Stanovi domaćina :name',
+        'no_apartments' => 'Ovaj domaćin trenutno nema aktivnih stanova.',        
+        'reviews_one' => 'recenzija',
+        'reviews_few' => 'recenzije',
+        'reviews_many' => 'recenzija',
+        'rating' => 'Ocena',
+        'apartments_count_one' => 'stan',
+        'apartments_count_few' => 'stana',
+        'apartments_count_many' => 'stanova',
+        'view_profile' => 'Pogledaj profil domaćina',
+    ],
+    '404' => [
+        'title' => 'Stranica nije pronađena',
+        'message' => 'Izgleda da stranica koju tražite ne postoji. Moguće je da je URL pogrešan ili da je stranica uklonjena.',
+        'back_to_home' => 'Povratak na početnu stranicu',
+    ],
 ];

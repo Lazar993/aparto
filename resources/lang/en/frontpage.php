@@ -266,4 +266,23 @@ return [
             'integer' => 'Number of apartments must be a valid number.',
         ],
     ],
+    'host' => [
+        'meet_title' => 'Meet your host',
+        'page_title' => 'About the host',
+        'apartments_title' => 'Apartments by :name',
+        'no_apartments' => 'This host has no active apartments at the moment.',
+        'reviews_one' => 'review',
+        'reviews_few' => 'reviews',
+        'reviews_many' => 'reviews',
+        'rating' => 'Rating',
+        'apartments_count_one' => 'apartment',
+        'apartments_count_few' => 'apartments',
+        'apartments_count_many' => 'apartments',
+        'view_profile' => 'View host profile',
+    ],
+    '404' => [
+        'title' => 'Page not found',
+        'message' => 'The page you are looking for does not exist. It might have been removed or you may have entered an incorrect URL.',
+        'back_to_home' => 'Back to home',
+    ],
 ];
