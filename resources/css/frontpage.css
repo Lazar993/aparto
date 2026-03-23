@@ -1235,7 +1235,7 @@
     position: fixed;
     bottom: 28px;
     right: 20px;
-    z-index: 90;
+    z-index: 10000;
     display: inline-flex;
     align-items: center;
     gap: 8px;
