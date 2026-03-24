@@ -25,7 +25,7 @@
         $currentLocale = app()->getLocale();
         $allLocales = ['sr', 'en', 'ru'];
     @endphp
-    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="canonical" href="{{ request()->url() }}">
     @foreach($allLocales as $altLocale)
         <link rel="alternate" hreflang="{{ $altLocale }}" href="{{ url(preg_replace('#^(' . implode('|', $allLocales) . ')(/|$)#', $altLocale . '$2', $currentPath)) }}">
     @endforeach
