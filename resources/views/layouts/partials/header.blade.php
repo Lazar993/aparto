@@ -84,13 +84,13 @@
                     @csrf
                     <button type="submit" class="aparto-mobile-action-link aparto-mobile-action-link--logout">
                         <img src="{{ asset('images/icons/logout.svg') }}" alt="" class="aparto-auth-icon aparto-auth-icon--logout" aria-hidden="true">
-                        {{ __('Logout') }}
+                        {{ __('frontpage.nav.logout') }}
                     </button>
                 </form>
             @else
                 <a href="{{ route('login') }}" class="aparto-mobile-action-link">
                     <img src="{{ asset('images/icons/login.svg') }}" alt="" class="aparto-auth-icon aparto-auth-icon--login" aria-hidden="true">
-                    {{ __('Login') }}
+                    {{ __('frontpage.nav.login') }}
                 </a>
             @endauth
         </div>
