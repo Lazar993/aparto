@@ -59,7 +59,7 @@
                 @foreach($apartments as $apartment)
                     <article class="aparto-card">
                         <div class="aparto-card-media-wrap">
-                            <a class="aparto-card-media" href="{{ route('apartments.show', ['id' => $apartment->id]) }}">
+                            <a class="aparto-card-media" href="{{ route('apartments.show', ['id' => $apartment->id, 'slug' => $apartment->slug]) }}">
                                 @if($apartment->lead_image)
                                     <img src="{{ asset('storage/' . $apartment->lead_image) }}" alt="{{ $apartment->title }}">
                                 @endif
@@ -67,7 +67,7 @@
                         </div>
                         <div class="aparto-card-body">
                             <h3 class="aparto-card-title">
-                                <a class="aparto-card-title-link" href="{{ route('apartments.show', ['id' => $apartment->id]) }}">
+                                <a class="aparto-card-title-link" href="{{ route('apartments.show', ['id' => $apartment->id, 'slug' => $apartment->slug]) }}">
                                     {{ $apartment->title }}
                                 </a>
                             </h3>

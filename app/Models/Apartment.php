@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use App\Models\Review;
 
 class Apartment extends Model
@@ -58,6 +59,11 @@ class Apartment extends Model
         'longitude' => 'float',
         'guest_number' => 'integer',
     ];
+
+    public function getSlugAttribute(): string
+    {
+        return Str::slug($this->title);
+    }
 
     public function reservations()
     {

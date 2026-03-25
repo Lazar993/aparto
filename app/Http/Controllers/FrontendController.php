@@ -261,11 +261,19 @@ class FrontendController extends Controller
             ->withAvg('approvedReviews as average_rating', 'rating');
     }
 
-    public function show(string $locale, $id)
+    public function show(string $locale, $id, $slug = null)
     {
         $apartment = Apartment::withCount(['approvedReviews as reviews_count'])
             ->withAvg('approvedReviews as average_rating', 'rating')
             ->findOrFail($id);
+
+        if ($slug !== $apartment->slug) {
+            return redirect()->route('apartments.show', [
+                'locale' => $locale,
+                'id' => $apartment->id,
+                'slug' => $apartment->slug,
+            ], 301);
+        }
 
         $reservationRanges = $apartment->reservations()
             // Keep frontend picker aligned with backend: only canceled reservations are available again.
@@ -392,9 +400,17 @@ class FrontendController extends Controller
         ));
     }
 
-    public function hostProfile(string $locale, $id)
+    public function hostProfile(string $locale, $id, $slug = null)
     {
         $host = User::where('user_type', User::TYPE_HOST)->findOrFail($id);
+
+        if ($slug !== $host->slug) {
+            return redirect()->route('host.profile', [
+                'locale' => $locale,
+                'id' => $host->id,
+                'slug' => $host->slug,
+            ], 301);
+        }
 
         $apartments = Apartment::where('user_id', $host->id)
             ->where('active', true)
@@ -424,6 +440,7 @@ class FrontendController extends Controller
     {
         return redirect()->route('apartments.show', [
             'id' => $apartment->getKey(),
+            'slug' => $apartment->slug,
             'review' => 'write',
         ]);
     }

@@ -35,11 +35,21 @@ Route::get('/apartments/popular', function () {
 Route::get('/apartments/reviewed', function () {
 	return redirect(url('/' . app()->getLocale() . '/apartments/reviewed?' . http_build_query(request()->query())), 301);
 });
-Route::get('/apartments/{id}', function ($id) {
-	return redirect()->route('apartments.show', ['locale' => app()->getLocale(), 'id' => $id], 301);
+Route::get('/apartments/{id}/{slug?}', function ($id, $slug = null) {
+	$apartment = \App\Models\Apartment::find($id);
+	$params = ['locale' => app()->getLocale(), 'id' => $id];
+	if ($apartment) {
+		$params['slug'] = $apartment->slug;
+	}
+	return redirect()->route('apartments.show', $params, 301);
 })->where('id', '[0-9]+');
-Route::get('/host/{id}', function ($id) {
-	return redirect()->route('host.profile', ['locale' => app()->getLocale(), 'id' => $id], 301);
+Route::get('/host/{id}/{slug?}', function ($id, $slug = null) {
+	$host = \App\Models\User::find($id);
+	$params = ['locale' => app()->getLocale(), 'id' => $id];
+	if ($host) {
+		$params['slug'] = $host->slug;
+	}
+	return redirect()->route('host.profile', $params, 301);
 })->where('id', '[0-9]+');
 Route::get('/contact', function () {
 	return redirect()->route('contact.show', ['locale' => app()->getLocale()], 301);
@@ -65,8 +75,8 @@ Route::prefix('{locale}')
 		Route::get('/apartments', [FrontendController::class, 'list'])->name('apartments.index');
 		Route::get('/apartments/popular', [FrontendController::class, 'popular'])->name('apartments.popular');
 		Route::get('/apartments/reviewed', [FrontendController::class, 'reviewed'])->name('apartments.reviewed');
-		Route::get('/apartments/{id}', [FrontendController::class, 'show'])->name('apartments.show');
-		Route::get('/host/{id}', [FrontendController::class, 'hostProfile'])->name('host.profile');
+		Route::get('/apartments/{id}/{slug?}', [FrontendController::class, 'show'])->name('apartments.show')->where('id', '[0-9]+');
+		Route::get('/host/{id}/{slug?}', [FrontendController::class, 'hostProfile'])->name('host.profile')->where('id', '[0-9]+');
 		Route::get('/contact', [FrontendController::class, 'contact'])->name('contact.show');
 		Route::post('/contact', [FrontendController::class, 'contactSubmit'])->name('contact.submit');
 

@@ -34,7 +34,7 @@
 
                         <article class="aparto-reservation-item">
                             @if($reservation->apartment && $reservation->apartment->lead_image)
-                                <a href="{{ route('apartments.show', ['id' => $reservation->apartment->id]) }}" class="aparto-reservation-image">
+                                <a href="{{ route('apartments.show', ['id' => $reservation->apartment->id, 'slug' => $reservation->apartment->slug]) }}" class="aparto-reservation-image">
                                     <img src="{{ asset('storage/' . $reservation->apartment->lead_image) }}" alt="{{ $reservation->apartment->title }}">
                                 </a>
                             @else
@@ -58,7 +58,7 @@
                                 </div>
 
                                 @if($reservation->apartment)
-                                    <a href="{{ route('apartments.show', ['id' => $reservation->apartment->id]) }}" class="aparto-button ghost aparto-reservation-link">
+                                    <a href="{{ route('apartments.show', ['id' => $reservation->apartment->id, 'slug' => $reservation->apartment->slug]) }}" class="aparto-button ghost aparto-reservation-link">
                                         {{ __('frontpage.my_reservations.view_apartment') }}
                                     </a>
                                 @endif

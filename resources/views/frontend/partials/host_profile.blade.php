@@ -2,7 +2,7 @@
 <div class="aparto-host-card">
     <h3 class="aparto-host-title">{{ __('frontpage.host.meet_title') }}</h3>
     <div class="aparto-host-body">
-        <a href="{{ route('host.profile', ['id' => $host->id]) }}" class="aparto-host-avatar">
+        <a href="{{ route('host.profile', ['id' => $host->id, 'slug' => $host->slug]) }}" class="aparto-host-avatar">
             @if($host->profile_image)
                 <img src="{{ asset('storage/' . $host->profile_image) }}" alt="{{ $host->name }}">
             @else
@@ -10,7 +10,7 @@
             @endif
         </a>
         <div class="aparto-host-info">
-            <a href="{{ route('host.profile', ['id' => $host->id]) }}" class="aparto-host-name">{{ $host->name }}</a>
+            <a href="{{ route('host.profile', ['id' => $host->id, 'slug' => $host->slug]) }}" class="aparto-host-name">{{ $host->name }}</a>
         </div>
         <div class="aparto-host-badges">
             @if($hostAverageRating)
@@ -47,7 +47,7 @@
             @endif
         </div>
     </div>
-    <a href="{{ route('host.profile', ['id' => $host->id]) }}" class="aparto-host-view-link">
+    <a href="{{ route('host.profile', ['id' => $host->id, 'slug' => $host->slug]) }}" class="aparto-host-view-link">
         {{ __('frontpage.host.view_profile') }} →
     </a>
 </div>
