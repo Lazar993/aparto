@@ -2,31 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repository\WishlistRepository;
 use App\Models\Apartment;
-use App\Models\Wishlist;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class WishlistController extends Controller
 {
+    public function __construct(
+        private WishlistRepository $wishlistRepository,
+    ) {}
+
     public function toggle(Request $request, Apartment $apartment): RedirectResponse|JsonResponse
     {
         $userId = (int) $request->user()->id;
 
-        $wishlistEntry = Wishlist::query()
-            ->where('user_id', $userId)
-            ->where('apartment_id', $apartment->id)
-            ->first();
+        $wishlistEntry = $this->wishlistRepository->findEntry($userId, $apartment->id);
 
         if ($wishlistEntry) {
-            $wishlistEntry->delete();
+            $this->wishlistRepository->delete($wishlistEntry);
             $isWishlisted = false;
         } else {
-            Wishlist::create([
-                'user_id' => $userId,
-                'apartment_id' => $apartment->id,
-            ]);
+            $this->wishlistRepository->create($userId, $apartment->id);
             $isWishlisted = true;
         }
 

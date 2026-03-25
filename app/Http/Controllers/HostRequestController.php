@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\HostRequest;
+use App\Services\HCaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 
 class HostRequestController extends Controller
 {
+    public function __construct(
+        private HCaptchaService $hCaptchaService,
+    ) {}
+
     public function show(): View
     {
         return view('frontend.become-host');
@@ -16,10 +22,7 @@ class HostRequestController extends Controller
 
     public function submit(Request $request)
     {
-        $siteKey = (string) config('services.hcaptcha.site_key');
-        $secret = (string) config('services.hcaptcha.secret');
-
-        if ($siteKey === '' || $secret === '') {
+        if (! $this->hCaptchaService->isConfigured()) {
             Log::warning('hCaptcha configuration is missing for contact form.');
 
             return back()
@@ -56,7 +59,7 @@ class HostRequestController extends Controller
 
             $hostRequest = HostRequest::create(array_merge($data, ['locale' => $locale]));
 
-            \Illuminate\Support\Facades\Notification::route('mail', config('website.contact_email'))
+            Notification::route('mail', config('website.contact_email'))
                 ->notify(new \App\Notifications\HostRequestCreatedForAdmin($hostRequest));
         } catch (\Throwable $e) {
             Log::error('Host request submission failed', ['error' => $e->getMessage()]);

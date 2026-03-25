@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Review;
-use App\Models\Reservation;
+use App\Http\Repository\ReservationRepository;
+use App\Http\Repository\ReviewRepository;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
+    public function __construct(
+        private ReviewRepository $reviewRepository,
+        private ReservationRepository $reservationRepository,
+    ) {}
+
     public function store(Request $request)
     {
         $request->validate([
@@ -16,23 +21,17 @@ class ReviewController extends Controller
             'comment' => 'nullable|string|max:1000',
         ]);
 
-        // Check if the user has a completed reservation for this apartment
-        // Support both new (with user_id) and old (without user_id) reservations by email
-        // For development/testing: Accept 'pending' or 'confirmed' status
-        $hasReservation = Reservation::where('apartment_id', $request->apartment_id)
-            ->where(function($query) {
-                $query->where('user_id', auth()->id())
-                      ->orWhere('email', auth()->user()->email);
-            })
-            ->where('date_to', '<', now())
-            ->whereIn('status', ['confirmed', 'pending']) // Allow pending for testing
-            ->exists();
+        $hasReservation = $this->reservationRepository->userHasPastReservation(
+            $request->apartment_id,
+            auth()->id(),
+            auth()->user()->email
+        );
 
         if (! $hasReservation) {
             abort(403, __('frontpage.reviews.not_allowed'));
         }
 
-        Review::create([
+        $this->reviewRepository->create([
             'apartment_id' => $request->apartment_id,
             'user_id' => auth()->id(),
             'rating' => $request->rating,
