@@ -17,6 +17,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('app:send-review-reminders')
             ->dailyAt('10:00')->between('09:59', '10:05');
+
+        $schedule->command('app:generate-sitemap')
+            ->daily();
     }
 
     /**
