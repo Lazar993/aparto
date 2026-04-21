@@ -24,7 +24,7 @@
             </div>
             <div class="aparto-host-page-info">
                 <span class="aparto-host-page-name">{{ $host->name }}</span>
-                <span class="aparto-host-page-email">{{ $host->email }}</span>
+                {{-- <span class="aparto-host-page-email">{{ $host->email }}</span> --}}
                 @if($hostTotalReviews > 0)
                     <div class="aparto-host-page-stats">
                         <span class="aparto-host-stat">
